@@ -1,28 +1,30 @@
 import Image from "next/image";
 import bg from "@/public/bg.png";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="mt-24">
+    <main className="mt-16 sm:mt-20 md:pt-24">
       <Image
         src={bg}
         fill
         placeholder="blur"
         className="object-cover object-top"
         quality={60}
-        alt="Mountains and forests with two cabins"
+        alt="The Retreat Cottage Ghibli"
+        priority
       />
 
-      <div className="relative z-10 text-center">
-        <h1 className="text-8xl text-primary-50 mb-10 tracking-tight font-normal">
+      <div className="relative z-10 text-center px-4 sm:px-6">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-primary-50 mb-6 sm:mb-8 md:mb-10 tracking-tight font-normal">
           Welcome to The Retreat Cottage
         </h1>
-        <a
+        <Link
           href="/cabins"
-          className="bg-accent-500 px-8 py-6 text-primary-800 text-lg font-semibold hover:bg-accent-600 transition-all"
+          className="bg-accent-500 px-6 py-4 sm:px-7 sm:py-5 md:px-8 md:py-6 text-primary-800 text-base sm:text-lg font-semibold hover:bg-accent-600 transition-all inline-block rounded-lg"
         >
           Explore Luxury Rooms & Cabins
-        </a>
+        </Link>
       </div>
     </main>
   );
