@@ -8,10 +8,10 @@ function page() {
   const rooms = {};
   return (
     <div>
-      <h1 className="text-4xl mb-5 text-accent-400 font-medium">
+      <h1 className="text-3xl sm:text-4xl mb-4 sm:mb-5 text-accent-400 font-medium">
         Our Elegant Villa Rooms
       </h1>
-      <p className="text-primary-200 text-lg mb-10">
+      <p className="text-primary-200 text-base sm:text-lg mb-8 sm:mb-10">
         Step into luxury with our three meticulously designed rooms within the
         main villa at The Retreat Cottage. Each room offers a perfect blend of
         contemporary comfort and classic charm, featuring premium amenities,
@@ -24,7 +24,7 @@ function page() {
       </p>
 
       {rooms.length > 0 && (
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 xl:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-14">
           {rooms.map((room) => (
             <ItemCard item={room} key={room.id} />
           ))}

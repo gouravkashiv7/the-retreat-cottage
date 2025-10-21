@@ -11,7 +11,7 @@ export default function Page() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-5 gap-x-8 lg:gap-x-24 gap-y-16 md:gap-y-32 text-lg items-center">
       {/* First Section */}
-      <div className="col-span-1 md:col-span-3 order-1">
+      <div className="col-span-1 md:col-span-3 order-2">
         <h1 className="text-3xl sm:text-4xl mb-6 md:mb-10 text-accent-400 font-medium">
           Welcome to The Retreat Cottage
         </h1>
@@ -40,7 +40,7 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="col-span-1 md:col-span-2 order-2">
+      <div className="col-span-1 md:col-span-2 order-1">
         <Image
           src={image1}
           quality={80}
@@ -50,8 +50,8 @@ export default function Page() {
         />
       </div>
 
-      {/* Second Section - Reverse order on mobile */}
-      <div className="col-span-1 md:col-span-2 order-4 md:order-3">
+      {/* Second Section - Fixed order */}
+      <div className="col-span-1 md:col-span-2 order-3">
         <Image
           src={image2}
           quality={80}
@@ -61,7 +61,7 @@ export default function Page() {
         />
       </div>
 
-      <div className="col-span-1 md:col-span-3 order-3 md:order-4">
+      <div className="col-span-1 md:col-span-3 order-4">
         <h1 className="text-3xl sm:text-4xl mb-6 md:mb-10 text-accent-400 font-medium">
           Curated with Passion for Luxury Stays
         </h1>
