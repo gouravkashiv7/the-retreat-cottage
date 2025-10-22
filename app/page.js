@@ -20,7 +20,7 @@ export default function Home() {
           Welcome to The Retreat Cottage
         </h1>
         <Link
-          href="/cabins"
+          href="/retreats"
           className="bg-accent-500 px-6 py-4 sm:px-7 sm:py-5 md:px-8 md:py-6 text-primary-800 text-base sm:text-lg font-semibold hover:bg-accent-600 transition-all inline-block rounded-lg mt-12 md:mt-4"
         >
           Explore Luxury Rooms & Cabins

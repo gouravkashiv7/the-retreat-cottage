@@ -3,8 +3,17 @@ import Image from "next/image";
 import Link from "next/link";
 
 function ItemCard({ item }) {
-  const { id, name, maxCapacity, regularPrice, discount, image, description } =
-    item;
+  const {
+    id,
+    name,
+    maxCapacity,
+    regularPrice,
+    discount: discountPercentage,
+    image,
+    description,
+  } = item;
+
+  const discount = Math.round((regularPrice * discountPercentage) / 100);
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden w-full">

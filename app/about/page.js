@@ -85,7 +85,7 @@ export default function Page() {
 
           <div className="text-center md:text-left">
             <Link
-              href="/cabins"
+              href="/retreats"
               className="inline-block mt-4 bg-accent-500 px-6 py-4 md:px-8 md:py-5 text-primary-800 text-base md:text-lg font-semibold hover:bg-accent-600 transition-all rounded-lg w-full md:w-auto text-center"
             >
               Explore Our Luxury Accommodations
