@@ -11,6 +11,7 @@ function ItemCard({ item }) {
     discount: discountPercentage,
     image,
     description,
+    type,
   } = item;
 
   const discount = Math.round((regularPrice * discountPercentage) / 100);
@@ -21,8 +22,9 @@ function ItemCard({ item }) {
         <div className="w-full h-48 sm:h-56 md:h-64 lg:h-72 relative">
           <Image
             src={image}
-            alt={`Cabin ${name}`}
+            alt={`${type.charAt(0).toUpperCase() + type.slice(1)} ${name}`}
             fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="w-full h-full object-cover"
             priority={false}
           />
@@ -31,7 +33,7 @@ function ItemCard({ item }) {
 
       <div className="p-4 sm:p-6">
         <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">
-          Cabin {name}
+          {type.charAt(0).toUpperCase() + type.slice(1)} {name}
         </h3>
 
         {description && (
@@ -67,7 +69,7 @@ function ItemCard({ item }) {
           </div>
 
           <Link
-            href={`/cabins/${id}`}
+            href={`/retreats/${type}/${id}`}
             className="bg-accent-500 hover:bg-accent-600 text-primary-800 py-1.5 px-3 sm:py-2 md:py-3 sm:px-4 md:px-6 rounded-lg font-semibold transition-all text-xs sm:text-sm md:text-base text-center"
           >
             Details & reservation &rarr;

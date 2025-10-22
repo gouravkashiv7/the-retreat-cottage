@@ -1,7 +1,9 @@
 import { Suspense } from "react";
 
 import RetreatList from "../_components/RetreatList";
-import ApiSpinner from "../_components/ApiSpinner";
+import Spinner from "../_components/Spinner";
+
+export const revalidate = 3600;
 
 export const metadata = {
   title: "Luxury Retreats",
@@ -21,7 +23,7 @@ export default function RetreatsPage() {
           serene hills.
         </p>
       </div>
-      <Suspense fallback={<ApiSpinner />}>
+      <Suspense fallback={<Spinner />}>
         <RetreatList />
       </Suspense>
     </>

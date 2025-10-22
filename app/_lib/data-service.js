@@ -1,5 +1,6 @@
 import { eachDayOfInterval } from "date-fns";
 import supabase from "./supabase";
+import { notFound } from "next/navigation";
 
 /////////////
 // GET
@@ -40,8 +41,8 @@ export async function getCabin(id) {
     .single();
 
   if (error) {
+    notFound();
     console.error("Error fetching cabin:", error);
-    throw new Error("Cabin could not be loaded");
   }
 
   return data;
@@ -55,8 +56,8 @@ export async function getRoom(id) {
     .single();
 
   if (error) {
+    notFound();
     console.error("Error fetching room:", error);
-    throw new Error("Room could not be loaded");
   }
 
   return data;

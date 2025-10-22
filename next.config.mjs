@@ -15,6 +15,8 @@ const nextConfig = {
         pathname: "/storage/v1/object/public/cabin-images/**",
       },
     ],
+    // Move qualities to the root level here
+    qualities: [60, 80, 90, 100],
   },
 };
 

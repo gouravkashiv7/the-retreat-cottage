@@ -1,13 +1,16 @@
 import image1 from "@/public/about-1.jpg";
 import image2 from "@/public/about-2.jpg";
+import { getCabins, getRooms } from "../_lib/data-service";
 import Image from "next/image";
 import Link from "next/link";
 
+export const revalidate = 1727800;
 export const metadata = {
   title: "About",
 };
 
-export default function Page() {
+export default async function Page() {
+  const [rooms, cabins] = await Promise.all([getRooms(), getCabins()]);
   return (
     <div className="grid grid-cols-1 md:grid-cols-5 gap-x-8 lg:gap-x-24 gap-y-16 md:gap-y-32 text-lg items-center">
       {/* First Section */}
@@ -24,12 +27,12 @@ export default function Page() {
             sanctuary away from the hustle of city life.
           </p>
           <p className="text-base sm:text-lg">
-            Our property features 3 elegantly appointed villa rooms and 2
-            charming wooden cabins, each designed to provide ultimate privacy
-            and comfort. But what truly sets us apart is the experience of
-            waking up to breathtaking mountain views, spending your days
-            exploring pine-scented trails, and unwinding in your private space
-            surrounded by nature's tranquility.
+            Our property features {rooms.length} elegantly appointed villa rooms
+            and {cabins.length} charming wooden cabins, each designed to provide
+            ultimate privacy and comfort. But what truly sets us apart is the
+            experience of waking up to breathtaking mountain views, spending
+            your days exploring pine-scented trails, and unwinding in your
+            private space surrounded by nature's tranquility.
           </p>
           <p className="text-base sm:text-lg">
             This is where you create lasting memories, surrounded by the beauty
