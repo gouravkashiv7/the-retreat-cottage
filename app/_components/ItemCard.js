@@ -1,57 +1,72 @@
 import { UsersIcon } from "@heroicons/react/24/solid";
+import Image from "next/image";
+import Link from "next/link";
 
-function CabinCard({ item }) {
-  const { id, name, maxCapacity, regularPrice, discount, image } = cabin;
+function ItemCard({ item }) {
+  const { id, name, maxCapacity, regularPrice, discount, image, description } =
+    item;
 
   return (
-    <div className="flex border-primary-800 border">
-      <img
-        src={image}
-        alt={`Cabin ${name}`}
-        className="flex-1 border-r border-primary-800"
-      />
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden w-full">
+      {image && (
+        <div className="w-full h-48 sm:h-56 md:h-64 lg:h-72 relative">
+          <Image
+            src={image}
+            alt={`Cabin ${name}`}
+            fill
+            className="w-full h-full object-cover"
+            priority={false}
+          />
+        </div>
+      )}
 
-      <div className="flex-grow">
-        <div className="pt-5 pb-4 px-7 bg-primary-950">
-          <h3 className="text-accent-500 font-semibold text-2xl mb-3">
-            Cabin {name}
-          </h3>
+      <div className="p-4 sm:p-6">
+        <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">
+          Cabin {name}
+        </h3>
 
-          <div className="flex gap-3 items-center mb-2">
-            <UsersIcon className="h-5 w-5 text-primary-600" />
-            <p className="text-lg text-primary-200">
-              For up to <span className="font-bold">{maxCapacity}</span> guests
-            </p>
-          </div>
+        {description && (
+          <p className="text-gray-600 text-base sm:text-lg mb-4 line-clamp-2">
+            {description}
+          </p>
+        )}
 
-          <p className="flex gap-3 justify-end items-baseline">
-            {discount > 0 ? (
-              <>
-                <span className="text-3xl font-[350]">
-                  ${regularPrice - discount}
-                </span>
-                <span className="line-through font-semibold text-primary-600">
-                  ${regularPrice}
-                </span>
-              </>
-            ) : (
-              <span className="text-3xl font-[350]">${regularPrice}</span>
-            )}
-            <span className="text-primary-200">/ night</span>
+        <div className="flex gap-3 items-center mb-4">
+          <UsersIcon className="h-5 w-5 text-primary-600" />
+          <p className="text-base sm:text-lg text-gray-600">
+            For up to <span className="font-bold">{maxCapacity}</span> guests
           </p>
         </div>
 
-        <div className="bg-primary-950 border-t border-t-primary-800 text-right">
-          <a
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
+          <div className="flex gap-3 items-baseline sm:justify-start">
+            {discount > 0 ? (
+              <>
+                <span className="text-lg sm:text-xl font-bold text-accent-600">
+                  ₹{regularPrice - discount}
+                </span>
+                <span className="text-sm text-gray-500 line-through">
+                  ₹{regularPrice}
+                </span>
+              </>
+            ) : (
+              <span className="text-lg sm:text-xl font-bold text-accent-600">
+                ₹{regularPrice}
+              </span>
+            )}
+            <span className="text-gray-500 text-sm sm:text-base">/ night</span>
+          </div>
+
+          <Link
             href={`/cabins/${id}`}
-            className="border-l border-primary-800 py-4 px-6 inline-block hover:bg-accent-600 transition-all hover:text-primary-900"
+            className="bg-accent-500 hover:bg-accent-600 text-primary-800 py-1.5 px-3 sm:py-2 md:py-3 sm:px-4 md:px-6 rounded-lg font-semibold transition-all text-xs sm:text-sm md:text-base text-center"
           >
             Details & reservation &rarr;
-          </a>
+          </Link>
         </div>
       </div>
     </div>
   );
 }
 
-export default CabinCard;
+export default ItemCard;

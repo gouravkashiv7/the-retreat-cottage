@@ -1,46 +1,3 @@
-// import Link from "next/link";
-
-// export default function Navigation() {
-//   return (
-//     <nav className="z-10 text-xl">
-//       <ul className="flex gap-16 items-center">
-//         <li>
-//           <Link
-//             href="/rooms"
-//             className="hover:text-accent-400 transition-colors"
-//           >
-//             Rooms
-//           </Link>
-//         </li>
-//         <li>
-//           <Link
-//             href="/cabins"
-//             className="hover:text-accent-400 transition-colors"
-//           >
-//             Cabins
-//           </Link>
-//         </li>
-//         <li>
-//           <Link
-//             href="/about"
-//             className="hover:text-accent-400 transition-colors"
-//           >
-//             About
-//           </Link>
-//         </li>
-//         <li>
-//           <Link
-//             href="/account"
-//             className="hover:text-accent-400 transition-colors"
-//           >
-//             Guest area
-//           </Link>
-//         </li>
-//       </ul>
-//     </nav>
-//   );
-// }
-
 "use client";
 import Link from "next/link";
 import { useState } from "react";
@@ -54,20 +11,13 @@ export default function Navigation() {
       <ul className="hidden md:flex gap-12 lg:gap-16 items-center">
         <li>
           <Link
-            href="/rooms"
+            href="/retreats"
             className="hover:text-accent-400 transition-colors"
           >
-            Rooms
+            Retreats
           </Link>
         </li>
-        <li>
-          <Link
-            href="/cabins"
-            className="hover:text-accent-400 transition-colors"
-          >
-            Cabins
-          </Link>
-        </li>
+
         <li>
           <Link
             href="/about"
@@ -131,22 +81,14 @@ export default function Navigation() {
             <ul className="flex flex-col p-4 space-y-3">
               <li>
                 <Link
-                  href="/rooms"
+                  href="/retreats"
                   className="block py-3 px-4 hover:text-accent-400 hover:bg-primary-900 rounded-lg transition-all"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Rooms
+                  Retreats
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/cabins"
-                  className="block py-3 px-4 hover:text-accent-400 hover:bg-primary-900 rounded-lg transition-all"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Cabins
-                </Link>
-              </li>
+
               <li>
                 <Link
                   href="/about"
