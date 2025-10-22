@@ -1,6 +1,6 @@
 import Spinner from "@/app/_components/Spinner";
 
-function RetreatSpinner() {
+function ApiSpinner() {
   return (
     <div className="grid justify-center items-center">
       <Spinner />
@@ -9,4 +9,4 @@ function RetreatSpinner() {
   );
 }
 
-export default RetreatSpinner;
+export default ApiSpinner;
