@@ -10,7 +10,9 @@ export default async function FirstFloorBookingPage() {
   const cabins = await getCabins();
   if (!cabins) notFound();
 
-  const firstFloorCabins = cabins.slice(0, 2);
+  const firstFloorCabins = cabins
+    .slice(0, 2)
+    .map((cabin) => ({ ...cabin, type: "cabin" }));
   if (firstFloorCabins.length !== 2) notFound();
 
   const totalCapacity = firstFloorCabins.reduce(
@@ -76,17 +78,10 @@ export default async function FirstFloorBookingPage() {
             pricing={pricing}
             stats={stats}
             guestOptions={guestOptions}
+            retreats={firstFloorCabins} // Pass retreats for dynamic pricing
           />
         </div>
       </div>
     </BookingLayout>
   );
-}
-
-export async function generateMetadata() {
-  return {
-    title: "First Floor Package Booking | Villa Retreat",
-    description:
-      "Book the first floor package including 2 wooden cabins. Nature experience with comfort for up to 6 guests.",
-  };
 }

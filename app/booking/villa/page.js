@@ -11,7 +11,11 @@ export default async function VillaPackageBookingPage() {
 
   if (!rooms || !cabins) notFound();
 
-  const allRetreats = [...rooms, ...cabins];
+  const allRetreats = [
+    ...rooms.map((room) => ({ ...room, type: "room" })),
+    ...cabins.map((cabin) => ({ ...cabin, type: "cabin" })),
+  ];
+
   const totalCapacity = allRetreats.reduce(
     (sum, retreat) => sum + retreat.maxCapacity,
     0
@@ -85,17 +89,10 @@ export default async function VillaPackageBookingPage() {
             stats={stats}
             showSpecialRequirements={true}
             guestOptions={guestOptions}
+            retreats={allRetreats} // Pass retreats for dynamic pricing
           />
         </div>
       </div>
     </BookingLayout>
   );
-}
-
-export async function generateMetadata() {
-  return {
-    title: "Complete Villa Package Booking | Exclusive Retreat",
-    description:
-      "Book the complete villa package with all rooms and cabins. Exclusive access to the entire property for large groups and special events.",
-  };
 }
