@@ -1,52 +1,61 @@
 // import { unstable_noStore } from "next/cache";
 import { getCabins, getRooms } from "../_lib/data-service";
-import ItemCard from "@/app/_components/ItemCard";
+import AllRetreatsView from "@/app/_components/features/AllRetreatsView";
+import VillaPackageView from "@/app/_components/features/VillaPackageView";
+import FloorPackagesView from "@/app/_components/features/FloorPackagesView";
+import GuestRetreatsView from "@/app/_components/features/GuestRetreatsView";
+import RetreatCombinationsView from "@/app/_components/features/RetreatCombinationsView";
+import { findExactCombinations } from "@/app/_components/utils/combo-logic";
 
-async function RetreatList() {
+async function RetreatList({ filter }) {
   // unstable_noStore();
   const [rooms, cabins] = await Promise.all([getRooms(), getCabins()]);
 
-  return (
-    <>
-      <div className="mb-12 sm:mb-16">
-        <h2 className="text-2xl sm:text-3xl mb-6 sm:mb-8 text-accent-400 font-medium text-center sm:text-left">
-          Villa Rooms
-        </h2>
-        {rooms.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12 xl:gap-14">
-            {rooms.map((room) => (
-              <ItemCard key={room.id} item={{ ...room, type: "room" }} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8 px-4">
-            <p className="text-primary-300 text-base sm:text-lg">
-              Villa rooms coming soon.
-            </p>
-          </div>
-        )}
-      </div>
+  if (!rooms || !cabins) return null;
 
-      <div>
-        <h2 className="text-2xl sm:text-3xl mb-6 sm:mb-8 text-accent-400 font-medium text-center sm:text-left">
-          Wooden Cabins
-        </h2>
-        {cabins.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12 xl:gap-14">
-            {cabins.map((cabin) => (
-              <ItemCard key={cabin.id} item={{ ...cabin, type: "cabin" }} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8 px-4">
-            <p className="text-primary-300 text-base sm:text-lg">
-              Wooden cabins coming soon.
-            </p>
-          </div>
-        )}
-      </div>
-    </>
-  );
+  // Combine all retreats
+  const allRetreats = [
+    ...rooms.map((room) => ({ ...room, type: "room" })),
+    ...cabins.map((cabin) => ({ ...cabin, type: "cabin" })),
+  ];
+
+  // Handle "villa" filter
+  if (filter === "villa") {
+    return <VillaPackageView rooms={rooms} cabins={cabins} />;
+  }
+
+  // Handle "all" filter
+  if (filter === "all") {
+    return <AllRetreatsView rooms={rooms} cabins={cabins} />;
+  }
+
+  // Handle "floor" filter
+  if (filter === "floor") {
+    return <FloorPackagesView rooms={rooms} cabins={cabins} />;
+  }
+
+  // Handle numeric filters (custom guest counts)
+  if (typeof filter === "string" && !isNaN(filter)) {
+    const guestCount = parseInt(filter);
+
+    // For 1-3 guests, show individual retreats
+    if (guestCount <= 3) {
+      return (
+        <GuestRetreatsView allRetreats={allRetreats} guestCount={guestCount} />
+      );
+    }
+
+    // For 4+ guests, create combinations with exact capacity matching
+    const combinations = findExactCombinations(allRetreats, guestCount);
+    return (
+      <RetreatCombinationsView
+        combinations={combinations}
+        guestCount={guestCount}
+      />
+    );
+  }
+
+  return null;
 }
 
 export default RetreatList;

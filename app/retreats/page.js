@@ -2,6 +2,7 @@ import { Suspense } from "react";
 
 import RetreatList from "../_components/RetreatList";
 import Spinner from "../_components/Spinner";
+import Filter from "../_components/Filter";
 
 export const revalidate = 3600;
 
@@ -10,7 +11,9 @@ export const metadata = {
 };
 
 // Using "Our Retreats"
-export default function RetreatsPage() {
+export default async function RetreatsPage({ searchParams }) {
+  const param = await searchParams;
+  const filter = param?.capacity ?? "all";
   return (
     <>
       <div className="px-4 sm:px-0">
@@ -23,8 +26,19 @@ export default function RetreatsPage() {
           serene hills.
         </p>
       </div>
-      <Suspense fallback={<Spinner />}>
-        <RetreatList />
+      <div
+        className="flex justify-end mb-8 
+                max-sm:justify-center 
+                max-sm:mb-6 
+                max-sm:px-4 
+                max-sm:w-full"
+      >
+        <div className="max-sm:w-full">
+          <Filter />
+        </div>
+      </div>
+      <Suspense fallback={<Spinner />} key={filter}>
+        <RetreatList filter={filter} />
       </Suspense>
     </>
   );
