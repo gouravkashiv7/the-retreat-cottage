@@ -14,6 +14,11 @@ const nextConfig = {
         port: "",
         pathname: "/storage/v1/object/public/cabin-images/**",
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        pathname: "**",
+      },
     ],
     // Move qualities to the root level here
     qualities: [60, 80, 90, 100],

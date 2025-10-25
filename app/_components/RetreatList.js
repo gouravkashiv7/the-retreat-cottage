@@ -1,10 +1,10 @@
 // import { unstable_noStore } from "next/cache";
 import { getCabins, getRooms } from "../_lib/data-service";
-import AllRetreatsView from "@/app/_components/features/AllRetreatsView";
-import VillaPackageView from "@/app/_components/features/VillaPackageView";
-import FloorPackagesView from "@/app/_components/features/FloorPackagesView";
-import GuestRetreatsView from "@/app/_components/features/GuestRetreatsView";
-import RetreatCombinationsView from "@/app/_components/features/RetreatCombinationsView";
+import AllRetreatsView from "@/app/_components/retreat_views/AllRetreatsView";
+import VillaPackageView from "@/app/_components/retreat_views/VillaPackageView";
+import FloorPackagesView from "@/app/_components/retreat_views/FloorPackagesView";
+import GuestRetreatsView from "@/app/_components/retreat_views/GuestRetreatsView";
+import RetreatCombinationsView from "@/app/_components/retreat_views/RetreatCombinationsView";
 import { findExactCombinations } from "@/app/_components/utils/combo-logic";
 
 async function RetreatList({ filter }) {

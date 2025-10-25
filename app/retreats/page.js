@@ -3,6 +3,8 @@ import { Suspense } from "react";
 import RetreatList from "../_components/RetreatList";
 import Spinner from "../_components/Spinner";
 import Filter from "../_components/Filter";
+// import ReservationReminder from "../_components/ReservationReminder";
+import DateRangeSelector from "../_components/DateRangeSelector";
 
 export const revalidate = 3600;
 
@@ -26,6 +28,10 @@ export default async function RetreatsPage({ searchParams }) {
           serene hills.
         </p>
       </div>
+      {/* Date Range Selector */}
+      <div className="px-4 sm:px-0 mb-6">
+        <DateRangeSelector />
+      </div>
       <div
         className="flex justify-end mb-8 
                 max-sm:justify-center 
@@ -39,6 +45,7 @@ export default async function RetreatsPage({ searchParams }) {
       </div>
       <Suspense fallback={<Spinner />} key={filter}>
         <RetreatList filter={filter} />
+        {/* <ReservationReminder /> */}
       </Suspense>
     </>
   );

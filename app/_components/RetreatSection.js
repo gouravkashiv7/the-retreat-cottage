@@ -8,7 +8,6 @@ function RetreatSection({
   className = "",
   isCombo,
 }) {
-  console.log(retreats);
   return (
     <div className={className}>
       <h2 className="text-2xl sm:text-3xl mb-6 sm:mb-8 text-accent-400 font-medium text-center sm:text-left">

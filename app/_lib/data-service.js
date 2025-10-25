@@ -2,6 +2,11 @@ import { eachDayOfInterval } from "date-fns";
 import supabase from "./supabase";
 import { notFound } from "next/navigation";
 
+// Utility function to add delay
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 /////////////
 // GET
 
@@ -122,32 +127,69 @@ export async function getBookings(guestId) {
   return data;
 }
 
-export async function getBookedDatesByCabinId(cabinId) {
+export async function getBookedDatesById(id, type) {
   let today = new Date();
   today.setUTCHours(0, 0, 0, 0);
   today = today.toISOString();
 
-  // Getting all bookings
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("*")
-    .eq("cabinId", cabinId)
-    .or(`startDate.gte.${today},status.eq.checked-in`);
+  let query;
+
+  if (type === "room") {
+    // Query bookings that have this room in booking_rooms
+    query = supabase
+      .from("bookings")
+      .select(
+        `
+        id,
+        startDate,
+        endDate,
+        status,
+        booking_rooms!inner (
+          roomId
+        )
+      `
+      )
+      .eq("booking_rooms.roomId", id)
+      .or(`startDate.gte.${today},status.eq.checked-in`);
+  } else if (type === "cabin") {
+    // Query bookings that have this cabin in booking_cabins
+    query = supabase
+      .from("bookings")
+      .select(
+        `
+        id,
+        startDate,
+        endDate,
+        status,
+        booking_cabins!inner (
+          cabinId
+        )
+      `
+      )
+      .eq("booking_cabins.cabinId", id)
+      .or(`startDate.gte.${today},status.eq.checked-in`);
+  } else {
+    throw new Error("Invalid type. Must be 'room' or 'cabin'");
+  }
+
+  const { data, error } = await query;
 
   if (error) {
-    console.error(error);
+    console.error("Supabase error:", error);
     throw new Error("Bookings could not get loaded");
   }
 
-  // Converting to actual dates to be displayed in the date picker
-  const bookedDates = data
-    .map((booking) => {
-      return eachDayOfInterval({
-        start: new Date(booking.startDate),
-        end: new Date(booking.endDate),
-      });
-    })
-    .flat();
+  // If no bookings found, return empty array
+  if (!data || data.length === 0) {
+    return [];
+  }
+
+  // Return the booking dates directly (no need to extract)
+  const bookedDates = data.map((booking) => ({
+    startDate: booking.startDate,
+    endDate: booking.endDate,
+    status: booking.status,
+  }));
 
   return bookedDates;
 }

@@ -56,8 +56,9 @@
 }
 
 /* For data picker */
-.rdp {
-  --rdp-cell-size: 32px !important;
+.rdp-root {
+  --rdp-day-height: 46px;
+  --rdp-day-width: 42px;
   --rdp-accent-color: var(--color-accent-500) !important; /* Updated */
   --rdp-background-color: var(--color-accent-600) !important; /* Updated */
   margin: 0 !important;

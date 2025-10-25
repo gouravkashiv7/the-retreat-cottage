@@ -97,7 +97,7 @@ export default async function Page() {
       <div className="bg-primary-950 rounded-lg p-8">
         <div className="flex items-start mb-6">
           <MapPin className="h-6 w-6 text-accent-400 mr-3 mt-1 flex-shrink-0" />
-          <h2 className="text-2xl sm:text-3xl text-accent-400 font-medium">
+          <h2 className="text-4xl text-accent-400 font-medium">
             Prime Location in Nature's Lap
           </h2>
         </div>
