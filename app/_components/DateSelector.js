@@ -55,7 +55,7 @@ function DateSelector({ settings, retreat, bookedDates }) {
         captionLayout="dropdown"
         numberOfMonths={numberOfMonths}
         style={{
-          "--rdp-day-height": "46px",
+          "--rdp-day-height": "47px",
           "--rdp-day-width": "42px",
           "--rdp-accent-color": "rgb(236 201 140)", // Your accent-500 color
         }}
