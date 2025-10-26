@@ -1,5 +1,5 @@
 "use client";
-import { isWithinInterval } from "date-fns";
+import { differenceInDays, isWithinInterval } from "date-fns";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { useEffect, useState } from "react";
@@ -31,10 +31,10 @@ function DateSelector({ settings, retreat, bookedDates }) {
   }, []);
 
   // CHANGE
-  const regularPrice = 23;
-  const discount = 23;
-  const numNights = 23;
-  const cabinPrice = 23;
+  const { regularPrice, discount: discountPercentage } = retreat;
+  const numNights = differenceInDays(range.to, range.from);
+  const discount = Math.round((regularPrice * discountPercentage) / 100);
+  const cabinPrice = numNights * (regularPrice - discount);
 
   // SETTINGS
   // const { minBookingLength, maxBookingLength } = settings;
