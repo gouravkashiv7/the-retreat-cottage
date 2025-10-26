@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { updateGuest } from "../_lib/server";
+import { updateGuest } from "../_lib/actions";
 import { useFormStatus } from "react-dom";
 
 function UpdateProfileForm({ guest, children }) {

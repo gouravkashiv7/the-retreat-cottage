@@ -3,6 +3,78 @@ import { redirect } from "next/navigation";
 import { auth, signIn, signOut } from "./auth";
 import supabase from "./supabase";
 import { revalidatePath } from "next/cache";
+import { getBookings } from "./data-service";
+
+export async function updateBooking(formData) {
+  const session = await auth();
+  if (!session) throw new Error("User must be Logged In!!");
+  const bookingId = Number(formData.get("bookingId"));
+  if (!bookingId) throw new Error("No Booking ID Specified!!");
+
+  const guestBookings = await getBookings(session.user.guestId);
+  const guestBookingIds = guestBookings.map((booking) => booking.id);
+
+  if (!guestBookingIds.includes(bookingId))
+    throw new Error("You are not allowed to update this booking");
+
+  const updateData = {
+    accommodationPrice: Number(formData.get("accommodationPrice")),
+    extrasPrice: Number(formData.get("extrasPrice")),
+    totalPrice: Number(formData.get("totalPrice")),
+    status: formData.get("status"),
+    hasBreakfast: formData.get("hasBreakfast"),
+    observations: formData.get("observations").slice(0, 1000),
+  };
+  const { error } = await supabase
+    .from("bookings")
+    .update(updateData)
+    .eq("id", bookingId)
+    .select()
+    .single();
+
+  if (error) throw new Error("Booking could not be updated");
+
+  revalidatePath(`/account/reservations/edit/${bookingId}`);
+  revalidatePath("/account/reservations");
+  redirect("/account/reservations");
+}
+
+export async function deleteReservation(bookingId) {
+  const session = await auth();
+  if (!session) throw new Error("User must be Logged In!!");
+
+  if (!bookingId) throw new Error("No Booking ID Specified!!");
+
+  const guestBookings = await getBookings(session.user.guestId);
+  const guestBookingIds = guestBookings.map((booking) => booking.id);
+
+  if (!guestBookingIds.includes(bookingId))
+    throw new Error("You are not allowed to delete this booking");
+  // First delete related records from junction tables
+  const { error: cabinsError } = await supabase
+    .from("booking_cabins")
+    .delete()
+    .eq("bookingId", bookingId);
+
+  if (cabinsError) throw new Error("Could not delete booking cabins");
+
+  const { error: roomsError } = await supabase
+    .from("booking_rooms")
+    .delete()
+    .eq("bookingId", bookingId);
+
+  if (roomsError) throw new Error("Could not delete booking rooms");
+
+  // Now delete the main booking
+  const { error } = await supabase
+    .from("bookings")
+    .delete()
+    .eq("id", bookingId);
+
+  if (error) throw new Error("Booking could not be deleted");
+
+  revalidatePath("/account/reservations");
+}
 
 export async function updateGuest(formData) {
   const session = await auth();

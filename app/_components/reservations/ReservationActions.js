@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import { isPast } from "date-fns";
-import DeleteReservation from "@/app/_components/DeleteReservation";
+import DeleteReservation from "@/app/_components/reservations/DeleteReservation";
 
 function ReservationActions({ bookingId, startDate }) {
   if (isPast(startDate)) {
