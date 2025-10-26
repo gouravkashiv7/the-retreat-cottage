@@ -109,22 +109,89 @@ export async function getBooking(id) {
   return data;
 }
 
+// export async function getBookings(guestId) {
+//   const { data, error, count } = await supabase
+//     .from("bookings")
+//     // We actually also need data on the cabins as well. But let's ONLY take the data that we actually need, in order to reduce downloaded data.
+//     .select(
+//       "id, created_at, startDate, endDate, numNights, numGuests, totalPrice, guestId, cabinId, cabins(name, image)"
+//     )
+//     .eq("guestId", guestId)
+//     .order("startDate");
+
+//   if (error) {
+//     console.error(error);
+//     throw new Error("Bookings could not get loaded");
+//   }
+
+//   return data;
+// }
+
 export async function getBookings(guestId) {
-  const { data, error, count } = await supabase
+  const { data, error } = await supabase
     .from("bookings")
-    // We actually also need data on the cabins as well. But let's ONLY take the data that we actually need, in order to reduce downloaded data.
     .select(
-      "id, created_at, startDate, endDate, numNights, numGuests, totalPrice, guestId, cabinId, cabins(name, image)"
+      `
+      id, 
+      created_at, 
+      startDate, 
+      endDate, 
+      numNights, 
+      numGuests, 
+      totalPrice,
+      guestId,     
+      status, 
+      booking_cabins (
+        bookingCabinPrice,
+        cabins (
+          id,
+          name,
+          image
+        )
+      ),
+      booking_rooms (
+        bookingRoomPrice,
+        rooms (
+          id,
+          name,
+          image
+        )
+      )
+    `
     )
     .eq("guestId", guestId)
     .order("startDate");
 
-  if (error) {
-    console.error(error);
-    throw new Error("Bookings could not get loaded");
-  }
+  if (error) throw new Error(`Bookings could not get loaded: ${error.message}`);
 
-  return data;
+  // Transform the data to match your desired structure
+  const transformedData = data?.map((booking) => {
+    const cabins =
+      booking.booking_cabins?.map((bc) => ({
+        ...bc.cabins,
+        type: "cabin",
+        bookingPrice: bc.bookingCabinPrice,
+      })) || [];
+
+    const rooms =
+      booking.booking_rooms?.map((br) => ({
+        ...br.rooms,
+        type: "room",
+        bookingPrice: br.bookingRoomPrice,
+      })) || [];
+
+    const accommodations = [...cabins, ...rooms];
+
+    // Remove the junction table data from the final object
+    const { booking_cabins, booking_rooms, ...bookingData } = booking;
+
+    return {
+      ...bookingData,
+      accommodations: accommodations.length > 0 ? accommodations : null,
+    };
+  });
+
+  return transformedData || [];
 }
 
 export async function getBookedDatesById(id, type) {
