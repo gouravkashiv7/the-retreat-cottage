@@ -1,11 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { updateGuest } from "../_lib/server";
 
 function UpdateProfileForm({ guest, children }) {
   const [selectedCountry, setSelectedCountry] = useState("India");
-  const [idType, setIdType] = useState("");
-
+  const formRef = useRef();
   const {
     fullName,
     email,
@@ -20,15 +19,33 @@ function UpdateProfileForm({ guest, children }) {
   const handleCountryChange = (e) => {
     const country = e.target.value.split("%")[0]; // Extract country name from value
     setSelectedCountry(country);
-    if (country === "India") {
-      setIdType("");
-    } else {
-      setIdType("passport");
-    }
   };
+  useEffect(() => {
+    const idTypeSelect = formRef.current?.querySelector(
+      'select[name="idType"]'
+    );
+    const idNumberInput = formRef.current?.querySelector(
+      'input[name="idNumber"]'
+    );
+
+    if (defaultIdType) return;
+    if (!idTypeSelect || !idNumberInput) return;
+
+    // Reset ID fields when country changes
+    idTypeSelect.value = "";
+    idNumberInput.disabled = true;
+    idNumberInput.value = "";
+
+    // Auto-set passport for non-India countries
+    if (selectedCountry !== "India") {
+      idTypeSelect.value = "passport";
+      idNumberInput.disabled = false;
+    }
+  }, [selectedCountry]);
 
   return (
     <form
+      ref={formRef}
       className="bg-primary-900 py-6 sm:py-8 px-4 sm:px-6 md:px-12 text-base sm:text-lg flex gap-4 sm:gap-6 flex-col"
       action={updateGuest}
     >
@@ -36,6 +53,7 @@ function UpdateProfileForm({ guest, children }) {
         <label className="block text-sm sm:text-base">Full name</label>
         <input
           disabled
+          name="fullName"
           defaultValue={fullName}
           className="px-4 sm:px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400 text-sm sm:text-base"
         />
@@ -45,6 +63,7 @@ function UpdateProfileForm({ guest, children }) {
         <label className="block text-sm sm:text-base">Email address</label>
         <input
           disabled
+          name="email"
           defaultValue={email}
           className="px-4 sm:px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400 text-sm sm:text-base"
         />
@@ -83,10 +102,15 @@ function UpdateProfileForm({ guest, children }) {
         <select
           name="idType"
           defaultValue={defaultIdType}
-          value={idType}
-          onChange={(e) => setIdType(e.target.value)}
-          className="px-4 sm:px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm text-sm sm:text-base disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400 disabled:opacity-70"
-          disabled={selectedCountry !== "India"}
+          onChange={(e) => {
+            const idNumberInput = e.target.form?.querySelector(
+              'input[name="idNumber"]'
+            );
+            if (idNumberInput) {
+              idNumberInput.disabled = !e.target.value;
+            }
+          }}
+          className="px-4 sm:px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm text-sm sm:text-base "
         >
           <option value="">Select ID Type</option>
           {selectedCountry === "India" ? (
@@ -110,8 +134,8 @@ function UpdateProfileForm({ guest, children }) {
         </label>
         <input
           name="idNumber"
+          disabled={!defaultIdType}
           defaultValue={selectedCountry === "India" ? nationalId : passport}
-          disabled={!idType}
           className="px-4 sm:px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm text-sm sm:text-base disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400"
         />
       </div>
