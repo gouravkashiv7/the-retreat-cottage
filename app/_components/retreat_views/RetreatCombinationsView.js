@@ -1,7 +1,15 @@
+"use client";
+import { useState } from "react";
 import ItemCard from "../ItemCard";
 import Link from "next/link";
 
 function RetreatCombinationsView({ combinations, guestCount }) {
+  const [loadingCombos, setLoadingCombos] = useState({});
+
+  const handleComboClick = (comboId) => {
+    setLoadingCombos((prev) => ({ ...prev, [comboId]: true }));
+  };
+
   // Calculate pricing for each combination
   const combinationsWithPricing = combinations.map((combination, index) => {
     const totalPrice = combination.retreats.reduce((sum, retreat) => {
@@ -81,9 +89,21 @@ function RetreatCombinationsView({ combinations, guestCount }) {
                   {/* Booking Button */}
                   <Link
                     href={`/combo/${combination.comboId}`}
-                    className="bg-accent-500 hover:bg-accent-600 text-primary-800 py-2 px-4 sm:py-2 sm:px-5 rounded-lg font-semibold transition-all text-sm w-full sm:w-auto text-center whitespace-nowrap"
+                    className={`bg-accent-500 hover:bg-accent-600 text-primary-800 py-2 px-4 sm:py-2 sm:px-5 rounded-lg font-semibold transition-all text-sm w-full sm:w-auto text-center whitespace-nowrap flex items-center justify-center gap-2 ${
+                      loadingCombos[combination.comboId]
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
+                    onClick={() => handleComboClick(combination.comboId)}
                   >
-                    Book This Combo &rarr;
+                    {loadingCombos[combination.comboId] ? (
+                      <>
+                        <div className="w-3 h-3 border-2 border-primary-800 border-t-transparent rounded-full animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      "Book This Combo →"
+                    )}
                   </Link>
                 </div>
               </div>

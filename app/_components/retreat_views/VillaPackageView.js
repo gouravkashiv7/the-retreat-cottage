@@ -1,7 +1,10 @@
+"use client";
+import { useState } from "react";
 import RetreatSection from "../RetreatSection";
 import Link from "next/link";
 
 function VillaPackageView({ rooms, cabins }) {
+  const [isVillaLoading, setIsVillaLoading] = useState(false);
   const totalCapacity = [...rooms, ...cabins].reduce(
     (sum, retreat) => sum + retreat.maxCapacity,
     0
@@ -83,9 +86,19 @@ function VillaPackageView({ rooms, cabins }) {
             {/* Booking Button */}
             <Link
               href="/booking/villa"
-              className="bg-accent-500 hover:bg-accent-600 text-primary-800 py-3 px-6 rounded-lg font-semibold transition-all text-base sm:text-lg text-center whitespace-nowrap"
+              className={`bg-accent-500 hover:bg-accent-600 text-primary-800 py-3 px-6 rounded-lg font-semibold transition-all text-base sm:text-lg text-center whitespace-nowrap flex items-center justify-center gap-2 ${
+                isVillaLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={() => setIsVillaLoading(true)}
             >
-              Book Complete Villa &rarr;
+              {isVillaLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-primary-800 border-t-transparent rounded-full animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                "Book Complete Villa →"
+              )}
             </Link>
           </div>
         </div>

@@ -1,8 +1,11 @@
+"use client";
 import { UsersIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 function ItemCard({ item, isCombo = false, isFull = false }) {
+  const [isLoading, setIsLoading] = useState(false);
   const {
     id,
     name,
@@ -114,9 +117,19 @@ function ItemCard({ item, isCombo = false, isFull = false }) {
           {!isCombo && (
             <Link
               href={`/retreats/${type}/${id}`}
-              className="bg-accent-500 hover:bg-accent-600 text-primary-800 py-1.5 px-3 sm:py-2 md:py-3 sm:px-4 md:px-6 rounded-lg font-semibold transition-all text-xs sm:text-sm md:text-base text-center"
+              className={`bg-accent-500 hover:bg-accent-600 text-primary-800 py-1.5 px-3 sm:py-2 md:py-3 sm:px-4 md:px-6 rounded-lg font-semibold transition-all text-xs sm:text-sm md:text-base text-center flex items-center justify-center gap-2 ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={() => setIsLoading(true)}
             >
-              Details & reservation &rarr;
+              {isLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-primary-800 border-t-transparent rounded-full animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                "Details & reservation →"
+              )}
             </Link>
           )}
         </div>

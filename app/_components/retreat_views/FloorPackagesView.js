@@ -1,7 +1,10 @@
+"use client";
+import { useState } from "react";
 import ItemCard from "../ItemCard";
 import Link from "next/link";
 
 function FloorPackagesView({ rooms, cabins }) {
+  const [isLoading, setIsLoading] = useState(false);
   // Ground floor: all 3 rooms
   const groundFloorRooms = rooms.slice(0, 3);
   const groundFloorCapacity = groundFloorRooms.reduce(
@@ -114,9 +117,19 @@ function FloorPackagesView({ rooms, cabins }) {
                   {/* Booking Button */}
                   <Link
                     href={pack.bookingUrl}
-                    className="bg-accent-500 hover:bg-accent-600 text-primary-800 py-2 px-5 rounded-lg font-semibold transition-all text-sm sm:text-base text-center whitespace-nowrap"
+                    className={`bg-accent-500 hover:bg-accent-600 text-primary-800 py-2 px-5 rounded-lg font-semibold transition-all text-sm sm:text-base text-center whitespace-nowrap flex items-center justify-center gap-2 ${
+                      isLoading ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    onClick={() => setIsLoading(true)}
                   >
-                    Book Package &rarr;
+                    {isLoading ? (
+                      <>
+                        <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-primary-800 border-t-transparent rounded-full animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      "Book Package →"
+                    )}
                   </Link>
                 </div>
               </div>
