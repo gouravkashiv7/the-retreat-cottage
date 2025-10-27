@@ -3,7 +3,19 @@ import { useReservation } from "./contexts/ReservationContext";
 
 function ReservationForm({ retreat, user }) {
   const { maxCapacity } = retreat;
-  const { range } = useReservation();
+  const { range, numGuests, updateGuests } = useReservation();
+
+  // Format date for display
+  const formatDate = (date) => {
+    return date
+      ? new Date(date).toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+        })
+      : "";
+  };
+
   return (
     <div className="scale-[1.01]">
       <div className="bg-primary-800 text-primary-300 px-4 sm:px-8 lg:px-16 py-2 flex justify-between items-center">
@@ -21,6 +33,22 @@ function ReservationForm({ retreat, user }) {
       </div>
 
       <form className="bg-primary-900 py-6 px-4 sm:py-8 sm:px-8 lg:py-10 lg:px-16 text-base sm:text-lg flex gap-4 sm:gap-5 flex-col">
+        {/* Display selected dates */}
+        {(range?.from || range?.to) && (
+          <div className="space-y-2">
+            <label className="text-sm sm:text-base lg:text-lg">
+              Selected Dates
+            </label>
+            <div className="px-3 sm:px-5 py-2 sm:py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm text-sm sm:text-base">
+              {range.from && range.to
+                ? `${formatDate(range.from)} - ${formatDate(range.to)}`
+                : range.from
+                ? `Selecting from ${formatDate(range.from)}`
+                : ""}
+            </div>
+          </div>
+        )}
+
         <div className="space-y-2">
           <label
             htmlFor="numGuests"
@@ -32,6 +60,8 @@ function ReservationForm({ retreat, user }) {
             name="numGuests"
             id="numGuests"
             className="px-3 sm:px-5 py-2 sm:py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm text-sm sm:text-base"
+            value={numGuests}
+            onChange={(e) => updateGuests(Number(e.target.value))}
             required
           >
             <option value="" key="">
@@ -43,6 +73,12 @@ function ReservationForm({ retreat, user }) {
               </option>
             ))}
           </select>
+          {numGuests > 0 && (
+            <p className="text-primary-300 text-sm">
+              Currently selected: {numGuests}{" "}
+              {numGuests === 1 ? "guest" : "guests"}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -61,11 +97,24 @@ function ReservationForm({ retreat, user }) {
         </div>
 
         <div className="flex flex-col sm:flex-row justify-end items-center gap-4 sm:gap-6">
-          <p className="text-primary-300 text-sm sm:text-base text-center sm:text-left">
-            Start by selecting dates
-          </p>
+          {!(range?.from && range?.to) ? (
+            <p className="text-primary-300 text-sm sm:text-base text-center sm:text-left">
+              Start by selecting dates
+            </p>
+          ) : !numGuests ? (
+            <p className="text-primary-300 text-sm sm:text-base text-center sm:text-left">
+              Please select number of guests
+            </p>
+          ) : (
+            <p className="text-primary-300 text-sm sm:text-base text-center sm:text-left">
+              Ready to book!
+            </p>
+          )}
 
-          <button className="bg-accent-500 px-6 sm:px-8 py-3 sm:py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300 text-sm sm:text-base w-full sm:w-auto">
+          <button
+            className="bg-accent-500 px-6 sm:px-8 py-3 sm:py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300 text-sm sm:text-base w-full sm:w-auto"
+            disabled={!range?.from || !range?.to || !numGuests}
+          >
             Reserve now
           </button>
         </div>

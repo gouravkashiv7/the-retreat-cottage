@@ -25,6 +25,7 @@ async function Reservations({ retreat, type }) {
             settings={settings}
             retreat={retreat}
             bookedDates={bookedDates}
+            type={type}
           />
         </div>
         <div className="lg:col-span-2 lg:border-l lg:border-primary-800">
