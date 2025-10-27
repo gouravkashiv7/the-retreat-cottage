@@ -68,6 +68,7 @@ export async function createBooking(bookingData, formData) {
       const type = [1, 2].includes(retreatId) ? "cabin" : "room";
       revalidatePath(`/retreats/${type}/${retreatId}`);
     }
+    redirect("/retreats/thankyou");
   } catch (error) {
     throw error;
   }
