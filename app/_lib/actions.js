@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { auth, signIn, signOut } from "./auth";
 import supabase from "./supabase";
 import { revalidatePath } from "next/cache";
-import { getBookedDatesById, getBookings } from "./data-service";
+import { getBookedDatesById, getBookings, getSettings } from "./data-service";
 
 import {
   convertToISTDate,
@@ -22,10 +22,13 @@ export async function createBooking(bookingData, formData) {
     const retreatId = formData.get("retreatId");
     const observations = sanitizeObservations(formData.get("observations"));
     const numNights = bookingData.numNights;
-
+    const { extraGuestPrice } = await getSettings();
+    let accommodationPrice = Number(formData.get("accommodationPrice"));
     const startDateIST = convertToISTDate(bookingData.startDate);
     const endDateIST = convertToISTDate(bookingData.endDate);
-
+    if (numGuests === 3) {
+      accommodationPrice += extraGuestPrice;
+    }
     await validateDateAvailability(retreatId, startDateIST, endDateIST);
 
     const newBooking = {
@@ -36,7 +39,8 @@ export async function createBooking(bookingData, formData) {
       numGuests,
       observations,
       extrasPrice: 0,
-      totalPrice: bookingData.accommodationPrice,
+      accommodationPrice,
+      totalPrice: accommodationPrice,
       status: "unconfirmed",
       hasBreakfast: false,
       isPaid: false,
@@ -56,7 +60,7 @@ export async function createBooking(bookingData, formData) {
       data.id,
       retreatId,
       numGuests,
-      bookingData.accommodationPrice,
+      accommodationPrice,
       numNights
     );
 
@@ -84,11 +88,14 @@ async function processRetreats(
       const type = getRetreatType(retreatNum);
 
       const tableName = type === "cabin" ? "booking_cabins" : "booking_rooms";
+      // Calculate base price per night
+      let pricePerNight = accommodationPrice / numNights;
+
       const insertData = {
         bookingId: bookingId,
         [type === "cabin" ? "cabinId" : "roomId"]: retreatNum,
         [`booking${type.charAt(0).toUpperCase() + type.slice(1)}Price`]:
-          accommodationPrice / numNights,
+          pricePerNight,
         ...(type === "cabin" && { isFull: numGuests >= 3 }),
       };
 

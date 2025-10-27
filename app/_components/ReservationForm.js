@@ -19,13 +19,13 @@ function ReservationForm({ retreat, user }) {
   const startDate = range.from;
   const endDate = range.to;
   const numNights = differenceInDays(endDate, startDate);
-  const accommodationPrice = numNights * (regularPrice - discount);
+
+  const accommodationPrice = Number(numNights * (regularPrice - discount));
 
   const bookingData = {
     startDate,
     endDate,
     numNights,
-    accommodationPrice,
   };
 
   const createBookingWithData = createBooking.bind(null, bookingData);
@@ -65,6 +65,11 @@ function ReservationForm({ retreat, user }) {
         className="bg-primary-900 py-6 px-4 sm:py-8 sm:px-8 lg:py-10 lg:px-16 text-base sm:text-lg flex gap-4 sm:gap-5 flex-col"
       >
         <input type="hidden" name="retreatId" value={retreat.id} />
+        <input
+          type="hidden"
+          name="accommodationPrice"
+          value={accommodationPrice || ""}
+        />
         {/* Display selected dates */}
         {(startDate || endDate) && (
           <div className="space-y-2">
