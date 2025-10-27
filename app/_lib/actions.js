@@ -3,7 +3,125 @@ import { redirect } from "next/navigation";
 import { auth, signIn, signOut } from "./auth";
 import supabase from "./supabase";
 import { revalidatePath } from "next/cache";
-import { getBookings } from "./data-service";
+import { getBookedDatesById, getBookings } from "./data-service";
+
+import {
+  convertToISTDate,
+  parseRetreatIds,
+  getRetreatType,
+  hasDateConflict,
+  sanitizeObservations,
+} from "./booking-helpers";
+
+export async function createBooking(bookingData, formData) {
+  const session = await auth();
+  if (!session) throw new Error("User must be logged in");
+
+  try {
+    const numGuests = Number(formData.get("numGuests"));
+    const retreatId = formData.get("retreatId");
+    const observations = sanitizeObservations(formData.get("observations"));
+    const numNights = bookingData.numNights;
+
+    const startDateIST = convertToISTDate(bookingData.startDate);
+    const endDateIST = convertToISTDate(bookingData.endDate);
+
+    await validateDateAvailability(retreatId, startDateIST, endDateIST);
+
+    const newBooking = {
+      ...bookingData,
+      startDate: startDateIST,
+      endDate: endDateIST,
+      guestId: session.user.guestId,
+      numGuests,
+      observations,
+      extrasPrice: 0,
+      totalPrice: bookingData.accommodationPrice,
+      status: "unconfirmed",
+      hasBreakfast: false,
+      isPaid: false,
+    };
+
+    const { data, error } = await supabase
+      .from("bookings")
+      .insert([newBooking])
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(`Booking could not be created: ${error.message}`);
+    }
+
+    await processRetreats(
+      data.id,
+      retreatId,
+      numGuests,
+      bookingData.accommodationPrice,
+      numNights
+    );
+
+    if (retreatId) {
+      const type = [1, 2].includes(retreatId) ? "cabin" : "room";
+      revalidatePath(`/retreats/${type}/${retreatId}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function processRetreats(
+  bookingId,
+  retreatId,
+  numGuests,
+  accommodationPrice,
+  numNights
+) {
+  try {
+    const retreatIds = parseRetreatIds(retreatId);
+
+    for (const retreatId of retreatIds) {
+      const retreatNum = parseInt(retreatId);
+      const type = getRetreatType(retreatNum);
+
+      const tableName = type === "cabin" ? "booking_cabins" : "booking_rooms";
+      const insertData = {
+        bookingId: bookingId,
+        [type === "cabin" ? "cabinId" : "roomId"]: retreatNum,
+        [`booking${type.charAt(0).toUpperCase() + type.slice(1)}Price`]:
+          accommodationPrice / numNights,
+        ...(type === "cabin" && { isFull: numGuests >= 3 }),
+      };
+
+      const { error } = await supabase.from(tableName).insert(insertData);
+
+      if (error) {
+        throw new Error(`Failed to book ${type}: ${error.message}`);
+      }
+    }
+  } catch (error) {
+    await supabase.from("bookings").delete().eq("id", bookingId);
+    throw error;
+  }
+}
+
+async function validateDateAvailability(retreatId, startDate, endDate) {
+  const retreatIds = parseRetreatIds(retreatId);
+
+  for (const retreatId of retreatIds) {
+    const retreatNum = parseInt(retreatId);
+    const type = getRetreatType(retreatNum);
+
+    const existingBookings = await getBookedDatesById(retreatNum, type);
+
+    if (hasDateConflict(existingBookings, startDate, endDate)) {
+      throw new Error(
+        `${
+          type.charAt(0).toUpperCase() + type.slice(1)
+        } ${retreatNum} is already booked for the selected dates. Please choose different dates.`
+      );
+    }
+  }
+}
 
 export async function updateBooking(formData) {
   const session = await auth();

@@ -1,5 +1,10 @@
 "use client";
-import { differenceInDays, isSameDay, isWithinInterval } from "date-fns";
+import {
+  addDays,
+  differenceInDays,
+  isSameDay,
+  isWithinInterval,
+} from "date-fns";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { useEffect, useState } from "react";
@@ -19,10 +24,31 @@ function isAlreadyBooked(range, bookedDates) {
     // Check if the ranges overlap
     const overlap = range.from <= adjustedEndDate && range.to >= bookingStart;
 
+    // SPECIAL CASE: Allow closest start date after range.from
+    if (overlap) {
+      const startDates = bookedDates.map((booking) => {
+        const startDate = new Date(booking.startDate);
+        startDate.setHours(0, 0, 0, 0);
+        return startDate;
+      });
+
+      let closestStartDate = null;
+      startDates.forEach((startDate) => {
+        if (startDate > range.from) {
+          if (!closestStartDate || startDate < closestStartDate) {
+            closestStartDate = startDate;
+          }
+        }
+      });
+
+      if (closestStartDate && isSameDay(range.to, closestStartDate)) {
+        return false; // Don't count this as booked
+      }
+    }
+
     return overlap;
   });
 }
-
 function DateSelector({ settings, retreat, bookedDates, type }) {
   const { numGuests } = useReservation();
   const [numberOfMonths, setNumberOfMonths] = useState(1);
@@ -74,7 +100,29 @@ function DateSelector({ settings, retreat, bookedDates, type }) {
       });
 
       if (includesDisabledDates) {
-        // Completely reject this selection and reset
+        // NEW: Check if user is selecting the closest start date
+        const startDates = bookedDates.map((booking) => {
+          const startDate = new Date(booking.startDate);
+          startDate.setHours(0, 0, 0, 0);
+          return startDate;
+        });
+
+        let closestStartDate = null;
+        startDates.forEach((startDate) => {
+          if (startDate > range.from) {
+            if (!closestStartDate || startDate < closestStartDate) {
+              closestStartDate = startDate;
+            }
+          }
+        });
+
+        if (closestStartDate && isSameDay(range.to, closestStartDate)) {
+          // Allow this specific case - set the range automatically
+          setRange({ from: range.from, to: closestStartDate });
+          return;
+        }
+
+        // For any other overlap, reject the selection
         resetRange();
         return;
       }
@@ -84,7 +132,6 @@ function DateSelector({ settings, retreat, bookedDates, type }) {
     }
   };
 
-  console.log(bookedDates);
   const { regularPrice, discount: discountPercentage } = retreat;
   const numNights = differenceInDays(displayRange?.to, displayRange?.from);
   const discount = Math.round((regularPrice * discountPercentage) / 100);
@@ -107,6 +154,75 @@ function DateSelector({ settings, retreat, bookedDates, type }) {
   // Total price including extra guest charges
   const totalPrice = baseCabinPrice + extraGuestTotal;
 
+  // const startDates = bookedDates.map((booking) => new Date(booking.startDate));
+  // const endDates = bookedDates.map((booking) => new Date(booking.endDate));
+
+  const isDateDisabled = (date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Disable dates before today
+    if (date < today) return true;
+
+    // Disable dates before selected start date
+    if (range?.from && date < range.from) return true;
+
+    // Check if date is in any booked range
+    const isInBookedRange = bookedDates.some((booking) => {
+      const bookingStart = new Date(booking.startDate);
+      const bookingEnd = new Date(booking.endDate);
+
+      // Create a proper date object for comparison
+      const bookingStartDate = new Date(bookingStart);
+      bookingStartDate.setHours(0, 0, 0, 0);
+
+      const bookingEndDate = new Date(booking.endDate);
+      bookingEndDate.setHours(0, 0, 0, 0);
+
+      // Subtract one day from the end date to make it bookable
+      const adjustedEndDate = new Date(bookingEndDate);
+      adjustedEndDate.setDate(adjustedEndDate.getDate() - 1);
+
+      // Create a clean date for comparison
+      const compareDate = new Date(date);
+      compareDate.setHours(0, 0, 0, 0);
+
+      return compareDate >= bookingStartDate && compareDate <= adjustedEndDate;
+    });
+
+    // SPECIAL CASE: Find and enable the closest start date after the selected date
+    if (range?.from && isInBookedRange) {
+      const dateClean = new Date(date);
+      dateClean.setHours(0, 0, 0, 0);
+
+      // Extract all start dates from bookedDates
+      const startDates = bookedDates.map((booking) => {
+        const startDate = new Date(booking.startDate);
+        startDate.setHours(0, 0, 0, 0);
+        return startDate;
+      });
+
+      // Find the closest start date that comes after the selected range.from
+      let closestStartDate = null;
+
+      startDates.forEach((startDate) => {
+        if (startDate > range.from) {
+          if (!closestStartDate || startDate < closestStartDate) {
+            closestStartDate = startDate;
+          }
+        }
+      });
+      console.log(closestStartDate);
+
+      // If this date is the closest start date we found, enable it
+      if (closestStartDate && isSameDay(dateClean, closestStartDate)) {
+        return false; // Enable this specific date
+      }
+    }
+
+    return isInBookedRange;
+  };
+
   return (
     <div className="flex flex-col justify-between">
       <DayPicker
@@ -118,24 +234,25 @@ function DateSelector({ settings, retreat, bookedDates, type }) {
         selected={displayRange}
         startMonth={new Date()}
         endMonth={new Date(2026, 11)}
-        disabled={[
-          { before: new Date() },
-          // When start date is selected, disable dates before it
-          ...(range?.from ? [{ before: range.from }] : []),
-          ...bookedDates.map((booking) => {
-            const startDate = new Date(booking.startDate);
-            const endDate = new Date(booking.endDate);
+        // disabled={[
+        //   { before: new Date() },
+        //   // When start date is selected, disable dates before it
+        //   ...(range?.from ? [{ before: range.from }] : []),
+        //   ...bookedDates.map((booking) => {
+        //     const startDate = new Date(booking.startDate);
+        //     const endDate = new Date(booking.endDate);
 
-            // Subtract one day from the end date to make it bookable
-            const adjustedEndDate = new Date(endDate);
-            adjustedEndDate.setDate(adjustedEndDate.getDate() - 1);
+        //     // Subtract one day from the end date to make it bookable
+        //     const adjustedEndDate = new Date(endDate);
+        //     adjustedEndDate.setDate(adjustedEndDate.getDate() - 1);
 
-            return {
-              from: startDate,
-              to: adjustedEndDate,
-            };
-          }),
-        ]}
+        //     return {
+        //       from: startDate,
+        //       to: adjustedEndDate,
+        //     };
+        //   }),
+        // ]}
+        disabled={isDateDisabled}
         captionLayout="dropdown"
         numberOfMonths={numberOfMonths}
         style={{

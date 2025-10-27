@@ -1,9 +1,34 @@
 "use client";
+import { differenceInDays } from "date-fns";
+import { createBooking } from "../_lib/actions";
 import { useReservation } from "./contexts/ReservationContext";
+import { useFormStatus } from "react-dom";
 
 function ReservationForm({ retreat, user }) {
-  const { maxCapacity } = retreat;
-  const { range, numGuests, updateGuests } = useReservation();
+  const {
+    id,
+    maxCapacity,
+    regularPrice,
+    discount: discountPercentage,
+  } = retreat;
+
+  const { range, numGuests, updateGuests, resetRange } = useReservation();
+  const { pending } = useFormStatus();
+
+  const discount = Math.round((regularPrice * discountPercentage) / 100);
+  const startDate = range.from;
+  const endDate = range.to;
+  const numNights = differenceInDays(endDate, startDate);
+  const accommodationPrice = numNights * (regularPrice - discount);
+
+  const bookingData = {
+    startDate,
+    endDate,
+    numNights,
+    accommodationPrice,
+  };
+
+  const createBookingWithData = createBooking.bind(null, bookingData);
 
   // Format date for display
   const formatDate = (date) => {
@@ -32,18 +57,25 @@ function ReservationForm({ retreat, user }) {
         </div>
       </div>
 
-      <form className="bg-primary-900 py-6 px-4 sm:py-8 sm:px-8 lg:py-10 lg:px-16 text-base sm:text-lg flex gap-4 sm:gap-5 flex-col">
+      <form
+        action={async (formData) => {
+          await createBookingWithData(formData);
+          resetRange();
+        }}
+        className="bg-primary-900 py-6 px-4 sm:py-8 sm:px-8 lg:py-10 lg:px-16 text-base sm:text-lg flex gap-4 sm:gap-5 flex-col"
+      >
+        <input type="hidden" name="retreatId" value={retreat.id} />
         {/* Display selected dates */}
-        {(range?.from || range?.to) && (
+        {(startDate || endDate) && (
           <div className="space-y-2">
             <label className="text-sm sm:text-base lg:text-lg">
               Selected Dates
             </label>
             <div className="px-3 sm:px-5 py-2 sm:py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm text-sm sm:text-base">
-              {range.from && range.to
-                ? `${formatDate(range.from)} - ${formatDate(range.to)}`
-                : range.from
-                ? `Selecting from ${formatDate(range.from)}`
+              {startDate && endDate
+                ? `${formatDate(startDate)} - ${formatDate(endDate)}`
+                : startDate
+                ? `Selecting from ${formatDate(startDate)}`
                 : ""}
             </div>
           </div>
@@ -97,7 +129,7 @@ function ReservationForm({ retreat, user }) {
         </div>
 
         <div className="flex flex-col sm:flex-row justify-end items-center gap-4 sm:gap-6">
-          {!(range?.from && range?.to) ? (
+          {!(startDate && endDate) ? (
             <p className="text-primary-300 text-sm sm:text-base text-center sm:text-left">
               Start by selecting dates
             </p>
@@ -113,9 +145,9 @@ function ReservationForm({ retreat, user }) {
 
           <button
             className="bg-accent-500 px-6 sm:px-8 py-3 sm:py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300 text-sm sm:text-base w-full sm:w-auto"
-            disabled={!range?.from || !range?.to || !numGuests}
+            disabled={!startDate || !endDate || !numGuests || pending}
           >
-            Reserve now
+            {pending ? "Reserving " : "Reserve now"}
           </button>
         </div>
       </form>
