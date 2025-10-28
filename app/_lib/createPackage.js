@@ -55,19 +55,19 @@ export async function createPackageBooking(formData) {
     }
     await processRetreats(data.id, retreatIds, numGuests, extraGuestPrice);
 
-    // if (packageName === "First Floor") {
-    //   revalidatePath(`/booking/first`);
-    // }
-    // if (packageName === "Ground Floor") {
-    //   revalidatePath(`/booking/ground`);
-    // }
-    // if (packageName === "Complete Villa") {
-    //   revalidatePath(`/booking/villa`);
-    // }
+    if (packageName === "First Floor") {
+      revalidatePath(`/booking/first`);
+    }
+    if (packageName === "Ground Floor") {
+      revalidatePath(`/booking/ground`);
+    }
+    if (packageName === "Complete Villa") {
+      revalidatePath(`/booking/villa`);
+    }
   } catch (error) {
     console.error("❌ Error creating package booking:", error);
-    //   } finally {
-    //     redirect("/retreats/thankyou");
+  } finally {
+    redirect("/retreats/thankyou");
   }
 }
 
