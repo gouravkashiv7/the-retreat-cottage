@@ -1,12 +1,15 @@
 import { notFound } from "next/navigation";
-import { getRooms, getCabins } from "@/app/_lib/data-service";
+import { getRooms, getCabins, getSettings } from "@/app/_lib/data-service";
 import BookingLayout from "@/app/_components/booking/BookingLayout";
 import BookingHeader from "@/app/_components/booking/BookingHeader";
 import RetreatsList from "@/app/_components/booking/RetreatsList";
 import PackageFeatures from "@/app/_components/booking/PackageFeatures";
 import BookingSummary from "@/app/_components/booking/BookingSummary";
+import { getAllBookedDates } from "@/app/_lib/dates";
+import { auth } from "@/app/_lib/auth";
 
 export default async function VillaPackageBookingPage() {
+  const session = await auth();
   const [rooms, cabins] = await Promise.all([getRooms(), getCabins()]);
 
   if (!rooms || !cabins) notFound();
@@ -62,6 +65,8 @@ export default async function VillaPackageBookingPage() {
 
   // Custom guest options for villa: 10-12 guests
   const guestOptions = Array.from({ length: 3 }, (_, i) => i + 10); // [10, 11, 12]
+  const settings = await getSettings();
+  const bookedDates = await getAllBookedDates();
 
   return (
     <BookingLayout>
@@ -70,6 +75,10 @@ export default async function VillaPackageBookingPage() {
         subtitle="Experience the ultimate retreat with our entire property"
         description={`Includes all ${rooms.length} villa rooms and ${cabins.length} wooden cabins`}
         stats={`Total capacity: ${totalCapacity} guests`}
+        settings={settings}
+        retreats={allRetreats}
+        bookedDates={bookedDates}
+        guestId={session?.user?.guestId}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -10,7 +10,9 @@ export default function DateRangeSelector() {
 
     setRange((prev) => ({
       ...prev,
-      [name === "startDate" ? "from" : "to"]: value || undefined,
+      [name === "startDate" ? "from" : "to"]: value
+        ? new Date(value)
+        : undefined,
     }));
   };
 
@@ -18,11 +20,33 @@ export default function DateRangeSelector() {
     resetRange();
   };
 
-  // Convert context format to local component format for display
-  const dateRange = {
-    startDate: range.from || "",
-    endDate: range.to || "",
+  // Safe date formatting function
+  const formatDate = (dateInput) => {
+    if (!dateInput) return "";
+
+    // Ensure we have a Date object
+    const dateObj = dateInput instanceof Date ? dateInput : new Date(dateInput);
+
+    // Check if it's a valid date
+    if (isNaN(dateObj.getTime())) return "";
+
+    return dateObj.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
+
+  // Convert Date objects to ISO string for input values
+  const dateRange = {
+    startDate: range.from ? range.from.toISOString().split("T")[0] : "",
+    endDate: range.to ? range.to.toISOString().split("T")[0] : "",
+  };
+
+  // Calculate min date for end date input
+  const minEndDate = range.from
+    ? range.from.toISOString().split("T")[0]
+    : new Date().toISOString().split("T")[0];
 
   return (
     <div className="bg-primary-900 border border-primary-800 rounded-lg p-4 sm:p-6 mb-6">
@@ -56,7 +80,7 @@ export default function DateRangeSelector() {
             name="endDate"
             value={dateRange.endDate}
             onChange={handleDateChange}
-            min={dateRange.startDate || new Date().toISOString().split("T")[0]}
+            min={minEndDate}
             className="w-full p-3 border border-primary-700 bg-primary-800 rounded-lg text-primary-100 focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
           />
         </div>
@@ -75,22 +99,22 @@ export default function DateRangeSelector() {
       </div>
 
       {/* Selected Dates Summary */}
-      {(dateRange.startDate || dateRange.endDate) && (
+      {(range.from || range.to) && (
         <div className="mt-4 p-3 bg-primary-800 rounded-lg">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-            {dateRange.startDate && (
+            {range.from && (
               <div>
                 <span className="text-primary-300">Check-in:</span>
                 <p className="text-primary-100 font-medium">
-                  {new Date(dateRange.startDate).toLocaleDateString()}
+                  {formatDate(range.from)}
                 </p>
               </div>
             )}
-            {dateRange.endDate && (
+            {range.to && (
               <div>
                 <span className="text-primary-300">Check-out:</span>
                 <p className="text-primary-100 font-medium">
-                  {new Date(dateRange.endDate).toLocaleDateString()}
+                  {formatDate(range.to)}
                 </p>
               </div>
             )}

@@ -1,20 +1,38 @@
 "use client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import { useReservation } from "./contexts/ReservationContext";
 
 function Filter() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathName = usePathname();
   const activeFilter = searchParams?.get("capacity") ?? "all";
 
+  const { numGuests, updateGuests } = useReservation();
+
+  // Update context when activeFilter changes
+  useEffect(() => {
+    if (activeFilter === "villa") {
+      updateGuests(10);
+    } else if (activeFilter === "floor") {
+      updateGuests(6);
+    } else if (activeFilter !== "all") {
+      // It's a custom guest number, update the context
+      const guestCount = parseInt(activeFilter);
+      if (!isNaN(guestCount) && guestCount >= 1 && guestCount <= 10) {
+        updateGuests(guestCount);
+      }
+    } else if (activeFilter === "all") {
+      updateGuests(2);
+    }
+  }, [activeFilter, updateGuests]);
+
   function handleFilter(filter) {
     const params = new URLSearchParams(searchParams);
     params.set("capacity", filter);
     router.replace(`${pathName}?${params.toString()}`, { scroll: false });
-    console.log(filter);
     setIsDropdownOpen(false);
   }
 
@@ -52,7 +70,7 @@ function Filter() {
       >
         Book Floor
         <span className="block sm:inline text-xs sm:text-sm opacity-75 mt-1 sm:mt-0 sm:ml-1">
-          (6 guests)
+          (4-6 guests)
         </span>
       </button>
 
@@ -67,7 +85,7 @@ function Filter() {
           <span>
             Custom Guests
             <span className="block sm:inline text-xs sm:text-sm opacity-75 mt-1 sm:mt-0 sm:ml-1">
-              (1-10)
+              {isCustomGuest ? `(${activeFilter} guests)` : "(1-10)"}
             </span>
           </span>
           <span className="ml-2 transform transition-transform">

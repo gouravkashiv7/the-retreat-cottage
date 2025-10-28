@@ -1,8 +1,9 @@
 import DateSelector from "@/app/_components/DateSelector";
 import ReservationForm from "@/app/_components/ReservationForm";
-import { getBookedDatesById, getSettings } from "../_lib/data-service";
+import { getSettings } from "../_lib/data-service";
 import { auth } from "../_lib/auth";
 import LoginMessage from "./LoginMessage";
+import { getBookedDatesById } from "../_lib/dates";
 
 async function Reservations({ retreat, type }) {
   const { name, id } = retreat;
@@ -26,6 +27,7 @@ async function Reservations({ retreat, type }) {
             retreat={retreat}
             bookedDates={bookedDates}
             type={type}
+            guestId={session?.user?.guestId || null}
           />
         </div>
         <div className="lg:col-span-2 lg:border-l lg:border-primary-800">

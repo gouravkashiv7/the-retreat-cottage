@@ -1,4 +1,3 @@
-import { eachDayOfInterval } from "date-fns";
 import supabase from "./supabase";
 import { notFound } from "next/navigation";
 
@@ -7,8 +6,7 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-/////////////
-// GET
+//GET
 
 export async function getCabins() {
   const { data, error } = await supabase
@@ -81,6 +79,19 @@ export async function getCabinPrice(id) {
 
   return data;
 }
+export async function getRoomPrice(id) {
+  const { data, error } = await supabase
+    .from("rooms")
+    .select("regularPrice, discount")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error(error);
+  }
+
+  return data;
+}
 
 // Guests are uniquely identified by their email address
 export async function getGuest(email) {
@@ -106,24 +117,6 @@ export async function getBooking(id) {
 
   return data;
 }
-
-// export async function getBookings(guestId) {
-//   const { data, error, count } = await supabase
-//     .from("bookings")
-//     // We actually also need data on the cabins as well. But let's ONLY take the data that we actually need, in order to reduce downloaded data.
-//     .select(
-//       "id, created_at, startDate, endDate, numNights, numGuests, totalPrice, guestId, cabinId, cabins(name, image)"
-//     )
-//     .eq("guestId", guestId)
-//     .order("startDate");
-
-//   if (error) {
-//     console.error(error);
-//     throw new Error("Bookings could not get loaded");
-//   }
-
-//   return data;
-// }
 
 export async function getBookings(guestId) {
   const { data, error } = await supabase
@@ -190,73 +183,6 @@ export async function getBookings(guestId) {
   });
 
   return transformedData || [];
-}
-
-export async function getBookedDatesById(id, type) {
-  let today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-  today = today.toISOString();
-
-  let query;
-
-  if (type === "room") {
-    // Query bookings that have this room in booking_rooms
-    query = supabase
-      .from("bookings")
-      .select(
-        `
-        id,
-        startDate,
-        endDate,
-        status,
-        booking_rooms!inner (
-          roomId
-        )
-      `
-      )
-      .eq("booking_rooms.roomId", id)
-      .or(`startDate.gte.${today},status.eq.checked-in`);
-  } else if (type === "cabin") {
-    // Query bookings that have this cabin in booking_cabins
-    query = supabase
-      .from("bookings")
-      .select(
-        `
-        id,
-        startDate,
-        endDate,
-        status,
-        booking_cabins!inner (
-          cabinId
-        )
-      `
-      )
-      .eq("booking_cabins.cabinId", id)
-      .or(`startDate.gte.${today},status.eq.checked-in`);
-  } else {
-    throw new Error("Invalid type. Must be 'room' or 'cabin'");
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
-    console.error("Supabase error:", error);
-    throw new Error("Bookings could not get loaded");
-  }
-
-  // If no bookings found, return empty array
-  if (!data || data.length === 0) {
-    return [];
-  }
-
-  // Return the booking dates directly (no need to extract)
-  const bookedDates = data.map((booking) => ({
-    startDate: booking.startDate,
-    endDate: booking.endDate,
-    status: booking.status,
-  }));
-
-  return bookedDates;
 }
 
 export async function getSettings() {

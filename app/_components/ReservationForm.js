@@ -59,8 +59,8 @@ function ReservationForm({ retreat, user }) {
 
       <form
         action={async (formData) => {
-          await createBookingWithData(formData);
           resetRange();
+          await createBookingWithData(formData);
         }}
         className="bg-primary-900 py-6 px-4 sm:py-8 sm:px-8 lg:py-10 lg:px-16 text-base sm:text-lg flex gap-4 sm:gap-5 flex-col"
       >

@@ -1,12 +1,15 @@
 import { notFound } from "next/navigation";
-import { getRooms } from "@/app/_lib/data-service";
+import { getRooms, getSettings } from "@/app/_lib/data-service";
 import BookingLayout from "@/app/_components/booking/BookingLayout";
 import BookingHeader from "@/app/_components/booking/BookingHeader";
 import RetreatsList from "@/app/_components/booking/RetreatsList";
 import PackageFeatures from "@/app/_components/booking/PackageFeatures";
 import BookingSummary from "@/app/_components/booking/BookingSummary";
+import { getAllBookedDates } from "@/app/_lib/dates";
+import { auth } from "@/app/_lib/auth";
 
 export default async function GroundFloorBookingPage() {
+  const session = await auth();
   const rooms = await getRooms();
   if (!rooms) notFound();
 
@@ -49,6 +52,9 @@ export default async function GroundFloorBookingPage() {
     ],
   ];
 
+  const settings = await getSettings();
+  const bookedDates = await getAllBookedDates();
+
   // Fixed guest option for ground floor: only 6 guests
   const guestOptions = [6];
 
@@ -58,6 +64,11 @@ export default async function GroundFloorBookingPage() {
         title="Ground Floor Package"
         subtitle="All 3 villa rooms - Perfect for groups and families"
         description={`Includes all 3 villa rooms with total capacity for ${totalCapacity} guests`}
+        stats={stats}
+        retreats={groundFloorRooms}
+        settings={settings}
+        bookedDates={bookedDates}
+        guestId={session?.user?.guestId}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -1,12 +1,15 @@
 import { notFound } from "next/navigation";
-import { getCabins } from "@/app/_lib/data-service";
+import { getCabins, getSettings } from "@/app/_lib/data-service";
 import BookingLayout from "@/app/_components/booking/BookingLayout";
 import BookingHeader from "@/app/_components/booking/BookingHeader";
 import RetreatsList from "@/app/_components/booking/RetreatsList";
 import PackageFeatures from "@/app/_components/booking/PackageFeatures";
 import BookingSummary from "@/app/_components/booking/BookingSummary";
+import { getAllBookedDates } from "@/app/_lib/dates";
+import { auth } from "@/app/_lib/auth";
 
 export default async function FirstFloorBookingPage() {
+  const session = await auth();
   const cabins = await getCabins();
   if (!cabins) notFound();
 
@@ -53,6 +56,8 @@ export default async function FirstFloorBookingPage() {
 
   // Custom guest options for first floor: 4-6 guests
   const guestOptions = Array.from({ length: 3 }, (_, i) => i + 4); // [4, 5, 6]
+  const settings = await getSettings();
+  const bookedDates = await getAllBookedDates();
 
   return (
     <BookingLayout>
@@ -60,6 +65,10 @@ export default async function FirstFloorBookingPage() {
         title="First Floor Package"
         subtitle="2 wooden cabins - Nature experience with comfort"
         description={`Includes 2 wooden cabins with total capacity for ${totalCapacity} guests`}
+        settings={settings}
+        retreats={firstFloorCabins}
+        bookedDates={bookedDates}
+        guestId={session?.user?.guestId}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

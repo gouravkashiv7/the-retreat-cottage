@@ -6,10 +6,14 @@ import FloorPackagesView from "@/app/_components/retreat_views/FloorPackagesView
 import GuestRetreatsView from "@/app/_components/retreat_views/GuestRetreatsView";
 import RetreatCombinationsView from "@/app/_components/retreat_views/RetreatCombinationsView";
 import { findExactCombinations } from "@/app/_components/utils/combo-logic";
+import { getAllBookedDates } from "../_lib/dates";
+import { auth } from "../_lib/auth";
 
 async function RetreatList({ filter }) {
   // unstable_noStore();
   const [rooms, cabins] = await Promise.all([getRooms(), getCabins()]);
+  const bookedDates = await getAllBookedDates();
+  const session = await auth();
 
   if (!rooms || !cabins) return null;
 
@@ -26,12 +30,26 @@ async function RetreatList({ filter }) {
 
   // Handle "all" filter
   if (filter === "all") {
-    return <AllRetreatsView rooms={rooms} cabins={cabins} />;
+    return (
+      <AllRetreatsView
+        rooms={rooms}
+        bookedDates={bookedDates}
+        guestId={session?.user?.guestId}
+        cabins={cabins}
+      />
+    );
   }
 
   // Handle "floor" filter
   if (filter === "floor") {
-    return <FloorPackagesView rooms={rooms} cabins={cabins} />;
+    return (
+      <FloorPackagesView
+        rooms={rooms}
+        bookedDates={bookedDates}
+        guestId={session?.user?.guestId}
+        cabins={cabins}
+      />
+    );
   }
 
   // Handle numeric filters (custom guest counts)

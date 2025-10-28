@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import { auth, signIn, signOut } from "./auth";
 import supabase from "./supabase";
 import { revalidatePath } from "next/cache";
-import { getBookedDatesById, getBookings, getSettings } from "./data-service";
+import { getBookings, getSettings } from "./data-service";
+import { getBookedDatesById } from "./dates";
 
 import {
   convertToISTDate,

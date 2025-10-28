@@ -26,6 +26,7 @@ function ItemCard({ item, isCombo = false, isFull = false }) {
   // Add extra guest price if it's a cabin and isFull is true
   const finalPrice =
     type === "cabin" && isFull ? basePrice + extraGuestPrice : basePrice;
+  // console.log(id, isFull);
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden w-full">

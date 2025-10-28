@@ -14,6 +14,7 @@ function ReservationProvider({ children }) {
   };
 
   function updateGuests(guestsCount) {
+    console.log(guestsCount);
     setNumGuests(guestsCount);
   }
 
@@ -28,7 +29,7 @@ function ReservationProvider({ children }) {
 
 function useReservation() {
   const context = useContext(ReservationContext);
-  if (context === "undefined")
+  if (context === undefined)
     throw new Error("ReservationContext was used outside of scope.");
   return context;
 }
