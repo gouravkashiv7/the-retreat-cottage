@@ -1,6 +1,10 @@
 "use client";
-import { format, isPast, isToday } from "date-fns";
-import { formatDistanceFromNow } from "./ReservationCard";
+import { format, isPast, isToday, formatDistance, parseISO } from "date-fns";
+
+const formatDistanceFromNow = (dateStr) =>
+  formatDistance(parseISO(dateStr), new Date(), {
+    addSuffix: true,
+  }).replace("about ", "");
 
 function ReservationContent({
   booking,
