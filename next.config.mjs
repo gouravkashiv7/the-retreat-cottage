@@ -6,13 +6,7 @@ const nextConfig = {
         protocol: "https",
         hostname: "kckngulhvwryekywvutn.supabase.co",
         port: "",
-        pathname: "/storage/v1/object/public/room-images/**",
-      },
-      {
-        protocol: "https",
-        hostname: "kckngulhvwryekywvutn.supabase.co",
-        port: "",
-        pathname: "/storage/v1/object/public/cabin-images/**",
+        pathname: "/storage/v1/object/public/**",
       },
       {
         protocol: "https",
@@ -20,8 +14,9 @@ const nextConfig = {
         pathname: "**",
       },
     ],
-    // Move qualities to the root level here
     qualities: [60, 80, 90, 100],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
 };
 
