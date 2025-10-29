@@ -31,7 +31,7 @@ function ReservationCard({ booking }) {
         hasMultipleAccommodations={hasMultipleAccommodations}
       />
 
-      <ReservationActions bookingId={id} startDate={startDate} />
+      {/* <ReservationActions bookingId={id} startDate={startDate} /> */}
     </div>
   );
 }
