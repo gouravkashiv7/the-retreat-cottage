@@ -7,21 +7,21 @@ import ReservationActions from "./ReservationActions";
 export function ReservationCard({ booking }) {
   const { id, startDate, accommodations } = booking;
 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  // const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const hasMultipleAccommodations = accommodations?.length > 1;
 
   return (
     <div className="flex flex-col md:flex-row border border-primary-800">
-      <ImageCarousel
+      {/* <ImageCarousel
         accommodations={accommodations}
-        currentImageIndex={currentImageIndex}
-        setCurrentImageIndex={setCurrentImageIndex}
+        // currentImageIndex={currentImageIndex}
+        // setCurrentImageIndex={setCurrentImageIndex}
         hasMultipleAccommodations={hasMultipleAccommodations}
-      />
+      /> */}
 
       <ReservationContent
         booking={booking}
-        currentImageIndex={currentImageIndex}
+        // currentImageIndex={currentImageIndex}
         hasMultipleAccommodations={hasMultipleAccommodations}
       />
 
