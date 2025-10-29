@@ -36,50 +36,50 @@ function ReservationContent({
 
   const accommodationNames = accommodations?.map((acc) => acc.name).join(", ");
 
-  // // Utility function to compare dates without time
-  // const compareDates = (date1, date2) => {
-  //   const d1 = new Date(date1);
-  //   const d2 = new Date(date2);
+  // Utility function to compare dates without time
+  const compareDates = (date1, date2) => {
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
 
-  //   // Set both to start of day for accurate comparison
-  //   d1.setHours(0, 0, 0, 0);
-  //   d2.setHours(0, 0, 0, 0);
+    // Set both to start of day for accurate comparison
+    d1.setHours(0, 0, 0, 0);
+    d2.setHours(0, 0, 0, 0);
 
-  //   if (d1 < d2) return -1;
-  //   if (d1 > d2) return 1;
-  //   return 0;
-  // };
+    if (d1 < d2) return -1;
+    if (d1 > d2) return 1;
+    return 0;
+  };
 
-  // const renderStatusBadge = () => {
-  //   const today = new Date();
-  //   const start = new Date(startDate);
-  //   const end = new Date(endDate);
+  const renderStatusBadge = () => {
+    const today = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
 
-  //   const todayVsStart = compareDates(today, start);
-  //   const todayVsEnd = compareDates(today, end);
+    const todayVsStart = compareDates(today, start);
+    const todayVsEnd = compareDates(today, end);
 
-  //   if (status === "checked-in" || (todayVsStart >= 0 && todayVsEnd <= 0)) {
-  //     return (
-  //       <span className="bg-blue-800 text-blue-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
-  //         ongoing
-  //       </span>
-  //     );
-  //   }
+    if (status === "checked-in" || (todayVsStart >= 0 && todayVsEnd <= 0)) {
+      return (
+        <span className="bg-blue-800 text-blue-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
+          ongoing
+        </span>
+      );
+    }
 
-  //   if (todayVsEnd > 0) {
-  //     return (
-  //       <span className="bg-yellow-800 text-yellow-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
-  //         past
-  //       </span>
-  //     );
-  //   }
+    if (todayVsEnd > 0) {
+      return (
+        <span className="bg-yellow-800 text-yellow-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
+          past
+        </span>
+      );
+    }
 
-  //   return (
-  //     <span className="bg-green-800 text-green-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
-  //       upcoming
-  //     </span>
-  //   );
-  // };
+    return (
+      <span className="bg-green-800 text-green-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
+        upcoming
+      </span>
+    );
+  };
 
   return (
     <div className="flex-grow px-4 md:px-6 py-3 flex flex-col">
@@ -102,7 +102,7 @@ function ReservationContent({
             {accommodationNames}
           </p>
         </div>
-        {/* {renderStatusBadge()} */}
+        {renderStatusBadge()}
       </div>
       {/* ✅ FIXED: Use timeDistance state instead of formatDistanceFromNow */}{" "}
       <p className="text-base md:text-lg text-primary-300 mt-2">
