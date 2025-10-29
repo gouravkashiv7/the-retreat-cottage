@@ -29,7 +29,6 @@ export async function createPackageBooking(formData) {
     const { extraGuestPrice } = await getSettings();
 
     await validateDateAvailability(retreatIds, startDate, endDate);
-    console.log("numGuests", numGuests);
     const newBooking = {
       numNights,
       startDate,
