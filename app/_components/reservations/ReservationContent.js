@@ -136,36 +136,12 @@
 
 // export default ReservationContent;
 
-function ReservationContent({
-  booking,
-  currentImageIndex,
-  hasMultipleAccommodations,
-}) {
-  const {
-    startDate,
-    endDate,
-    numNights,
-    totalPrice,
-    numGuests,
-    created_at,
-    accommodations,
-    status,
-  } = booking;
-
+function ReservationContent({ hasMultipleAccommodations }) {
   return (
     <div className="flex-grow px-4 md:px-6 py-3 flex flex-col">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <h3 className="text-lg md:text-xl font-semibold">
-            {numNights} nights in{" "}
-            {hasMultipleAccommodations ? (
-              <>Retreats</>
-            ) : (
-              <>
-                <span className="text-primary-300"></span>
-              </>
-            )}
-          </h3>
+          <h3 className="text-lg md:text-xl font-semibold">Retreats</h3>
         </div>
       </div>
 
@@ -173,17 +149,10 @@ function ReservationContent({
 
       {hasMultipleAccommodations && (
         <div className="mt-2">
-          <p className="text-sm text-primary-400">
-            Currently viewing: <span className="text-primary-200"></span>{" "}
-          </p>
+          <p className="text-sm text-primary-400">Currently viewing:</p>
         </div>
       )}
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 mt-auto items-baseline pt-3">
-        <p className="text-xl font-semibold text-accent-400">₹{totalPrice}</p>
-        <p className="text-primary-300 hidden sm:block">&bull;</p>
-        <p className="text-lg text-primary-300">
-          {numGuests} guest{numGuests > 1 && "s"}
-        </p>
         <p className="text-sm text-primary-400 sm:ml-auto mt-2 sm:mt-0">
           Booked {format(new Date(created_at), "EEE, MMM dd yyyy, p")}
         </p>
