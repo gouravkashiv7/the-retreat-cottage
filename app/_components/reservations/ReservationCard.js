@@ -1,7 +1,12 @@
 "use client";
 import { useState } from "react";
 import ImageCarousel from "./ImageCarousel";
-import ReservationContent from "./ReservationContent";
+import dynamic from "next/dynamic";
+
+const ReservationContent = dynamic(() => import("./ReservationContent"), {
+  ssr: false,
+  loading: () => <div>Loading reservation details...</div>,
+});
 import ReservationActions from "./ReservationActions";
 import { formatDistance, parseISO } from "date-fns";
 
