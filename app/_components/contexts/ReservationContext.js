@@ -14,7 +14,6 @@ function ReservationProvider({ children }) {
   };
 
   function updateGuests(guestsCount) {
-    console.log(guestsCount);
     setNumGuests(guestsCount);
   }
 
