@@ -1,6 +1,6 @@
 "use client";
 import { format, isPast, isToday, formatDistance, parseISO } from "date-fns";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"; // ✅ Add useState import
 
 function ReservationContent({
   booking,
@@ -18,37 +18,15 @@ function ReservationContent({
     status,
   } = booking;
 
-  const [timeDistance, setTimeDistance] = useState("");
-  const [isStartDateToday, setIsStartDateToday] = useState(false);
-  const [statusBadge, setStatusBadge] = useState("");
+  // const [timeDistance, setTimeDistance] = useState(""); // ✅ Add state
 
-  useEffect(() => {
-    // Calculate all dynamic values on client only
-    const today = new Date();
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    // Calculate time distance
-    const distance = formatDistance(parseISO(startDate), today, {
-      addSuffix: true,
-    }).replace("about ", "");
-    setTimeDistance(distance);
-
-    // Check if start date is today
-    setIsStartDateToday(isToday(start));
-
-    // Determine status badge
-    if (
-      status === "checked-in" ||
-      (today >= start && today <= end && !isPast(end))
-    ) {
-      setStatusBadge("ongoing");
-    } else if (isPast(end)) {
-      setStatusBadge("past");
-    } else {
-      setStatusBadge("upcoming");
-    }
-  }, [startDate, endDate, status]);
+  // useEffect(() => {
+  //   // Calculate it here instead of parent
+  //   const distance = formatDistance(parseISO(startDate), new Date(), {
+  //     addSuffix: true,
+  //   }).replace("about ", "");
+  //   setTimeDistance(distance);
+  // }, [startDate]);
 
   const currentAccommodation = accommodations?.[currentImageIndex];
 
@@ -58,21 +36,50 @@ function ReservationContent({
 
   const accommodationNames = accommodations?.map((acc) => acc.name).join(", ");
 
-  const renderStatusBadge = () => {
-    const badgeStyles = {
-      ongoing: "bg-blue-800 text-blue-200",
-      past: "bg-yellow-800 text-yellow-200",
-      upcoming: "bg-green-800 text-green-200",
-    };
+  // // Utility function to compare dates without time
+  // const compareDates = (date1, date2) => {
+  //   const d1 = new Date(date1);
+  //   const d2 = new Date(date2);
 
-    return (
-      <span
-        className={`${badgeStyles[statusBadge]} h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto`}
-      >
-        {statusBadge || "..."}
-      </span>
-    );
-  };
+  //   // Set both to start of day for accurate comparison
+  //   d1.setHours(0, 0, 0, 0);
+  //   d2.setHours(0, 0, 0, 0);
+
+  //   if (d1 < d2) return -1;
+  //   if (d1 > d2) return 1;
+  //   return 0;
+  // };
+
+  // const renderStatusBadge = () => {
+  //   const today = new Date();
+  //   const start = new Date(startDate);
+  //   const end = new Date(endDate);
+
+  //   const todayVsStart = compareDates(today, start);
+  //   const todayVsEnd = compareDates(today, end);
+
+  //   if (status === "checked-in" || (todayVsStart >= 0 && todayVsEnd <= 0)) {
+  //     return (
+  //       <span className="bg-blue-800 text-blue-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
+  //         ongoing
+  //       </span>
+  //     );
+  //   }
+
+  //   if (todayVsEnd > 0) {
+  //     return (
+  //       <span className="bg-yellow-800 text-yellow-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
+  //         past
+  //       </span>
+  //     );
+  //   }
+
+  //   return (
+  //     <span className="bg-green-800 text-green-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
+  //       upcoming
+  //     </span>
+  //   );
+  // };
 
   return (
     <div className="flex-grow px-4 md:px-6 py-3 flex flex-col">
@@ -95,15 +102,14 @@ function ReservationContent({
             {accommodationNames}
           </p>
         </div>
-        {renderStatusBadge()}
+        {/* {renderStatusBadge()} */}
       </div>
-
+      {/* ✅ FIXED: Use timeDistance state instead of formatDistanceFromNow */}{" "}
       <p className="text-base md:text-lg text-primary-300 mt-2">
         {format(new Date(startDate), "EEE, MMM dd yyyy")} (
-        {isStartDateToday ? "Today" : timeDistance || "..."}) &mdash;{" "}
-        {format(new Date(endDate), "EEE, MMM dd yyyy")}
+        {isToday(new Date(startDate)) ? "Today" : "timeDistance" || "..."} )
+        &mdash; {format(new Date(endDate), "EEE, MMM dd yyyy")}
       </p>
-
       {hasMultipleAccommodations && (
         <div className="mt-2">
           <p className="text-sm text-primary-400">
@@ -115,7 +121,6 @@ function ReservationContent({
           </p>
         </div>
       )}
-
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 mt-auto items-baseline pt-3">
         <p className="text-xl font-semibold text-accent-400">₹{totalPrice}</p>
         <p className="text-primary-300 hidden sm:block">&bull;</p>
