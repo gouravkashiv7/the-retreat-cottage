@@ -8,7 +8,7 @@ export function ReservationCard({ booking }) {
   const { id, startDate, accommodations } = booking;
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const hasMultipleAccommodations = accommodations?.length > 1;
+  // const hasMultipleAccommodations = accommodations?.length > 1;
 
   return (
     <div className="flex flex-col md:flex-row border border-primary-800">
@@ -16,14 +16,14 @@ export function ReservationCard({ booking }) {
         accommodations={accommodations}
         currentImageIndex={currentImageIndex}
         setCurrentImageIndex={setCurrentImageIndex}
-        hasMultipleAccommodations={hasMultipleAccommodations}
+        // hasMultipleAccommodations={hasMultipleAccommodations}
       />
 
-      {/* <ReservationContent
+      <ReservationContent
         booking={booking}
-        // currentImageIndex={currentImageIndex}
-        hasMultipleAccommodations={hasMultipleAccommodations}
-      /> */}
+        currentImageIndex={currentImageIndex}
+        // hasMultipleAccommodations={hasMultipleAccommodations}
+      />
 
       <ReservationActions bookingId={id} startDate={startDate} />
     </div>
