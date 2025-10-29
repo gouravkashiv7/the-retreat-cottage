@@ -154,14 +154,6 @@ function ReservationContent({
     status,
   } = booking;
 
-  // const currentAccommodation = accommodations?.[currentImageIndex];
-
-  const capitalizeFirst = (str) => {
-    return str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
-  };
-
-  // const accommodationNames = accommodations?.map((acc) => acc.name).join(", ");
-
   return (
     <div className="flex-grow px-4 md:px-6 py-3 flex flex-col">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -176,11 +168,11 @@ function ReservationContent({
               </>
             )}
           </h3>
-          <p className="text-primary-300 mt-1 text-sm md:text-base"></p>
         </div>
       </div>
 
-      <p className="text-base md:text-lg text-primary-300 mt-2"></p>
+      {/* REMOVE this empty paragraph completely or add proper content */}
+
       {hasMultipleAccommodations && (
         <div className="mt-2">
           <p className="text-sm text-primary-400">
