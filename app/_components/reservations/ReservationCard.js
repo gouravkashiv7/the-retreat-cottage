@@ -18,12 +18,12 @@ function ReservationCard({ booking }) {
 
   return (
     <div className="flex flex-col md:flex-row border border-primary-800">
-      {/* <ImageCarousel
+      <ImageCarousel
         accommodations={accommodations}
         currentImageIndex={currentImageIndex}
         setCurrentImageIndex={setCurrentImageIndex}
         hasMultipleAccommodations={hasMultipleAccommodations}
-      /> */}
+      />
 
       {/* <ReservationContent
         booking={booking}
@@ -31,7 +31,7 @@ function ReservationCard({ booking }) {
         hasMultipleAccommodations={hasMultipleAccommodations}
       /> */}
 
-      {/* <ReservationActions bookingId={id} startDate={startDate} /> */}
+      <ReservationActions bookingId={id} startDate={startDate} />
     </div>
   );
 }
