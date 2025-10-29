@@ -16,6 +16,7 @@ function ReservationContent({
     status,
   } = booking;
 
+  const [isMounted, setIsMounted] = useState(false);
   const [timeDistance, setTimeDistance] = useState("");
   const [formattedDates, setFormattedDates] = useState({
     startDate: "",
@@ -25,7 +26,8 @@ function ReservationContent({
   const [isToday, setIsToday] = useState(false);
 
   useEffect(() => {
-    // Client-side only formatting
+    setIsMounted(true);
+
     const formatDate = (date, includeTime = false) => {
       if (!date) return "";
       const d = new Date(date);
@@ -63,7 +65,6 @@ function ReservationContent({
       return `${weekday}, ${month} ${day} ${year}`;
     };
 
-    // Calculate time distance
     const calculateTimeDistance = () => {
       if (!startDate) return "";
       const start = new Date(startDate);
@@ -79,7 +80,6 @@ function ReservationContent({
       return "";
     };
 
-    // Check if today
     const checkIsToday = () => {
       if (!startDate) return false;
       const start = new Date(startDate);
@@ -87,7 +87,6 @@ function ReservationContent({
       return start.toDateString() === today.toDateString();
     };
 
-    // Set all formatted values
     setFormattedDates({
       startDate: formatDate(startDate),
       endDate: formatDate(endDate),
@@ -105,25 +104,24 @@ function ReservationContent({
 
   const accommodationNames = accommodations?.map((acc) => acc.name).join(", ");
 
-  const compareDates = (date1, date2) => {
-    const d1 = new Date(date1);
-    const d2 = new Date(date2);
-    d1.setHours(0, 0, 0, 0);
-    d2.setHours(0, 0, 0, 0);
-    if (d1 < d2) return -1;
-    if (d1 > d2) return 1;
-    return 0;
-  };
-
+  // Simple status check without dates for initial render
   const renderStatusBadge = () => {
+    if (!isMounted) {
+      return (
+        <span className="bg-gray-800 text-gray-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
+          loading
+        </span>
+      );
+    }
+
     const today = new Date();
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    const todayVsStart = compareDates(today, start);
-    const todayVsEnd = compareDates(today, end);
+    const todayVsStart = today >= new Date(start.setHours(0, 0, 0, 0));
+    const todayVsEnd = today <= new Date(end.setHours(23, 59, 59, 999));
 
-    if (status === "checked-in" || (todayVsStart >= 0 && todayVsEnd <= 0)) {
+    if (status === "checked-in" || (todayVsStart && todayVsEnd)) {
       return (
         <span className="bg-blue-800 text-blue-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
           ongoing
@@ -131,7 +129,7 @@ function ReservationContent({
       );
     }
 
-    if (todayVsEnd > 0) {
+    if (today > end) {
       return (
         <span className="bg-yellow-800 text-yellow-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
           past
@@ -145,6 +143,62 @@ function ReservationContent({
       </span>
     );
   };
+
+  // Show loading state for dates during SSR
+  if (!isMounted) {
+    return (
+      <div className="flex-grow px-4 md:px-6 py-3 flex flex-col">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 className="text-lg md:text-xl font-semibold">
+              {numNights} nights in{" "}
+              {hasMultipleAccommodations ? (
+                <>{accommodations?.length} Retreats</>
+              ) : (
+                <>
+                  {capitalizeFirst(currentAccommodation?.type)}{" "}
+                  <span className="text-primary-300">
+                    "{currentAccommodation?.name}"
+                  </span>
+                </>
+              )}
+            </h3>
+            <p className="text-primary-300 mt-1 text-sm md:text-base">
+              {accommodationNames}
+            </p>
+          </div>
+          {renderStatusBadge()}
+        </div>
+
+        <p className="text-base md:text-lg text-primary-300 mt-2">
+          Loading dates...
+        </p>
+
+        {hasMultipleAccommodations && (
+          <div className="mt-2">
+            <p className="text-sm text-primary-400">
+              Currently viewing:{" "}
+              <span className="text-primary-200">
+                {currentAccommodation?.name}
+              </span>{" "}
+              ({capitalizeFirst(currentAccommodation?.type)})
+            </p>
+          </div>
+        )}
+
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 mt-auto items-baseline pt-3">
+          <p className="text-xl font-semibold text-accent-400">₹{totalPrice}</p>
+          <p className="text-primary-300 hidden sm:block">&bull;</p>
+          <p className="text-lg text-primary-300">
+            {numGuests} guest{numGuests > 1 && "s"}
+          </p>
+          <p className="text-sm text-primary-400 sm:ml-auto mt-2 sm:mt-0">
+            Loading booking date...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-grow px-4 md:px-6 py-3 flex flex-col">
