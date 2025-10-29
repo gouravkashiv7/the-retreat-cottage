@@ -136,8 +136,6 @@
 
 // export default ReservationContent;
 
-import { format, isPast, isToday, formatDistance, parseISO } from "date-fns";
-
 function ReservationContent({
   booking,
   currentImageIndex,
