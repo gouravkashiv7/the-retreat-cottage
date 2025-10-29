@@ -154,13 +154,13 @@ function ReservationContent({
     status,
   } = booking;
 
-  const currentAccommodation = accommodations?.[currentImageIndex];
+  // const currentAccommodation = accommodations?.[currentImageIndex];
 
   const capitalizeFirst = (str) => {
     return str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
   };
 
-  const accommodationNames = accommodations?.map((acc) => acc.name).join(", ");
+  // const accommodationNames = accommodations?.map((acc) => acc.name).join(", ");
 
   return (
     <div className="flex-grow px-4 md:px-6 py-3 flex flex-col">
@@ -169,18 +169,18 @@ function ReservationContent({
           <h3 className="text-lg md:text-xl font-semibold">
             {numNights} nights in{" "}
             {hasMultipleAccommodations ? (
-              <>{accommodations?.length} Retreats</>
+              <>Retreats</>
             ) : (
               <>
-                {capitalizeFirst(currentAccommodation?.type)}{" "}
+                {/* {capitalizeFirst(currentAccommodation?.type)}{" "} */}
                 <span className="text-primary-300">
-                  "{currentAccommodation?.name}"
+                  {/* "{currentAccommodation?.name}" */}
                 </span>
               </>
             )}
           </h3>
           <p className="text-primary-300 mt-1 text-sm md:text-base">
-            {accommodationNames || "No accommodations"}
+            {/* {accommodationNames || "No accommodations"} */}
           </p>
         </div>
       </div>
@@ -195,9 +195,9 @@ function ReservationContent({
           <p className="text-sm text-primary-400">
             Currently viewing:{" "}
             <span className="text-primary-200">
-              {currentAccommodation?.name}
+              {/* {currentAccommodation?.name} */}
             </span>{" "}
-            ({capitalizeFirst(currentAccommodation?.type)})
+            {/* ({capitalizeFirst(currentAccommodation?.type)}) */}
           </p>
         </div>
       )}
