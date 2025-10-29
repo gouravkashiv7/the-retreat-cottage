@@ -19,11 +19,11 @@ export function ReservationCard({ booking }) {
         hasMultipleAccommodations={hasMultipleAccommodations}
       /> */}
 
-      <ReservationContent
+      {/* <ReservationContent
         booking={booking}
         // currentImageIndex={currentImageIndex}
         hasMultipleAccommodations={hasMultipleAccommodations}
-      />
+      /> */}
 
       <ReservationActions bookingId={id} startDate={startDate} />
     </div>
