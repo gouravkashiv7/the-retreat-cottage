@@ -1,10 +1,11 @@
+"use client";
 import { format, isPast, isToday } from "date-fns";
+import { formatDistanceFromNow } from "./ReservationCard";
 
 function ReservationContent({
   booking,
   currentImageIndex,
   hasMultipleAccommodations,
-  timeDistance, // Add this prop from parent
 }) {
   const {
     startDate,
@@ -84,12 +85,12 @@ function ReservationContent({
         {renderStatusBadge()}
       </div>
 
-      {/* ✅ Fixed: Using timeDistance prop instead of direct function call */}
       <p className="text-base md:text-lg text-primary-300 mt-2">
         {format(new Date(startDate), "EEE, MMM dd yyyy")} (
-        {isToday(new Date(startDate)) ? "Today" : timeDistance || "..."}{" "}
-        {/* Shows "..." while loading */}) &mdash;{" "}
-        {format(new Date(endDate), "EEE, MMM dd yyyy")}
+        {isToday(new Date(startDate))
+          ? "Today"
+          : formatDistanceFromNow(startDate)}
+        ) &mdash; {format(new Date(endDate), "EEE, MMM dd yyyy")}
       </p>
 
       {hasMultipleAccommodations && (
