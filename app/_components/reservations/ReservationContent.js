@@ -186,9 +186,9 @@ function ReservationContent({
       </div>
 
       <p className="text-base md:text-lg text-primary-300 mt-2">
-        {format(new Date(startDate), "EEE, MMM dd yyyy")} (
+        {/* {format(new Date(startDate), "EEE, MMM dd yyyy")} (
         {isToday(new Date(startDate)) ? "Today" : "timeDistance" || "..."} )
-        &mdash; {format(new Date(endDate), "EEE, MMM dd yyyy")}
+        &mdash; {format(new Date(endDate), "EEE, MMM dd yyyy")} */}
       </p>
       {hasMultipleAccommodations && (
         <div className="mt-2">
