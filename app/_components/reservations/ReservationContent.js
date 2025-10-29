@@ -19,7 +19,7 @@ function ReservationContent({
 
   const [timeDistance, setTimeDistance] = useState(""); // ✅ Add state
 
-  // Custom formatDate function without date-fns
+  // Custom format function without date-fns
   const formatDate = (date, formatString) => {
     if (!date) return "";
 
@@ -179,9 +179,20 @@ function ReservationContent({
       </div>
       {/* ✅ FIXED: Use timeDistance state instead of formatDistanceFromNow */}{" "}
       <p className="text-base md:text-lg text-primary-300 mt-2">
-        {formatDate(new Date(startDate), "EEE, MMM dd yyyy")} (
-        {isToday(new Date(startDate)) ? "Today" : timeDistance || "..."} )
-        &mdash; {formatDate(new Date(endDate), "EEE, MMM dd yyyy")}
+        {new Date(startDate).toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })}{" "}
+        ({isToday(new Date(startDate)) ? "Today" : timeDistance || "..."} )
+        &mdash;{" "}
+        {new Date(endDate).toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })}
       </p>
       {hasMultipleAccommodations && (
         <div className="mt-2">
@@ -201,7 +212,19 @@ function ReservationContent({
           {numGuests} guest{numGuests > 1 && "s"}
         </p>
         <p className="text-sm text-primary-400 sm:ml-auto mt-2 sm:mt-0">
-          Booked {formatDate(new Date(created_at), "EEE, MMM dd yyyy, p")}
+          Booked{" "}
+          {new Date(created_at).toLocaleDateString("en-US", {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+          ,{" "}
+          {new Date(created_at).toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          })}
         </p>
       </div>
     </div>
