@@ -1,16 +1,16 @@
 "use client";
 import { useState } from "react";
 import ImageCarousel from "./ImageCarousel";
-import dynamic from "next/dynamic";
-
-const DynamicReservationContent = dynamic(
-  () => import("./ReservationContent"),
-  { ssr: false }
-);
-
+import ReservationContent from "./ReservationContent";
 import ReservationActions from "./ReservationActions";
+import { formatDistance, parseISO } from "date-fns";
 
-export function ReservationCard({ booking }) {
+export const formatDistanceFromNow = (dateStr) =>
+  formatDistance(parseISO(dateStr), new Date(), {
+    addSuffix: true,
+  }).replace("about ", "");
+
+function ReservationCard({ booking }) {
   const { id, startDate, accommodations } = booking;
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -25,7 +25,7 @@ export function ReservationCard({ booking }) {
         hasMultipleAccommodations={hasMultipleAccommodations}
       />
 
-      <DynamicReservationContent
+      <ReservationContent
         booking={booking}
         currentImageIndex={currentImageIndex}
         hasMultipleAccommodations={hasMultipleAccommodations}

@@ -1,5 +1,5 @@
-import { format, isToday, formatDistance, parseISO } from "date-fns";
-import { useEffect, useState } from "react";
+import { format, isPast, isToday } from "date-fns";
+import { formatDistanceFromNow } from "./ReservationCard";
 
 function ReservationContent({
   booking,
@@ -14,18 +14,8 @@ function ReservationContent({
     numGuests,
     created_at,
     accommodations,
-    status,
+    status, // Assuming status is now available in booking data
   } = booking;
-
-  const [timeDistance, setTimeDistance] = useState(""); // ✅ Add state
-
-  useEffect(() => {
-    // Calculate it here instead of parent
-    const distance = formatDistance(parseISO(startDate), new Date(), {
-      addSuffix: true,
-    }).replace("about ", "");
-    setTimeDistance(distance);
-  }, [startDate]);
 
   const currentAccommodation = accommodations?.[currentImageIndex];
 
@@ -106,9 +96,12 @@ function ReservationContent({
 
       <p className="text-base md:text-lg text-primary-300 mt-2">
         {format(new Date(startDate), "EEE, MMM dd yyyy")} (
-        {isToday(new Date(startDate)) ? "Today" : timeDistance || "..."} )
-        &mdash; {format(new Date(endDate), "EEE, MMM dd yyyy")}
+        {isToday(new Date(startDate))
+          ? "Today"
+          : formatDistanceFromNow(startDate)}
+        ) &mdash; {format(new Date(endDate), "EEE, MMM dd yyyy")}
       </p>
+
       {hasMultipleAccommodations && (
         <div className="mt-2">
           <p className="text-sm text-primary-400">
@@ -120,6 +113,7 @@ function ReservationContent({
           </p>
         </div>
       )}
+
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 mt-auto items-baseline pt-3">
         <p className="text-xl font-semibold text-accent-400">₹{totalPrice}</p>
         <p className="text-primary-300 hidden sm:block">&bull;</p>
