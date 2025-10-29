@@ -22,7 +22,7 @@ export function ReservationCard({ booking }) {
       <ReservationContent
         booking={booking}
         currentImageIndex={currentImageIndex}
-        // hasMultipleAccommodations={hasMultipleAccommodations}
+        hasMultipleAccommodations={hasMultipleAccommodations}
       />
 
       <ReservationActions bookingId={id} startDate={startDate} />
