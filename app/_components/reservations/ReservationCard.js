@@ -1,7 +1,13 @@
 "use client";
 import { useState } from "react";
 import ImageCarousel from "./ImageCarousel";
-import ReservationContent from "./ReservationContent";
+import dynamic from "next/dynamic";
+
+const DynamicReservationContent = dynamic(
+  () => import("./ReservationContent"),
+  { ssr: false }
+);
+
 import ReservationActions from "./ReservationActions";
 
 export function ReservationCard({ booking }) {
@@ -19,7 +25,7 @@ export function ReservationCard({ booking }) {
         hasMultipleAccommodations={hasMultipleAccommodations}
       />
 
-      <ReservationContent
+      <DynamicReservationContent
         booking={booking}
         currentImageIndex={currentImageIndex}
         hasMultipleAccommodations={hasMultipleAccommodations}
