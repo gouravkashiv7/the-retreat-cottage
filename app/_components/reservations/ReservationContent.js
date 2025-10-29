@@ -172,32 +172,19 @@ function ReservationContent({
               <>Retreats</>
             ) : (
               <>
-                {/* {capitalizeFirst(currentAccommodation?.type)}{" "} */}
-                <span className="text-primary-300">
-                  {/* "{currentAccommodation?.name}" */}
-                </span>
+                <span className="text-primary-300"></span>
               </>
             )}
           </h3>
-          <p className="text-primary-300 mt-1 text-sm md:text-base">
-            {/* {accommodationNames || "No accommodations"} */}
-          </p>
+          <p className="text-primary-300 mt-1 text-sm md:text-base"></p>
         </div>
       </div>
 
-      <p className="text-base md:text-lg text-primary-300 mt-2">
-        {/* {format(new Date(startDate), "EEE, MMM dd yyyy")} (
-        {isToday(new Date(startDate)) ? "Today" : "timeDistance" || "..."} )
-        &mdash; {format(new Date(endDate), "EEE, MMM dd yyyy")} */}
-      </p>
+      <p className="text-base md:text-lg text-primary-300 mt-2"></p>
       {hasMultipleAccommodations && (
         <div className="mt-2">
           <p className="text-sm text-primary-400">
-            Currently viewing:{" "}
-            <span className="text-primary-200">
-              {/* {currentAccommodation?.name} */}
-            </span>{" "}
-            {/* ({capitalizeFirst(currentAccommodation?.type)}) */}
+            Currently viewing: <span className="text-primary-200"></span>{" "}
           </p>
         </div>
       )}
