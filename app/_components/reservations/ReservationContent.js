@@ -1,10 +1,6 @@
 "use client";
 import { format, isPast, isToday, formatDistance, parseISO } from "date-fns";
-
-const formatDistanceFromNow = (dateStr) =>
-  formatDistance(parseISO(dateStr), new Date(), {
-    addSuffix: true,
-  }).replace("about ", "");
+import { useEffect, useState } from "react"; // ✅ Add useState import
 
 function ReservationContent({
   booking,
@@ -19,8 +15,18 @@ function ReservationContent({
     numGuests,
     created_at,
     accommodations,
-    status, // Assuming status is now available in booking data
+    status,
   } = booking;
+
+  const [timeDistance, setTimeDistance] = useState(""); // ✅ Add state
+
+  useEffect(() => {
+    // Calculate it here instead of parent
+    const distance = formatDistance(parseISO(startDate), new Date(), {
+      addSuffix: true,
+    }).replace("about ", "");
+    setTimeDistance(distance);
+  }, [startDate]);
 
   const currentAccommodation = accommodations?.[currentImageIndex];
 
@@ -89,12 +95,12 @@ function ReservationContent({
         {renderStatusBadge()}
       </div>
 
+      {/* ✅ FIXED: Use timeDistance state instead of formatDistanceFromNow */}
       <p className="text-base md:text-lg text-primary-300 mt-2">
         {format(new Date(startDate), "EEE, MMM dd yyyy")} (
-        {isToday(new Date(startDate))
-          ? "Today"
-          : formatDistanceFromNow(startDate)}
-        ) &mdash; {format(new Date(endDate), "EEE, MMM dd yyyy")}
+        {isToday(new Date(startDate)) ? "Today" : timeDistance || "..."}{" "}
+        {/* ✅ Use the state variable */}) &mdash;{" "}
+        {format(new Date(endDate), "EEE, MMM dd yyyy")}
       </p>
 
       {hasMultipleAccommodations && (
