@@ -46,8 +46,3 @@ function ReservationCard({ booking }) {
 }
 
 export default ReservationCard;
-
-export const formatDistanceFromNow = (dateStr) =>
-  formatDistance(parseISO(dateStr), new Date(), {
-    addSuffix: true,
-  }).replace("about ", "");

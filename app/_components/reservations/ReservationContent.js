@@ -1,8 +1,6 @@
 "use client";
 
-import { format, isToday } from "date-fns";
-import { formatDistanceFromNow } from "./ReservationCard";
-import { useEffect, useState } from "react"; // Add this import
+import { useEffect, useState } from "react";
 
 function ReservationContent({
   booking,
@@ -20,12 +18,40 @@ function ReservationContent({
     status,
   } = booking;
 
-  // Add state to track when component is mounted on client
   const [isMounted, setIsMounted] = useState(false);
+  const [formattedDates, setFormattedDates] = useState({
+    startDate: "",
+    endDate: "",
+    createdAt: "",
+    timeDistance: "",
+    isToday: false,
+  });
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+
+    // Dynamically import date-fns only on client side
+    const loadDateFormats = async () => {
+      const { format, isToday, formatDistance, parseISO } = await import(
+        "date-fns"
+      );
+
+      const formatDistanceFromNow = (dateStr) =>
+        formatDistance(parseISO(dateStr), new Date(), {
+          addSuffix: true,
+        }).replace("about ", "");
+
+      setFormattedDates({
+        startDate: format(new Date(startDate), "EEE, MMM dd yyyy"),
+        endDate: format(new Date(endDate), "EEE, MMM dd yyyy"),
+        createdAt: format(new Date(created_at), "EEE, MMM dd yyyy, p"),
+        timeDistance: formatDistanceFromNow(startDate),
+        isToday: isToday(new Date(startDate)),
+      });
+    };
+
+    loadDateFormats();
+  }, [startDate, endDate, created_at]);
 
   const currentAccommodation = accommodations?.[currentImageIndex];
 
@@ -39,11 +65,8 @@ function ReservationContent({
   const compareDates = (date1, date2) => {
     const d1 = new Date(date1);
     const d2 = new Date(date2);
-
-    // Set both to start of day for accurate comparison
     d1.setHours(0, 0, 0, 0);
     d2.setHours(0, 0, 0, 0);
-
     if (d1 < d2) return -1;
     if (d1 > d2) return 1;
     return 0;
@@ -80,7 +103,7 @@ function ReservationContent({
     );
   };
 
-  // Don't render date content until mounted on client
+  // Don't render ANY date content until mounted
   if (!isMounted) {
     return (
       <div className="flex-grow px-4 md:px-6 py-3 flex flex-col">
@@ -106,7 +129,7 @@ function ReservationContent({
           {renderStatusBadge()}
         </div>
 
-        {/* Loading state for dates */}
+        {/* Loading placeholder for dates */}
         <div className="text-base md:text-lg text-primary-300 mt-2 h-6 bg-gray-700 animate-pulse rounded"></div>
 
         {hasMultipleAccommodations && (
@@ -127,7 +150,7 @@ function ReservationContent({
           <p className="text-lg text-primary-300">
             {numGuests} guest{numGuests > 1 && "s"}
           </p>
-          <div className="text-sm text-primary-400 sm:ml-auto mt-2 sm:mt-0 h-4 bg-gray-600 animate-pulse rounded w-40"></div>
+          <div className="text-sm text-primary-400 sm:ml-auto mt-2 sm:mt-0 h-4 bg-gray-600 animate-pulse rounded w-48"></div>
         </div>
       </div>
     );
@@ -158,11 +181,9 @@ function ReservationContent({
       </div>
 
       <p className="text-base md:text-lg text-primary-300 mt-2">
-        {format(new Date(startDate), "EEE, MMM dd yyyy")} (
-        {isToday(new Date(startDate))
-          ? "Today"
-          : formatDistanceFromNow(startDate)}
-        ) &mdash; {format(new Date(endDate), "EEE, MMM dd yyyy")}
+        {formattedDates.startDate} (
+        {formattedDates.isToday ? "Today" : formattedDates.timeDistance})
+        &mdash; {formattedDates.endDate}
       </p>
 
       {hasMultipleAccommodations && (
@@ -184,7 +205,7 @@ function ReservationContent({
           {numGuests} guest{numGuests > 1 && "s"}
         </p>
         <p className="text-sm text-primary-400 sm:ml-auto mt-2 sm:mt-0">
-          Booked {format(new Date(created_at), "EEE, MMM dd yyyy, p")}
+          Booked {formattedDates.createdAt}
         </p>
       </div>
     </div>
