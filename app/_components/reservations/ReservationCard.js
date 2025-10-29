@@ -2,18 +2,22 @@
 import { useState } from "react";
 import ImageCarousel from "./ImageCarousel";
 import dynamic from "next/dynamic";
-
-const ReservationContent = dynamic(() => import("./ReservationContent"), {
-  ssr: false,
-  loading: () => <div>Loading reservation details...</div>,
-});
 import ReservationActions from "./ReservationActions";
 import { formatDistance, parseISO } from "date-fns";
-
-export const formatDistanceFromNow = (dateStr) =>
-  formatDistance(parseISO(dateStr), new Date(), {
-    addSuffix: true,
-  }).replace("about ", "");
+// Dynamically import ReservationContent to avoid SSR
+const ReservationContent = dynamic(() => import("./ReservationContent"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex-grow px-4 md:px-6 py-3 flex flex-col">
+      <div className="animate-pulse">
+        <div className="h-6 bg-gray-700 rounded w-3/4 mb-2"></div>
+        <div className="h-4 bg-gray-600 rounded w-1/2 mb-4"></div>
+        <div className="h-4 bg-gray-600 rounded w-full mb-4"></div>
+        <div className="h-6 bg-gray-700 rounded w-1/2"></div>
+      </div>
+    </div>
+  ),
+});
 
 function ReservationCard({ booking }) {
   const { id, startDate, accommodations } = booking;
@@ -42,3 +46,8 @@ function ReservationCard({ booking }) {
 }
 
 export default ReservationCard;
+
+export const formatDistanceFromNow = (dateStr) =>
+  formatDistance(parseISO(dateStr), new Date(), {
+    addSuffix: true,
+  }).replace("about ", "");

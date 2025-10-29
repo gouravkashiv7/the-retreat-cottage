@@ -1,5 +1,8 @@
-import { format, isPast, isToday } from "date-fns";
+"use client";
+
+import { format, isToday } from "date-fns";
 import { formatDistanceFromNow } from "./ReservationCard";
+import { useEffect, useState } from "react"; // Add this import
 
 function ReservationContent({
   booking,
@@ -14,8 +17,15 @@ function ReservationContent({
     numGuests,
     created_at,
     accommodations,
-    status, // Assuming status is now available in booking data
+    status,
   } = booking;
+
+  // Add state to track when component is mounted on client
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const currentAccommodation = accommodations?.[currentImageIndex];
 
@@ -69,6 +79,59 @@ function ReservationContent({
       </span>
     );
   };
+
+  // Don't render date content until mounted on client
+  if (!isMounted) {
+    return (
+      <div className="flex-grow px-4 md:px-6 py-3 flex flex-col">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 className="text-lg md:text-xl font-semibold">
+              {numNights} nights in{" "}
+              {hasMultipleAccommodations ? (
+                <>{accommodations?.length} Retreats</>
+              ) : (
+                <>
+                  {capitalizeFirst(currentAccommodation?.type)}{" "}
+                  <span className="text-primary-300">
+                    "{currentAccommodation?.name}"
+                  </span>
+                </>
+              )}
+            </h3>
+            <p className="text-primary-300 mt-1 text-sm md:text-base">
+              {accommodationNames}
+            </p>
+          </div>
+          {renderStatusBadge()}
+        </div>
+
+        {/* Loading state for dates */}
+        <div className="text-base md:text-lg text-primary-300 mt-2 h-6 bg-gray-700 animate-pulse rounded"></div>
+
+        {hasMultipleAccommodations && (
+          <div className="mt-2">
+            <p className="text-sm text-primary-400">
+              Currently viewing:{" "}
+              <span className="text-primary-200">
+                {currentAccommodation?.name}
+              </span>{" "}
+              ({capitalizeFirst(currentAccommodation?.type)})
+            </p>
+          </div>
+        )}
+
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 mt-auto items-baseline pt-3">
+          <p className="text-xl font-semibold text-accent-400">₹{totalPrice}</p>
+          <p className="text-primary-300 hidden sm:block">&bull;</p>
+          <p className="text-lg text-primary-300">
+            {numGuests} guest{numGuests > 1 && "s"}
+          </p>
+          <div className="text-sm text-primary-400 sm:ml-auto mt-2 sm:mt-0 h-4 bg-gray-600 animate-pulse rounded w-40"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-grow px-4 md:px-6 py-3 flex flex-col">
