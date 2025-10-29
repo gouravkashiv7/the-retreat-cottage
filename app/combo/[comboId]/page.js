@@ -11,7 +11,7 @@ import {
 import { EXTRA_GUEST_PRICE } from "@/app/_components/utils/combo-logic";
 
 export default async function ComboDetailsPage({ params }) {
-  const { comboId } = params;
+  const { comboId } = await params;
 
   const comboParams = parseComboId(comboId);
   if (!comboParams) {
@@ -75,7 +75,7 @@ export async function generateStaticParams() {
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }) {
-  const { comboId } = params;
+  const { comboId } = await params;
   const comboParams = parseComboId(comboId);
 
   if (!comboParams) {

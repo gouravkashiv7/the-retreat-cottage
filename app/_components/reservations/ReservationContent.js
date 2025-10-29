@@ -1,6 +1,6 @@
 "use client";
 import { format, isPast, isToday, formatDistance, parseISO } from "date-fns";
-import { useEffect, useState } from "react"; // ✅ Add useState import
+import { useEffect, useState } from "react";
 
 function ReservationContent({
   booking,
@@ -18,15 +18,37 @@ function ReservationContent({
     status,
   } = booking;
 
-  const [timeDistance, setTimeDistance] = useState(""); // ✅ Add state
+  const [timeDistance, setTimeDistance] = useState("");
+  const [isStartDateToday, setIsStartDateToday] = useState(false);
+  const [statusBadge, setStatusBadge] = useState("");
 
   useEffect(() => {
-    // Calculate it here instead of parent
-    const distance = formatDistance(parseISO(startDate), new Date(), {
+    // Calculate all dynamic values on client only
+    const today = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    // Calculate time distance
+    const distance = formatDistance(parseISO(startDate), today, {
       addSuffix: true,
     }).replace("about ", "");
     setTimeDistance(distance);
-  }, [startDate]);
+
+    // Check if start date is today
+    setIsStartDateToday(isToday(start));
+
+    // Determine status badge
+    if (
+      status === "checked-in" ||
+      (today >= start && today <= end && !isPast(end))
+    ) {
+      setStatusBadge("ongoing");
+    } else if (isPast(end)) {
+      setStatusBadge("past");
+    } else {
+      setStatusBadge("upcoming");
+    }
+  }, [startDate, endDate, status]);
 
   const currentAccommodation = accommodations?.[currentImageIndex];
 
@@ -36,37 +58,18 @@ function ReservationContent({
 
   const accommodationNames = accommodations?.map((acc) => acc.name).join(", ");
 
-  // Function to determine status badge
   const renderStatusBadge = () => {
-    const today = new Date();
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const badgeStyles = {
+      ongoing: "bg-blue-800 text-blue-200",
+      past: "bg-yellow-800 text-yellow-200",
+      upcoming: "bg-green-800 text-green-200",
+    };
 
-    // Check for checked-in/ongoing status first
-    if (
-      status === "checked-in" ||
-      (today >= start && today <= end && !isPast(end))
-    ) {
-      return (
-        <span className="bg-blue-800 text-blue-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
-          ongoing
-        </span>
-      );
-    }
-
-    // Then check for past dates
-    if (isPast(end)) {
-      return (
-        <span className="bg-yellow-800 text-yellow-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
-          past
-        </span>
-      );
-    }
-
-    // Default to upcoming
     return (
-      <span className="bg-green-800 text-green-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
-        upcoming
+      <span
+        className={`${badgeStyles[statusBadge]} h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto`}
+      >
+        {statusBadge || "..."}
       </span>
     );
   };
@@ -95,11 +98,9 @@ function ReservationContent({
         {renderStatusBadge()}
       </div>
 
-      {/* ✅ FIXED: Use timeDistance state instead of formatDistanceFromNow */}
       <p className="text-base md:text-lg text-primary-300 mt-2">
         {format(new Date(startDate), "EEE, MMM dd yyyy")} (
-        {isToday(new Date(startDate)) ? "Today" : timeDistance || "..."}{" "}
-        {/* ✅ Use the state variable */}) &mdash;{" "}
+        {isStartDateToday ? "Today" : timeDistance || "..."}) &mdash;{" "}
         {format(new Date(endDate), "EEE, MMM dd yyyy")}
       </p>
 

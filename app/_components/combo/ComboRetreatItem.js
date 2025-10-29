@@ -17,6 +17,7 @@ export default function ComboRetreatItem({ retreat }) {
       {retreat.image && (
         <div className="w-full sm:w-24 h-32 sm:h-24 relative flex-shrink-0">
           <Image
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             src={retreat.image}
             alt={retreat.name}
             fill
