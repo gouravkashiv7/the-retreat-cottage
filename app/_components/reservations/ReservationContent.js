@@ -19,6 +19,80 @@ function ReservationContent({
 
   const [timeDistance, setTimeDistance] = useState(""); // ✅ Add state
 
+  // Custom formatDate function without date-fns
+  const formatDate = (date, formatString) => {
+    if (!date) return "";
+
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "Invalid date";
+
+    const options = {
+      weekday: "EEE",
+      month: "MMM",
+      day: "dd",
+      year: "yyyy",
+      hour: "HH",
+      minute: "mm",
+      hour12: true,
+    };
+
+    const formats = {
+      "EEE, MMM dd yyyy": () => {
+        const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][
+          d.getDay()
+        ];
+        const month = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ][d.getMonth()];
+        const day = d.getDate().toString().padStart(2, "0");
+        const year = d.getFullYear();
+        return `${weekday}, ${month} ${day} ${year}`;
+      },
+      "EEE, MMM dd yyyy, p": () => {
+        const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][
+          d.getDay()
+        ];
+        const month = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ][d.getMonth()];
+        const day = d.getDate().toString().padStart(2, "0");
+        const year = d.getFullYear();
+
+        let hours = d.getHours();
+        const minutes = d.getMinutes().toString().padStart(2, "0");
+        const ampm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+
+        return `${weekday}, ${month} ${day} ${year}, ${hours}:${minutes} ${ampm}`;
+      },
+    };
+
+    return formats[formatString] ? formats[formatString]() : d.toString();
+  };
+
   useEffect(() => {
     // Calculate it here instead of parent
     const distance = formatDistance(parseISO(startDate), new Date(), {
@@ -105,9 +179,9 @@ function ReservationContent({
       </div>
       {/* ✅ FIXED: Use timeDistance state instead of formatDistanceFromNow */}{" "}
       <p className="text-base md:text-lg text-primary-300 mt-2">
-        {(new Date(startDate), "EEE, MMM dd yyyy")} (
+        {formatDate(new Date(startDate), "EEE, MMM dd yyyy")} (
         {isToday(new Date(startDate)) ? "Today" : timeDistance || "..."} )
-        &mdash; {(new Date(endDate), "EEE, MMM dd yyyy")}
+        &mdash; {formatDate(new Date(endDate), "EEE, MMM dd yyyy")}
       </p>
       {hasMultipleAccommodations && (
         <div className="mt-2">
@@ -127,7 +201,7 @@ function ReservationContent({
           {numGuests} guest{numGuests > 1 && "s"}
         </p>
         <p className="text-sm text-primary-400 sm:ml-auto mt-2 sm:mt-0">
-          Booked {(new Date(created_at), "EEE, MMM dd yyyy, p")}
+          Booked {formatDate(new Date(created_at), "EEE, MMM dd yyyy, p")}
         </p>
       </div>
     </div>
