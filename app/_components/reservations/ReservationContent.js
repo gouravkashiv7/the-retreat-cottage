@@ -222,4 +222,3 @@ function ReservationContent() {
 }
 
 export default ReservationContent;
-Hello;
