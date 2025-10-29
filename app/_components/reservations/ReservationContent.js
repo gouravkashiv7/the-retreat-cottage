@@ -121,7 +121,7 @@ function ReservationContent({
           {numGuests} guest{numGuests > 1 && "s"}
         </p>
         <p className="text-sm text-primary-400 sm:ml-auto mt-2 sm:mt-0">
-          Booked {format(new Date(created_at), "EEE, MMM dd yyyy, p")}
+          Booked {format(new Date(created_at), "EEE, MMM dd yyyy")}
         </p>
       </div>
     </div>
