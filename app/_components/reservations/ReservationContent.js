@@ -154,7 +154,7 @@ function ReservationContent({ hasMultipleAccommodations }) {
       )}
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 mt-auto items-baseline pt-3">
         <p className="text-sm text-primary-400 sm:ml-auto mt-2 sm:mt-0">
-          Booked {format(new Date(created_at), "EEE, MMM dd yyyy, p")}
+          Booked
         </p>
       </div>
     </div>
