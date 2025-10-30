@@ -16,8 +16,8 @@ function ReservationForm({ retreat, user }) {
   const { pending } = useFormStatus();
 
   const discount = Math.round((regularPrice * discountPercentage) / 100);
-  const startDate = range.from;
-  const endDate = range.to;
+  const startDate = range?.from || null;
+  const endDate = range?.to || null;
   const numNights = differenceInDays(endDate, startDate);
 
   const accommodationPrice = Number(numNights * (regularPrice - discount));

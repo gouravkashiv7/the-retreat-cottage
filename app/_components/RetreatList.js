@@ -25,7 +25,14 @@ async function RetreatList({ filter }) {
 
   // Handle "villa" filter
   if (filter === "villa") {
-    return <VillaPackageView rooms={rooms} cabins={cabins} />;
+    return (
+      <VillaPackageView
+        rooms={rooms}
+        cabins={cabins}
+        bookedDates={bookedDates}
+        guestId={session?.user?.guestId}
+      />
+    );
   }
 
   // Handle "all" filter
@@ -59,7 +66,12 @@ async function RetreatList({ filter }) {
     // For 1-3 guests, show individual retreats
     if (guestCount <= 3) {
       return (
-        <GuestRetreatsView allRetreats={allRetreats} guestCount={guestCount} />
+        <GuestRetreatsView
+          bookedDates={bookedDates}
+          guestId={session?.user?.guestId}
+          allRetreats={allRetreats}
+          guestCount={guestCount}
+        />
       );
     }
 
@@ -69,6 +81,8 @@ async function RetreatList({ filter }) {
       <RetreatCombinationsView
         combinations={combinations}
         guestCount={guestCount}
+        bookedDates={bookedDates}
+        guestId={session?.user?.guestId}
       />
     );
   }

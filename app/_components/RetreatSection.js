@@ -1,7 +1,6 @@
 "use client";
 import { useReservation } from "./contexts/ReservationContext";
 import ItemCard from "./ItemCard";
-import { isAlreadyBooked } from "./DateSelector/utils/dateValidation";
 
 function RetreatSection({
   title,
@@ -66,6 +65,29 @@ function RetreatSection({
         return true;
       }
     }) || [];
+
+  function isAlreadyBooked(range, bookedDates) {
+    if (!range?.from || !range?.to) return false;
+
+    return bookedDates.some((booking, index) => {
+      const bookingStart = new Date(booking.startDate);
+      const bookingEnd = new Date(booking.endDate);
+      const rangeFrom = new Date(range.from);
+      const rangeTo = new Date(range.to);
+
+      // Normalize dates
+      bookingStart.setHours(0, 0, 0, 0);
+      bookingEnd.setHours(0, 0, 0, 0);
+      rangeFrom.setHours(0, 0, 0, 0);
+      rangeTo.setHours(0, 0, 0, 0);
+
+      // Flexible: allows check-out and check-in on same day
+      // Only conflicts if the stay periods actually overlap
+      const hasOverlap = rangeFrom < bookingEnd && rangeTo > bookingStart;
+
+      return hasOverlap;
+    });
+  }
 
   return (
     <div className={className}>

@@ -2,8 +2,10 @@
 import { useState } from "react";
 import RetreatSection from "../RetreatSection";
 import Link from "next/link";
+import { useReservation } from "../contexts/ReservationContext";
 
-function VillaPackageView({ rooms, cabins }) {
+function VillaPackageView({ rooms, cabins, bookedDates, guestId }) {
+  const { range } = useReservation();
   const [isVillaLoading, setIsVillaLoading] = useState(false);
   const totalCapacity = [...rooms, ...cabins].reduce(
     (sum, retreat) => sum + retreat.maxCapacity,
@@ -30,6 +32,81 @@ function VillaPackageView({ rooms, cabins }) {
     ...rooms.map((room) => ({ ...room, type: "room" })),
     ...cabins.map((cabin) => ({ ...cabin, type: "cabin" })),
   ];
+
+  // Filter retreats based on range and bookedDates
+  const filteredRetreats =
+    comboRetreats?.filter((retreat) => {
+      try {
+        // If no range is selected, show all items
+        if (!range?.from || !range?.to) {
+          return true;
+        }
+
+        // Filter bookedDates for this specific retreat
+        const retreatBookedDates = (bookedDates || []).filter((booking) => {
+          // Check if booking has retreatId property and matches current retreat
+          const matchesRetreat = booking.retreatId === retreat.id;
+          return matchesRetreat;
+        });
+
+        // Create filtered bookedDates based on status and guest
+        const filteredBookedDates = retreatBookedDates.filter((booking) => {
+          // Always include confirmed and checked-in bookings
+          if (
+            booking.status === "confirmed" ||
+            booking.status === "checked-in"
+          ) {
+            return true;
+          }
+
+          // For unconfirmed bookings, only include if it's the same guest
+          if (booking.status === "unconfirmed" && guestId) {
+            return booking.guestId === guestId;
+          }
+
+          // Exclude all other cases
+          return false;
+        });
+
+        // Format for date validation
+        const formattedBookedDates = filteredBookedDates.map((booking) => ({
+          startDate: booking.startDate,
+          endDate: booking.endDate,
+        }));
+
+        // Check if range overlaps with any booked dates
+        const isOverlapping = isAlreadyBooked(range, formattedBookedDates);
+
+        // Only show the item if there's NO overlap
+        return !isOverlapping;
+      } catch (error) {
+        // Show retreat if there's an error in filtering
+        return true;
+      }
+    }) || [];
+
+  function isAlreadyBooked(range, bookedDates) {
+    if (!range?.from || !range?.to) return false;
+
+    return bookedDates.some((booking, index) => {
+      const bookingStart = new Date(booking.startDate);
+      const bookingEnd = new Date(booking.endDate);
+      const rangeFrom = new Date(range.from);
+      const rangeTo = new Date(range.to);
+
+      // Normalize dates
+      bookingStart.setHours(0, 0, 0, 0);
+      bookingEnd.setHours(0, 0, 0, 0);
+      rangeFrom.setHours(0, 0, 0, 0);
+      rangeTo.setHours(0, 0, 0, 0);
+
+      // Flexible: allows check-out and check-in on same day
+      // Only conflicts if the stay periods actually overlap
+      const hasOverlap = rangeFrom < bookingEnd && rangeTo > bookingStart;
+
+      return hasOverlap;
+    });
+  }
 
   return (
     <div className="border-2 border-accent-400 rounded-xl overflow-hidden">
@@ -108,9 +185,9 @@ function VillaPackageView({ rooms, cabins }) {
       <div className="p-6 sm:p-8">
         <RetreatSection
           title="Complete Villa Package - All Retreats"
-          retreats={comboRetreats}
+          retreats={filteredRetreats}
           type="combo"
-          emptyMessage="No retreats available."
+          emptyMessage="Villa not available for following dates"
           isCombo={true}
         />
       </div>

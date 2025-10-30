@@ -9,7 +9,7 @@ function AllRetreatsView({ rooms, cabins, bookedDates, guestId }) {
         type="room"
         bookedDates={bookedDates}
         guestId={guestId}
-        emptyMessage="Villa rooms coming soon."
+        emptyMessage="Villa rooms not available for following dates."
         className="mb-12 sm:mb-16"
       />
       <RetreatSection
@@ -18,7 +18,7 @@ function AllRetreatsView({ rooms, cabins, bookedDates, guestId }) {
         guestId={guestId}
         bookedDates={bookedDates}
         type="cabin"
-        emptyMessage="Wooden cabins coming soon."
+        emptyMessage="Wooden cabins not available for following dates."
       />
     </>
   );

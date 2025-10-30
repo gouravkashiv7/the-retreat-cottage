@@ -39,13 +39,13 @@ export default function DateRangeSelector() {
 
   // Convert Date objects to ISO string for input values
   const dateRange = {
-    startDate: range.from ? range.from.toISOString().split("T")[0] : "",
-    endDate: range.to ? range.to.toISOString().split("T")[0] : "",
+    startDate: range?.from ? range?.from.toISOString().split("T")[0] : "",
+    endDate: range?.to ? range?.to.toISOString().split("T")[0] : "",
   };
 
   // Calculate min date for end date input
-  const minEndDate = range.from
-    ? range.from.toISOString().split("T")[0]
+  const minEndDate = range?.from
+    ? range?.from.toISOString().split("T")[0]
     : new Date().toISOString().split("T")[0];
 
   return (
@@ -99,22 +99,22 @@ export default function DateRangeSelector() {
       </div>
 
       {/* Selected Dates Summary */}
-      {(range.from || range.to) && (
+      {(range?.from || range?.to) && (
         <div className="mt-4 p-3 bg-primary-800 rounded-lg">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-            {range.from && (
+            {range?.from && (
               <div>
                 <span className="text-primary-300">Check-in:</span>
                 <p className="text-primary-100 font-medium">
-                  {formatDate(range.from)}
+                  {formatDate(range?.from)}
                 </p>
               </div>
             )}
-            {range.to && (
+            {range?.to && (
               <div>
                 <span className="text-primary-300">Check-out:</span>
                 <p className="text-primary-100 font-medium">
-                  {formatDate(range.to)}
+                  {formatDate(range?.to)}
                 </p>
               </div>
             )}

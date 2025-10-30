@@ -2,8 +2,95 @@
 import { useState } from "react";
 import ItemCard from "../ItemCard";
 import Link from "next/link";
+import { useReservation } from "../contexts/ReservationContext";
 
-function RetreatCombinationsView({ combinations, guestCount }) {
+function RetreatCombinationsView({
+  combinations,
+  guestCount,
+  bookedDates,
+  guestId,
+}) {
+  const { range } = useReservation();
+
+  // Filter retreats based on range and bookedDates
+  const filteredCombinations =
+    combinations?.filter((combination) => {
+      try {
+        // If no range is selected, show all items
+        if (!range?.from || !range?.to) {
+          return true;
+        }
+
+        // Check each retreat in this combination for availability
+        const allRetreatsAvailable = combination.retreats?.every((retreat) => {
+          // Filter bookedDates for this specific retreat
+          const retreatBookedDates = (bookedDates || []).filter((booking) => {
+            // Check if booking has retreatId property and matches current retreat
+            const matchesRetreat = booking.retreatId === retreat.id;
+            return matchesRetreat;
+          });
+
+          // Create filtered bookedDates based on status and guest
+          const filteredBookedDates = retreatBookedDates.filter((booking) => {
+            // Always include confirmed and checked-in bookings
+            if (
+              booking.status === "confirmed" ||
+              booking.status === "checked-in"
+            ) {
+              return true;
+            }
+
+            // For unconfirmed bookings, only include if it's the same guest
+            if (booking.status === "unconfirmed" && guestId) {
+              return booking.guestId === guestId;
+            }
+
+            // Exclude all other cases
+            return false;
+          });
+
+          // Format for date validation
+          const formattedBookedDates = filteredBookedDates.map((booking) => ({
+            startDate: booking.startDate,
+            endDate: booking.endDate,
+          }));
+
+          // Check if range overlaps with any booked dates for this retreat
+          const isOverlapping = isAlreadyBooked(range, formattedBookedDates);
+
+          // This retreat is available if there's NO overlap
+          return !isOverlapping;
+        });
+
+        // Only show the combination if ALL retreats are available
+        return allRetreatsAvailable;
+      } catch (error) {
+        console.error(`🚨 Error processing combination:`, error);
+        // Show combination if there's an error in filtering
+        return true;
+      }
+    }) || [];
+
+  function isAlreadyBooked(range, bookedDates) {
+    if (!range?.from || !range?.to) return false;
+
+    return bookedDates.some((booking) => {
+      const bookingStart = new Date(booking.startDate);
+      const bookingEnd = new Date(booking.endDate);
+      const rangeFrom = new Date(range.from);
+      const rangeTo = new Date(range.to);
+
+      // Normalize dates
+      bookingStart.setHours(0, 0, 0, 0);
+      bookingEnd.setHours(0, 0, 0, 0);
+      rangeFrom.setHours(0, 0, 0, 0);
+      rangeTo.setHours(0, 0, 0, 0);
+
+      // Simple overlap check
+      return rangeFrom < bookingEnd && rangeTo > bookingStart;
+    });
+  }
+
   const [loadingCombos, setLoadingCombos] = useState({});
 
   const handleComboClick = (comboId) => {
@@ -11,30 +98,32 @@ function RetreatCombinationsView({ combinations, guestCount }) {
   };
 
   // Calculate pricing for each combination
-  const combinationsWithPricing = combinations.map((combination, index) => {
-    const totalPrice = combination.retreats.reduce((sum, retreat) => {
-      const discount = Math.round(
-        (retreat.regularPrice * (retreat.discount || 0)) / 100
+  const combinationsWithPricing = filteredCombinations.map(
+    (combination, index) => {
+      const totalPrice = combination.retreats.reduce((sum, retreat) => {
+        const discount = Math.round(
+          (retreat.regularPrice * (retreat.discount || 0)) / 100
+        );
+        return sum + (retreat.regularPrice - discount);
+      }, 0);
+
+      const totalOriginalPrice = combination.retreats.reduce(
+        (sum, retreat) => sum + retreat.regularPrice,
+        0
       );
-      return sum + (retreat.regularPrice - discount);
-    }, 0);
 
-    const totalOriginalPrice = combination.retreats.reduce(
-      (sum, retreat) => sum + retreat.regularPrice,
-      0
-    );
+      const hasDiscount = totalPrice < totalOriginalPrice;
+      const comboId = `combo-${index + 1}-${guestCount}guests`;
 
-    const hasDiscount = totalPrice < totalOriginalPrice;
-    const comboId = `combo-${index + 1}-${guestCount}guests`;
-
-    return {
-      ...combination,
-      totalPrice,
-      totalOriginalPrice,
-      hasDiscount,
-      comboId,
-    };
-  });
+      return {
+        ...combination,
+        totalPrice,
+        totalOriginalPrice,
+        hasDiscount,
+        comboId,
+      };
+    }
+  );
 
   return (
     <div className="px-2 sm:px-0">

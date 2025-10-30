@@ -16,6 +16,9 @@ export function isAlreadyBooked(range, bookedDates) {
 
     const rangeTo = new Date(range.to);
     rangeTo.setHours(0, 0, 0, 0);
+    console.log("IS ALREADYBOOKED");
+    console.log("range", rangeFrom, rangeTo);
+    console.log("Comparing With", bookingStart, bookingEnd);
 
     // Subtract one day from the end date to make it bookable
     const adjustedEndDate = new Date(bookingEnd);
