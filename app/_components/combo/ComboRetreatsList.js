@@ -1,6 +1,6 @@
 import ComboRetreatItem from "./ComboRetreatItem";
 
-export default function ComboRetreatsList({ retreats }) {
+export default function ComboRetreatsList({ retreats, extraGuestPrice }) {
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">
@@ -11,6 +11,7 @@ export default function ComboRetreatsList({ retreats }) {
           <ComboRetreatItem
             key={`${retreat.type}-${retreat.id}`}
             retreat={retreat}
+            extraGuestPrice={extraGuestPrice}
           />
         ))}
       </div>

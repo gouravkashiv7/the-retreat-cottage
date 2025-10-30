@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getRooms, getCabins } from "@/app/_lib/data-service";
+import { getRooms, getCabins, getSettings } from "@/app/_lib/data-service";
 import ComboDetailsHeader from "@/app/_components/combo/ComboDetailsHeader";
 import ComboRetreatsList from "@/app/_components/combo/ComboRetreatsList";
 import ComboBookingSummary from "@/app/_components/combo/ComboBookingSummary";
@@ -8,11 +8,16 @@ import {
   parseComboId,
   calculateCombinationPricing,
 } from "@/app/_components/utils/combo-utils";
-import { EXTRA_GUEST_PRICE } from "@/app/_components/utils/combo-logic";
+import { getAllBookedDates } from "@/app/_lib/dates";
+import { auth } from "@/app/_lib/auth";
 
 export default async function ComboDetailsPage({ params }) {
+  const session = await auth();
+  const guestId = session?.user?.guestId;
+  const bookedDates = await getAllBookedDates();
   const { comboId } = await params;
-
+  const settings = await getSettings();
+  const { extraGuestPrice } = settings;
   const comboParams = parseComboId(comboId);
   if (!comboParams) {
     notFound();
@@ -25,31 +30,49 @@ export default async function ComboDetailsPage({ params }) {
     notFound();
   }
 
-  const pricing = calculateCombinationPricing(combination, EXTRA_GUEST_PRICE);
+  const pricing = calculateCombinationPricing(combination, extraGuestPrice);
 
   return (
-    <div className="min-h-screen bg-primary-950 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ComboDetailsHeader
-          optionNumber={optionNumber}
-          guestCount={guestCount}
-          totalCapacity={combination.totalCapacity}
-          fullCapacityCabins={pricing.fullCapacityCabins}
-        />
+    <div className="min-h-screen bg-primary-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header Section */}
+        <div className="mb-8 lg:mb-12">
+          <ComboDetailsHeader
+            optionNumber={optionNumber}
+            guestCount={guestCount}
+            totalCapacity={combination.totalCapacity}
+            fullCapacityCabins={pricing.fullCapacityCabins}
+            extraGuestPrice={extraGuestPrice}
+            retreats={combination.retreats}
+            settings={settings}
+            bookedDates={bookedDates}
+            guestId={guestId}
+          />
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-6">
-            <ComboRetreatsList retreats={combination.retreats} />
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          {/* Retreats List - Left Column */}
+          <div className="lg:col-span-2">
+            <ComboRetreatsList
+              retreats={combination.retreats}
+              extraGuestPrice={extraGuestPrice}
+            />
           </div>
 
+          {/* Booking Summary - Right Column (Sticky) */}
           <div className="lg:col-span-1">
-            <ComboBookingSummary
-              guestCount={guestCount}
-              retreatCount={combination.retreats.length}
-              totalCapacity={combination.totalCapacity}
-              pricing={pricing}
-              comboId={comboId}
-            />
+            <div className="sticky top-6">
+              <ComboBookingSummary
+                retreats={combination.retreats}
+                guestCount={guestCount}
+                retreatCount={combination.retreats.length}
+                totalCapacity={combination.totalCapacity}
+                pricing={pricing}
+                comboId={comboId}
+                extraGuestPrice={extraGuestPrice}
+              />
+            </div>
           </div>
         </div>
       </div>

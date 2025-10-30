@@ -4,7 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-function ItemCard({ item, isCombo = false, isFull = false }) {
+function ItemCard({
+  item,
+  isCombo = false,
+  isFull = false,
+  extraGuestPrice = 800,
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const {
     id,
@@ -18,7 +23,6 @@ function ItemCard({ item, isCombo = false, isFull = false }) {
   } = item;
 
   const discount = Math.round((regularPrice * discountPercentage) / 100);
-  const extraGuestPrice = 800;
 
   // Calculate base price after discount
   const basePrice = regularPrice - discount;

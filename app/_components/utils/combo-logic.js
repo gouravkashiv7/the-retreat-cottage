@@ -1,6 +1,3 @@
-// Extra price for each cabin at full capacity
-export const EXTRA_GUEST_PRICE = 800;
-
 // New combination logic with flexible cabin capacities
 export function findExactCombinations(retreats, targetGuests) {
   const results = [];

@@ -1,15 +1,14 @@
 import Image from "next/image";
 import { UsersIcon, HomeModernIcon } from "@heroicons/react/24/solid";
-import { EXTRA_GUEST_PRICE } from "../utils/combo-logic";
 
-export default function ComboRetreatItem({ retreat }) {
+export default function ComboRetreatItem({ retreat, extraGuestPrice }) {
   const retreatDiscount = Math.round(
     (retreat.regularPrice * (retreat.discount || 0)) / 100
   );
   const retreatBasePrice = retreat.regularPrice - retreatDiscount;
   const retreatFinalPrice =
     retreat.type === "cabin" && retreat.isFull
-      ? retreatBasePrice + EXTRA_GUEST_PRICE
+      ? retreatBasePrice + extraGuestPrice
       : retreatBasePrice;
 
   return (
@@ -66,7 +65,7 @@ export default function ComboRetreatItem({ retreat }) {
 
           {retreat.type === "cabin" && retreat.isFull && (
             <p className="text-xs text-accent-600 font-medium">
-              +₹{EXTRA_GUEST_PRICE} for extra guest
+              +₹{extraGuestPrice} for extra guest
             </p>
           )}
         </div>
@@ -82,7 +81,7 @@ export default function ComboRetreatItem({ retreat }) {
                 <p className="text-xs sm:text-sm text-gray-500 line-through">
                   ₹
                   {retreat.type === "cabin" && retreat.isFull
-                    ? retreat.regularPrice + EXTRA_GUEST_PRICE
+                    ? retreat.regularPrice + extraGuestPrice
                     : retreat.regularPrice}
                 </p>
               </div>

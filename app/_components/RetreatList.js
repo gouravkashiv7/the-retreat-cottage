@@ -1,5 +1,5 @@
 // import { unstable_noStore } from "next/cache";
-import { getCabins, getRooms } from "../_lib/data-service";
+import { getCabins, getRooms, getSettings } from "../_lib/data-service";
 import AllRetreatsView from "@/app/_components/retreat_views/AllRetreatsView";
 import VillaPackageView from "@/app/_components/retreat_views/VillaPackageView";
 import FloorPackagesView from "@/app/_components/retreat_views/FloorPackagesView";
@@ -14,6 +14,7 @@ async function RetreatList({ filter }) {
   const [rooms, cabins] = await Promise.all([getRooms(), getCabins()]);
   const bookedDates = await getAllBookedDates();
   const session = await auth();
+  const { extraGuestPrice } = await getSettings();
 
   if (!rooms || !cabins) return null;
 
@@ -83,6 +84,7 @@ async function RetreatList({ filter }) {
         guestCount={guestCount}
         bookedDates={bookedDates}
         guestId={session?.user?.guestId}
+        extraGuestPrice={extraGuestPrice}
       />
     );
   }

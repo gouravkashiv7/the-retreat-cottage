@@ -9,12 +9,41 @@ function RetreatCombinationsView({
   guestCount,
   bookedDates,
   guestId,
+  extraGuestPrice,
 }) {
   const { range } = useReservation();
+  const [loadingCombos, setLoadingCombos] = useState({});
+
+  // Calculate pricing and comboId for ALL combinations first (before filtering)
+  const allCombinationsWithPricing =
+    combinations?.map((combination, index) => {
+      const totalPrice = combination.retreats.reduce((sum, retreat) => {
+        const discount = Math.round(
+          (retreat.regularPrice * (retreat.discount || 0)) / 100
+        );
+        return sum + (retreat.regularPrice - discount);
+      }, 0);
+
+      const totalOriginalPrice = combination.retreats.reduce(
+        (sum, retreat) => sum + retreat.regularPrice,
+        0
+      );
+
+      const hasDiscount = totalPrice < totalOriginalPrice;
+      const comboId = `combo-${index + 1}-${guestCount}guests`;
+
+      return {
+        ...combination,
+        totalPrice,
+        totalOriginalPrice,
+        hasDiscount,
+        comboId,
+      };
+    }) || [];
 
   // Filter retreats based on range and bookedDates
-  const filteredCombinations =
-    combinations?.filter((combination) => {
+  const filteredCombinations = allCombinationsWithPricing.filter(
+    (combination) => {
       try {
         // If no range is selected, show all items
         if (!range?.from || !range?.to) {
@@ -69,7 +98,8 @@ function RetreatCombinationsView({
         // Show combination if there's an error in filtering
         return true;
       }
-    }) || [];
+    }
+  );
 
   function isAlreadyBooked(range, bookedDates) {
     if (!range?.from || !range?.to) return false;
@@ -91,50 +121,20 @@ function RetreatCombinationsView({
     });
   }
 
-  const [loadingCombos, setLoadingCombos] = useState({});
-
   const handleComboClick = (comboId) => {
     setLoadingCombos((prev) => ({ ...prev, [comboId]: true }));
   };
-
-  // Calculate pricing for each combination
-  const combinationsWithPricing = filteredCombinations.map(
-    (combination, index) => {
-      const totalPrice = combination.retreats.reduce((sum, retreat) => {
-        const discount = Math.round(
-          (retreat.regularPrice * (retreat.discount || 0)) / 100
-        );
-        return sum + (retreat.regularPrice - discount);
-      }, 0);
-
-      const totalOriginalPrice = combination.retreats.reduce(
-        (sum, retreat) => sum + retreat.regularPrice,
-        0
-      );
-
-      const hasDiscount = totalPrice < totalOriginalPrice;
-      const comboId = `combo-${index + 1}-${guestCount}guests`;
-
-      return {
-        ...combination,
-        totalPrice,
-        totalOriginalPrice,
-        hasDiscount,
-        comboId,
-      };
-    }
-  );
 
   return (
     <div className="px-2 sm:px-0">
       <h2 className="text-2xl sm:text-3xl mb-6 sm:mb-8 text-accent-400 font-medium text-center sm:text-left px-2">
         Retreat Combinations for {guestCount} guests
       </h2>
-      {combinationsWithPricing.length > 0 ? (
+      {filteredCombinations.length > 0 ? (
         <div className="space-y-6 sm:space-y-8">
-          {combinationsWithPricing.map((combination, index) => (
+          {filteredCombinations.map((combination, index) => (
             <div
-              key={index}
+              key={combination.comboId} // Use comboId as key for consistency
               className="border-2 border-accent-300 rounded-xl p-4 sm:p-6 mx-2 sm:mx-0"
             >
               {/* Combination Header with Pricing and Button */}
@@ -201,6 +201,7 @@ function RetreatCombinationsView({
               <div className="grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 md:grid-cols-2 lg:gap-8 xl:gap-10">
                 {combination.retreats.map((retreat) => (
                   <ItemCard
+                    extraGuestPrice={extraGuestPrice}
                     key={`${retreat.type}-${retreat.id}`}
                     item={retreat}
                     isCombo={true}
