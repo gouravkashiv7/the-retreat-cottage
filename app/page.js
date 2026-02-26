@@ -14,8 +14,32 @@ export default function Home() {
   const opacity = useTransform(scrollY, [0, 400], [1, 0]);
   const scale = useTransform(scrollY, [0, 500], [1.05, 1.15]);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    name: "The Retreat Cottage",
+    image: "https://retreatcottage.in/retreat.webp",
+    description:
+      "A luxury homestay nestled in the Himalayan pine valleys near Kasauli. Experience bespoke stays in our charming wooden cabins & elegant rooms.",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "The Retreat Cottage, Near Kasauli",
+      addressLocality: "Kasauli",
+      addressRegion: "Himachal Pradesh",
+      postalCode: "173204",
+      addressCountry: "IN",
+    },
+    telephone: "+919906039157",
+    url: "https://retreatcottage.in",
+    priceRange: "$$",
+  };
+
   return (
     <main className="relative min-h-svh bg-primary-950 selection:bg-accent-500 selection:text-primary-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Cinematic Background Layer */}
       <m.div
         style={{ y, opacity, scale }}

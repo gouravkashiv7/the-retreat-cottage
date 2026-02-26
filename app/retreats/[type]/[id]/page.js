@@ -21,8 +21,23 @@ export async function generateMetadata({ params }) {
     retreat = await getCabin(id);
   }
 
+  const title = `${type.charAt(0).toUpperCase() + type.slice(1)} ${retreat.name}`;
+  const description = retreat.description?.substring(0, 150) + "...";
+
   return {
-    title: `${type.charAt(0).toUpperCase() + type.slice(1)} ${retreat.name}`,
+    title,
+    description,
+    openGraph: {
+      title: `${title} | The Retreat Cottage`,
+      description,
+      images: [retreat.image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | The Retreat Cottage`,
+      description,
+      images: [retreat.image],
+    },
   };
 }
 
@@ -71,8 +86,30 @@ export default async function Page({ params }) {
     description,
   } = retreat;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Accommodation",
+    name: `${type.charAt(0).toUpperCase() + type.slice(1)} ${name} at The Retreat Cottage`,
+    description: description,
+    image: image,
+    numberOfRooms: 1,
+    occupancy: {
+      "@type": "QuantitativeValue",
+      value: maxCapacity,
+    },
+    offers: {
+      "@type": "Offer",
+      price: regularPrice - discount,
+      priceCurrency: "INR",
+    },
+  };
+
   return (
     <div className="max-w-6xl mx-auto mt-4 sm:mt-8 px-3 sm:px-6 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Retreat retreat={retreat} type={type} />
       <Suspense fallback={<Spinner />}>
         <Reservations retreat={retreat} type={type} />

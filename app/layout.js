@@ -13,12 +13,43 @@ const josefin = Josefin_Sans({
 });
 
 export const metadata = {
+  metadataBase: new URL("https://retreatcottage.in"),
   title: {
-    template: "%s / The Retreat Cottage",
-    default: "Welcome / The Retreat Cottage",
+    template: "%s | The Retreat Cottage",
+    default: "Welcome | The Retreat Cottage",
   },
   description:
-    "Explore The Retreat Cottage, a luxury homestay near Kasauli. Experience bespoke stays in our 5 exclusive accommodations: 3 elegant rooms & 2 charming wooden cabins. Your perfect mountain retreat awaits.!!",
+    "Explore The Retreat Cottage, a luxury homestay near Kasauli. Experience bespoke stays in our 5 exclusive accommodations: 3 elegant rooms & 2 charming wooden cabins. Your perfect mountain retreat awaits.",
+  keywords: [
+    "Kasauli Homestay",
+    "Luxury Villa Kasauli",
+    "Mountain Retreat",
+    "Boutique Homestay Himachal",
+    "Wooden Cabins Kasauli",
+  ],
+  openGraph: {
+    title: "The Retreat Cottage | Luxury Mountain Homestay",
+    description:
+      "Escape into the wild. Experience bespoke stays in our charming wooden cabins & elegant rooms near Kasauli.",
+    url: "https://retreatcottage.in",
+    siteName: "The Retreat Cottage",
+    images: [
+      {
+        url: "/opengraph-image.jpg", // Needs to be generated/placed in public
+        width: 1200,
+        height: 630,
+        alt: "The Retreat Cottage Cinematic View",
+      },
+    ],
+    locale: "en_IN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Retreat Cottage",
+    description: "Luxury mountain homestay near Kasauli.",
+    images: ["/opengraph-image.jpg"],
+  },
 };
 
 export default function RootLayout({ children }) {
