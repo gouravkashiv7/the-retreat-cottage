@@ -114,7 +114,7 @@ export default function Page() {
             variant="outline"
             className="mb-6 border-accent-400/40 text-accent-400 bg-accent-400/5 text-xs tracking-widest uppercase px-4 py-1.5"
           >
-            ✦ Near Kasauli, Himachal Pradesh
+            ✦ Dharampur, Himachal Pradesh
           </Badge>
           <h1 className="text-4xl sm:text-5xl md:text-7xl mb-6 text-accent-400 font-medium tracking-tight leading-tight">
             About The <br className="hidden sm:block" />
