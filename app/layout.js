@@ -2,6 +2,8 @@ import Header from "./_components/Header";
 import "@/app/_styles/globals.css";
 import { Josefin_Sans } from "next/font/google";
 import { ReservationProvider } from "./_components/contexts/ReservationContext";
+import { FramerProvider } from "./_components/contexts/FramerProvider";
+import { Toaster } from "sonner";
 
 const josefin = Josefin_Sans({
   subsets: ["latin"],
@@ -24,12 +26,15 @@ export default function RootLayout({ children }) {
       <body
         className={`${josefin.className} bg-primary-950 text-primary-100 min-h-screen flex flex-col antialiased relative`}
       >
-        <Header />
-        <div className="flex-1 px-4 py-8 sm:px-6 md:px-8 lg:py-12 grid">
-          <main className="max-w-7xl mx-auto w-full">
-            <ReservationProvider>{children}</ReservationProvider>
-          </main>
-        </div>
+        <FramerProvider>
+          <Header />
+          <div className="flex-1 px-4 py-8 sm:px-6 md:px-8 lg:py-12 grid">
+            <main className="max-w-7xl mx-auto w-full">
+              <ReservationProvider>{children}</ReservationProvider>
+            </main>
+          </div>
+          <Toaster position="top-center" richColors />
+        </FramerProvider>
       </body>
     </html>
   );
