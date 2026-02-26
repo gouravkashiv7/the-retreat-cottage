@@ -1,26 +1,36 @@
 import Image from "next/image";
 import Link from "next/link";
 import logo from "@/public/logo-blue.png";
+import { m } from "framer-motion";
 
 function Logo() {
   return (
-    <Link
-      href="/"
-      className="flex items-center gap-3 md:gap-4 z-10 max-w-[200px] md:max-w-none"
-    >
-      <Image
-        style={{
-          filter: "saturate(7)",
-        }}
-        src={logo}
-        height="60"
-        quality={100}
-        alt="The Retreat Cottage logo"
-        className="w-8 h-7 md:w-10 md:h-8 flex-shrink-0"
-      />
-      <span className="text-sm md:text-lg font-semibold text-primary-100 truncate">
-        The Retreat Cottage
-      </span>
+    <Link href="/" className="group relative z-10 flex items-center gap-4">
+      <m.div
+        whileHover={{ scale: 1.05, rotate: [0, -5, 5, 0] }}
+        transition={{ type: "spring", stiffness: 300, damping: 15 }}
+        className="relative"
+      >
+        <div className="absolute inset-0 bg-accent-400 blur-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-full" />
+        <Image
+          style={{
+            filter: "saturate(7)",
+          }}
+          src={logo}
+          height="60"
+          quality={100}
+          alt="The Retreat Cottage logo"
+          className="w-10 h-8 md:w-12 md:h-10 shrink-0 relative z-10"
+        />
+      </m.div>
+      <div className="flex flex-col">
+        <span className="text-base md:text-xl font-bold text-white tracking-tight leading-none group-hover:text-accent-200 transition-colors duration-300">
+          The Retreat
+        </span>
+        <span className="text-[10px] md:text-sm font-medium text-accent-400 tracking-[0.3em] uppercase leading-relaxed">
+          Cottage
+        </span>
+      </div>
     </Link>
   );
 }
