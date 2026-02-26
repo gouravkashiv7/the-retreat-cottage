@@ -1,4 +1,5 @@
 import Header from "./_components/Header";
+import Footer from "./_components/Footer";
 import "@/app/_styles/globals.css";
 import { Josefin_Sans } from "next/font/google";
 import { ReservationProvider } from "./_components/contexts/ReservationContext";
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
               <ReservationProvider>{children}</ReservationProvider>
             </main>
           </div>
+          <Footer />
           <Toaster position="top-center" richColors />
         </FramerProvider>
       </body>

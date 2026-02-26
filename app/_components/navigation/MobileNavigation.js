@@ -33,7 +33,7 @@ export default function MobileNavigation({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-100 bg-black/80 backdrop-blur-sm"
           />
 
           {/* Premium Full-Screen Drawer */}
@@ -42,9 +42,9 @@ export default function MobileNavigation({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: "100%", opacity: 0.5 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed top-0 right-0 bottom-0 z-[110] w-full max-w-sm bg-primary-950 border-l border-primary-800/50 shadow-2xl h-dvh overflow-y-auto"
+            className="fixed top-0 right-0 bottom-0 z-110 w-full max-w-sm bg-primary-950 border-l border-primary-800/50 shadow-2xl h-dvh overflow-y-auto"
           >
-            <div className="flex flex-col h-full pt-28 pb-12 px-8 relative z-[120]">
+            <div className="flex flex-col h-full pt-28 pb-12 px-8 relative z-120">
               <nav className="flex-1">
                 <ul className="flex flex-col gap-4">
                   {navLinks.map((link, idx) => (
