@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { createGuest, getGuest } from "./data-service";
+import { sendWelcomeEmail } from "./mail";
 
 const authConfig = {
   providers: [
@@ -17,8 +18,13 @@ const authConfig = {
       try {
         const existingUser = await getGuest(user.email);
 
-        if (!existingUser)
+        if (!existingUser) {
           await createGuest({ email: user.email, fullName: user.name });
+          // Send welcome email asynchronously (don't block sign-in)
+          sendWelcomeEmail(user.email, user.name).catch((err) =>
+            console.error("Welcome email failed:", err),
+          );
+        }
 
         return true;
       } catch {
