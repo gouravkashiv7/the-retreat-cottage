@@ -1,33 +1,28 @@
 import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import { authConfig } from "./auth.config";
 import { createGuest, getGuest } from "./data-service";
-import { sendWelcomeEmail } from "./mail";
 
-const authConfig = {
-  providers: [
-    GoogleProvider({
-      clientId: process.env.AUTH_GOOGLE_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET,
-    }),
-  ],
+const authOptions = {
+  ...authConfig,
   callbacks: {
-    authorized({ auth, request }) {
-      return !!auth?.user;
-    },
-    async signIn({ user }) {
+    ...authConfig.callbacks,
+    async signIn({ user, account, profile }) {
       try {
         const existingUser = await getGuest(user.email);
 
         if (!existingUser) {
           await createGuest({ email: user.email, fullName: user.name });
-          // Send welcome email asynchronously (don't block sign-in)
+
+          // Use dynamic import to prevent Node.js modules from being loaded in the Edge runtime (middleware)
+          const { sendWelcomeEmail } = await import("./mail");
           sendWelcomeEmail(user.email, user.name).catch((err) =>
             console.error("Welcome email failed:", err),
           );
         }
 
         return true;
-      } catch {
+      } catch (error) {
+        console.error("Sign in callback error:", error);
         return false;
       }
     },
@@ -37,9 +32,6 @@ const authConfig = {
       return session;
     },
   },
-  pages: {
-    signIn: "/login",
-  },
 };
 
 export const {
@@ -47,4 +39,4 @@ export const {
   signIn,
   signOut,
   handlers: { GET, POST },
-} = NextAuth(authConfig);
+} = NextAuth(authOptions);

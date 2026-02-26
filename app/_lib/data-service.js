@@ -1,4 +1,4 @@
-import supabase from "./supabase";
+import { supabase, supabaseAdmin } from "./supabase";
 import { notFound } from "next/navigation";
 
 // Utility function to add delay
@@ -95,13 +95,13 @@ export async function getRoomPrice(id) {
 
 // Guests are uniquely identified by their email address
 export async function getGuest(email) {
-  const { data, error } = await supabase
+  // Use admin client to ensure we can find the guest during auth process
+  const { data, error } = await supabaseAdmin
     .from("guests")
     .select("*")
     .eq("email", email)
     .single();
 
-  // No error here! We handle the possibility of no guest in the sign in callback
   return data;
 }
 
@@ -148,7 +148,7 @@ export async function getBookings(guestId) {
           image
         )
       )
-    `
+    `,
     )
     .eq("guestId", guestId)
     .order("startDate");
@@ -196,10 +196,22 @@ export async function getSettings() {
   return data;
 }
 
+export async function getCountry(name) {
+  try {
+    const res = await fetch(
+      `https://restcountries.com/v2/name/${name}?fields=name,flag`,
+    );
+    const country = await res.json();
+    return country[0];
+  } catch {
+    throw new Error("Could not fetch country data");
+  }
+}
+
 export async function getCountries() {
   try {
     const res = await fetch(
-      "https://restcountries.com/v2/all?fields=name,flag"
+      "https://restcountries.com/v2/all?fields=name,flag",
     );
     const countries = await res.json();
     return countries;
@@ -212,7 +224,8 @@ export async function getCountries() {
 // CREATE
 
 export async function createGuest(newGuest) {
-  const { data, error } = await supabase.from("guests").insert([newGuest]);
+  // Use admin client to bypass RLS for new guest registration
+  const { data, error } = await supabaseAdmin.from("guests").insert([newGuest]);
 
   if (error) {
     console.error(error);
