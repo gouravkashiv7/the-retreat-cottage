@@ -21,7 +21,8 @@ export default function Home() {
         style={{ y, opacity, scale }}
         className="fixed inset-0 z-0 h-full w-full pointer-events-none"
       >
-        <div className="absolute inset-0 bg-linear-to-b from-primary-950/60 via-primary-950/20 to-primary-950 z-10" />
+        <div className="absolute inset-0 bg-linear-to-b from-primary-950/80 via-primary-950/40 to-primary-950 z-10" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(12,17,29,0.4)_100%)] z-11" />
         <Image
           src={retreat}
           fill

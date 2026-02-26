@@ -1,12 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import DesktopNavigation from "./DesktopNavigation";
 import MobileNavigation from "./MobileNavigation";
 
-export default function Navigation({ session }) {
-  const [isOpen, setIsOpen] = useState(false);
-
+export default function Navigation({ session, isOpen, onToggle, onClose }) {
   return (
     <nav>
       {/* Desktop View */}
@@ -16,8 +13,8 @@ export default function Navigation({ session }) {
       <MobileNavigation
         session={session}
         isOpen={isOpen}
-        onToggle={() => setIsOpen(!isOpen)}
-        onClose={() => setIsOpen(false)}
+        onToggle={onToggle}
+        onClose={onClose}
       />
     </nav>
   );
