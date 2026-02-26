@@ -7,8 +7,8 @@ function Logo() {
   return (
     <Link href="/" className="group relative z-10 flex items-center gap-4">
       <m.div
-        whileHover={{ scale: 1.05, rotate: [0, -5, 5, 0] }}
-        transition={{ type: "spring", stiffness: 300, damping: 15 }}
+        whileHover={{ scale: 1.05, rotate: 5 }}
+        transition={{ type: "tween", duration: 0.2, ease: "easeInOut" }}
         className="relative"
       >
         <div className="absolute inset-0 bg-accent-400 blur-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-full" />

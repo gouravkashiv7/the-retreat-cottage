@@ -19,18 +19,18 @@ export const metadata = {
     default: "Welcome | The Retreat Cottage",
   },
   description:
-    "Explore The Retreat Cottage, a luxury homestay near Kasauli. Experience bespoke stays in our 5 exclusive accommodations: 3 elegant rooms & 2 charming wooden cabins. Your perfect mountain retreat awaits.",
+    "Explore The Retreat Cottage, a luxury homestay near Dharampur. Experience bespoke stays in our 5 exclusive accommodations: 3 elegant rooms & 2 charming wooden cabins. Your perfect mountain retreat awaits.",
   keywords: [
-    "Kasauli Homestay",
-    "Luxury Villa Kasauli",
+    "Dharampur Homestay",
+    "Luxury Villa Dharampur",
     "Mountain Retreat",
     "Boutique Homestay Himachal",
-    "Wooden Cabins Kasauli",
+    "Wooden Cabins Dharampur",
   ],
   openGraph: {
     title: "The Retreat Cottage | Luxury Mountain Homestay",
     description:
-      "Escape into the wild. Experience bespoke stays in our charming wooden cabins & elegant rooms near Kasauli.",
+      "Escape into the wild. Experience bespoke stays in our charming wooden cabins & elegant rooms near Dharampur.",
     url: "https://retreatcottage.in",
     siteName: "The Retreat Cottage",
     images: [
@@ -47,7 +47,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "The Retreat Cottage",
-    description: "Luxury mountain homestay near Kasauli.",
+    description: "Luxury mountain homestay near Dharampur.",
     images: ["/opengraph-image.jpg"],
   },
 };

@@ -1,7 +1,7 @@
 export const metadata = {
   title: "Terms of Service",
   description:
-    "Terms of Service for The Retreat Cottage — a luxury homestay near Kasauli, Himachal Pradesh.",
+    "Terms of Service for The Retreat Cottage — a luxury homestay near Dharampur, Himachal Pradesh.",
 };
 
 export default function TermsPage() {
@@ -21,8 +21,8 @@ export default function TermsPage() {
         <p>
           By accessing and using the website and services of The Retreat Cottage
           (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;), located near
-          Kasauli, Himachal Pradesh, India, you agree to be bound by these Terms
-          of Service. If you do not agree, please refrain from using our
+          Dharampur, Himachal Pradesh, India, you agree to be bound by these
+          Terms of Service. If you do not agree, please refrain from using our
           services.
         </p>
       </section>
@@ -45,7 +45,7 @@ export default function TermsPage() {
             accommodation.
           </li>
           <li>
-            Check-in time is 1:00 PM and check-out time is 11:00 AM unless
+            Check-in time is 2:00 PM and check-out time is 11:00 AM unless
             otherwise communicated.
           </li>
         </ul>

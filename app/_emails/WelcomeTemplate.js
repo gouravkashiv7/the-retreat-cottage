@@ -74,7 +74,7 @@ export function getWelcomeEmailTemplate(name) {
           <div class="content">
             <h2>Welcome to the Sanctuary, ${firstName}!</h2>
             <p>We're absolutely delighted to have you join our community of nature lovers and mountain explorers.</p>
-            <p>At <span class="highlight">The Retreat Cottage</span>, we believe in the harmony of nature and mountain luxury. Your journey to serenity near Kasauli starts right here.</p>
+            <p>At <span class="highlight">The Retreat Cottage</span>, we believe in the harmony of nature and mountain luxury. Your journey to serenity in Dharampur starts right here.</p>
             <p>You can now:</p>
             <ul>
               <li>Explore our exclusive wooden cabins and elegant rooms</li>
@@ -86,7 +86,7 @@ export function getWelcomeEmailTemplate(name) {
             <p>Warmly,<br>The Retreat Cottage Team</p>
           </div>
           <div class="footer">
-            <p>© ${new Date().getFullYear()} The Retreat Cottage. Near Kasauli, Himachal Pradesh, India.</p>
+            <p>© ${new Date().getFullYear()} The Retreat Cottage. Dharampur, Himachal Pradesh, India.</p>
           </div>
         </div>
       </body>
@@ -98,7 +98,7 @@ Welcome to The Retreat Cottage, ${firstName}!
 
 We're absolutely delighted to have you join our community of nature lovers and mountain explorers.
 
-At The Retreat Cottage, we believe in the harmony of nature and mountain luxury. Your journey to serenity near Kasauli starts right here.
+At The Retreat Cottage, we believe in the harmony of nature and mountain luxury. Your journey to serenity in Dharampur starts right here.
 
 Explore our retreats and book your stay at: https://retreatcottage.in/retreats
 

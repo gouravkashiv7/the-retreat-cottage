@@ -1,7 +1,7 @@
 export const metadata = {
   title: "Privacy Policy",
   description:
-    "Privacy Policy for The Retreat Cottage — a luxury homestay near Kasauli, Himachal Pradesh.",
+    "Privacy Policy for The Retreat Cottage — a luxury homestay near Dharampur, Himachal Pradesh.",
 };
 
 export default function PrivacyPage() {

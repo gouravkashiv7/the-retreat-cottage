@@ -60,7 +60,7 @@ export default function FooterClient() {
             </Link>
             <p className="text-primary-300 text-sm leading-relaxed mb-6 max-w-xs">
               A luxury homestay nestled in the Himalayan pine valleys near
-              Kasauli. Experience the harmony of nature and mountain luxury.
+              Dharampur. Experience the harmony of nature and mountain luxury.
             </p>
 
             {/* Social Icons */}
@@ -180,7 +180,7 @@ export default function FooterClient() {
                   className="text-primary-300 hover:text-accent-400 transition-colors duration-300 text-sm flex items-start gap-3 group"
                 >
                   <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-accent-500/70 group-hover:text-accent-400 transition-colors" />
-                  Near Kasauli, Himachal Pradesh, India
+                  Dharampur, Himachal Pradesh, India
                 </a>
               </li>
             </ul>
