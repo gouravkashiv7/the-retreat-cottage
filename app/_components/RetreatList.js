@@ -6,13 +6,13 @@ import FloorPackagesView from "@/app/_components/retreat_views/FloorPackagesView
 import GuestRetreatsView from "@/app/_components/retreat_views/GuestRetreatsView";
 import RetreatCombinationsView from "@/app/_components/retreat_views/RetreatCombinationsView";
 import { findExactCombinations } from "@/app/_components/utils/combo-logic";
-import { getAllBookedDates } from "../_lib/dates";
+import { getUnifiedBookedDates } from "../_lib/live-availability";
 import { auth } from "../_lib/auth";
 
 async function RetreatList({ filter }) {
   // unstable_noStore();
   const [rooms, cabins] = await Promise.all([getRooms(), getCabins()]);
-  const bookedDates = await getAllBookedDates();
+  const bookedDates = await getUnifiedBookedDates();
   const session = await auth();
   const { extraGuestPrice } = await getSettings();
 

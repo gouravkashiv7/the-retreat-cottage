@@ -2,6 +2,7 @@
 import { useReservation } from "../contexts/ReservationContext";
 import DatePicker from "./DatePicker";
 import { useDateValidation } from "./hooks/useDateValidation";
+import { useLiveAvailability } from "../../_hooks/useLiveAvailability";
 
 function PackageDateSelector({ settings, retreats, bookedDates, guestId }) {
   // Get all retreat IDs from retreat[] object
@@ -37,12 +38,20 @@ function PackageDateSelector({ settings, retreats, bookedDates, guestId }) {
     endDate: booking.endDate,
   }));
 
-  const { isAlreadyBooked, isDateDisabled, handleDateSelect } =
-    useDateValidation(formattedBookedDates, range, setRange, resetRange);
+  // Fetch live availability using the first retreat as representative for the package block
+  // (Usually packages block all associated units, so checking the first is a good proxy)
+  const firstRetreat = retreats?.[0];
+  const { liveBookedDates } = useLiveAvailability(
+    firstRetreat?.type === "retreat" ? firstRetreat?.id : undefined,
+    firstRetreat?.type === "cabin" ? firstRetreat?.id : undefined,
+  );
 
-  const displayRange = isAlreadyBooked(range, formattedBookedDates)
-    ? {}
-    : range;
+  const combinedBookedDates = [...formattedBookedDates, ...liveBookedDates];
+
+  const { isAlreadyBooked, isDateDisabled, handleDateSelect } =
+    useDateValidation(combinedBookedDates, range, setRange, resetRange);
+
+  const displayRange = isAlreadyBooked(range, combinedBookedDates) ? {} : range;
 
   // Function to check if a package is available for the selected dates
   const isPackageAvailable = (retreats) => {
@@ -55,7 +64,7 @@ function PackageDateSelector({ settings, retreats, bookedDates, guestId }) {
     return retreats.every((retreat) => {
       const retreatBookedDates = bookedDates.filter(
         (booking) =>
-          booking.retreatId === retreat.id && booking.type === retreat.type
+          booking.retreatId === retreat.id && booking.type === retreat.type,
       );
 
       const relevantBookings = retreatBookedDates.filter((booking) => {

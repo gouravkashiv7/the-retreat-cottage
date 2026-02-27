@@ -4,6 +4,7 @@ import DatePicker from "./DatePicker";
 import PriceDisplay from "./PriceDisplay";
 import GuestInfo from "./GuestInfo";
 import { useDateValidation } from "./hooks/useDateValidation";
+import { useLiveAvailability } from "../../_hooks/useLiveAvailability";
 
 function DateSelector({ settings, retreat, bookedDates, type, guestId }) {
   const { range, setRange, resetRange, numGuests } = useReservation();
@@ -30,12 +31,19 @@ function DateSelector({ settings, retreat, bookedDates, type, guestId }) {
     endDate: booking.endDate,
   }));
 
-  const { isAlreadyBooked, isDateDisabled, handleDateSelect } =
-    useDateValidation(formattedBookedDates, range, setRange, resetRange);
+  // Fetch live availability from external OTAs and internal DB combined
+  const { liveBookedDates, isLoadingLiveAvail } = useLiveAvailability(
+    type === "retreat" ? retreat?.id : undefined,
+    type === "cabin" ? retreat?.id : undefined,
+  );
 
-  const displayRange = isAlreadyBooked(range, formattedBookedDates)
-    ? {}
-    : range;
+  // Combine local filtered booked dates with live external dates
+  const combinedBookedDates = [...formattedBookedDates, ...liveBookedDates];
+
+  const { isAlreadyBooked, isDateDisabled, handleDateSelect } =
+    useDateValidation(combinedBookedDates, range, setRange, resetRange);
+
+  const displayRange = isAlreadyBooked(range, combinedBookedDates) ? {} : range;
 
   return (
     <div className="flex flex-col justify-between">

@@ -43,3 +43,5 @@ next-env.d.ts
 # documentation
 *.md
 !README.md
+
+/supabase

@@ -1,23 +1,85 @@
 "use client";
 
+import React, { useEffect } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useReservation } from "./contexts/ReservationContext";
 
 export default function DateRangeSelector() {
   const { range, setRange, resetRange } = useReservation();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Sync from URL to context ONLY on initial mount if context is empty
+  // We use a ref to prevent re-syncing from the URL immediately after the user clicks "Clear"
+  const isInitialMount = React.useRef(true);
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      const startParam = searchParams.get("startDate");
+      const endParam = searchParams.get("endDate");
+
+      if ((startParam || endParam) && !range?.from && !range?.to) {
+        setRange({
+          from: startParam ? new Date(startParam) : undefined,
+          to: endParam ? new Date(endParam) : undefined,
+        });
+      }
+      isInitialMount.current = false;
+    }
+  }, [searchParams, range?.from, range?.to, setRange]);
 
   const handleDateChange = (e) => {
     const { name, value } = e.target;
+    // When clearing an input, 'value' is empty string
+    const newDate = value ? new Date(value) : undefined;
 
+    // Create new params object to construct the next URL
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set(name, value);
+    } else {
+      params.delete(name);
+    }
+
+    // First, push to router so URL updates immediately (outside of setState render cycle)
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+
+    // Then update context state
     setRange((prev) => ({
       ...prev,
-      [name === "startDate" ? "from" : "to"]: value
-        ? new Date(value)
-        : undefined,
+      [name === "startDate" ? "from" : "to"]: newDate,
     }));
   };
 
   const clearDates = () => {
+    // 1. Reset local React context state FIRST
     resetRange();
+
+    // 2. Clear URL parameters
+    const params = new URLSearchParams(searchParams);
+    params.delete("startDate");
+    params.delete("endDate");
+
+    // 3. Push empty URL to router
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  // Helper to get today's date string specifically in IST (India Standard Time)
+  const getTodayIST = () => {
+    const now = new Date();
+    // Format to IST using Intl string, then parse out the YYYY-MM-DD
+    const formatter = new Intl.DateTimeFormat("en-IN", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const parts = formatter.formatToParts(now);
+    const day = parts.find((p) => p.type === "day").value;
+    const month = parts.find((p) => p.type === "month").value;
+    const year = parts.find((p) => p.type === "year").value;
+    return `${year}-${month}-${day}`;
   };
 
   // Safe date formatting function
@@ -43,10 +105,12 @@ export default function DateRangeSelector() {
     endDate: range?.to ? range?.to.toISOString().split("T")[0] : "",
   };
 
-  // Calculate min date for end date input
+  // Calculate min date for end date input based on IST
+  const todayIST = getTodayIST();
+
   const minEndDate = range?.from
     ? range?.from.toISOString().split("T")[0]
-    : new Date().toISOString().split("T")[0];
+    : todayIST;
 
   return (
     <div className="bg-primary-900 border border-primary-800 rounded-lg p-4 sm:p-6 mb-6">
@@ -65,7 +129,7 @@ export default function DateRangeSelector() {
             name="startDate"
             value={dateRange.startDate}
             onChange={handleDateChange}
-            min={new Date().toISOString().split("T")[0]}
+            min={todayIST}
             className="w-full p-3 border border-primary-700 bg-primary-800 rounded-lg text-primary-100 focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
           />
         </div>
