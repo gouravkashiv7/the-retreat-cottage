@@ -282,22 +282,34 @@ export async function updateGuest(formData) {
     address,
     country,
     countryFlag,
-    nationalId: country === "India" ? idNumber : null,
-    passport: country !== "India" ? idNumber : null,
+    nationalId: country === "India" ? idNumber || null : null,
+    passport: country !== "India" ? idNumber || null : null,
     idType,
-    phone,
+    phone: phone || null,
   };
 
   if (idFrontUrl !== undefined) updateData.idFrontUrl = idFrontUrl;
   if (idBackUrl !== undefined) updateData.idBackUrl = idBackUrl;
 
-  const { data, error } = await supabase
-    .from("guests")
-    .update(updateData)
-    .eq("id", session.user.guestId);
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("guests")
+      .update(updateData)
+      .eq("id", session.user.guestId);
 
-  if (error) throw new Error("Guest could not be updated");
-  revalidatePath("/account/profile");
+    if (error) {
+      console.error("Supabase error:", error.message, error.details);
+      return {
+        success: false,
+        message: `Update failed: ${error.message}`,
+      };
+    }
+
+    revalidatePath("/account/profile");
+    return { success: true, message: "Profile updated successfully!" };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
 }
 
 export async function signInAction() {
@@ -323,8 +335,8 @@ function validateIndianId(idType, idNumber) {
       return /^[A-Z]{5}\d{4}[A-Z]{1}$/.test(cleanedId);
 
     case "voter":
-      // Voter ID: EP followed by 7 digits (simplified)
-      return /^[A-Z]{2}\d{7}$/.test(cleanedId.toUpperCase());
+      // Voter ID: Alphanumeric, usually 10 characters (e.g. ABC1234567)
+      return /^[A-Z0-9]{3,20}$/.test(cleanedId.toUpperCase());
 
     case "driver":
       // Driver's License: varies by state, basic length check
@@ -360,11 +372,11 @@ function getIndianIdTypeName(idType) {
   return typeMap[idType] || "ID";
 }
 
-export async function extractIdDetailsAction(base64Image) {
+export async function extractIdDetailsAction(images) {
   const session = await auth();
   if (!session) throw new Error("You must be logged in!");
 
-  const edgeFunctionUrl = `${process.env.SUPABASE_URL}/functions/v1/extract-id`; // Adjust if function name differs
+  const edgeFunctionUrl = `${process.env.SUPABASE_URL}/functions/v1/extract-id`;
 
   try {
     const response = await fetch(edgeFunctionUrl, {
@@ -373,7 +385,7 @@ export async function extractIdDetailsAction(base64Image) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.SUPABASE_KEY}`,
       },
-      body: JSON.stringify({ image: base64Image }),
+      body: JSON.stringify({ images }),
     });
 
     if (!response.ok) {

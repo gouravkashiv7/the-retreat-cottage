@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { updateGuest, extractIdDetailsAction } from "../_lib/actions";
 import { useFormStatus } from "react-dom";
+import { useRouter } from "next/navigation";
 import {
   Sparkles,
   UploadCloud,
@@ -20,6 +21,8 @@ function UpdateProfileForm({ guest, children }) {
     countryFlag,
     passport,
     address,
+    idFrontUrl,
+    idBackUrl,
   } = guest;
 
   const [selectedCountry, setSelectedCountry] = useState(
@@ -27,15 +30,42 @@ function UpdateProfileForm({ guest, children }) {
   );
   const formRef = useRef();
 
+  const router = useRouter();
+  const [formKey, setFormKey] = useState(Date.now());
   // AI extraction states
   const [isExtracting, setIsExtracting] = useState(false);
   const [extractMsg, setExtractMsg] = useState({ type: "", text: "" });
+  const [submitMsg, setSubmitMsg] = useState({ type: "", text: "" });
   const [selectedIdType, setSelectedIdType] = useState(defaultIdType || "");
   const frontImageRef = useRef(null);
   const backImageRef = useRef(null);
 
-  const [frontPreview, setFrontPreview] = useState(null);
-  const [backPreview, setBackPreview] = useState(null);
+  const [frontPreview, setFrontPreview] = useState(idFrontUrl || null);
+  const [backPreview, setBackPreview] = useState(idBackUrl || null);
+  const lastExtractedRef = useRef({ front: null, back: null });
+
+  // Auto-trigger extract when both images are uploaded
+  useEffect(() => {
+    const frontFile = frontImageRef.current?.files?.[0];
+    const backFile = backImageRef.current?.files?.[0];
+
+    // Only auto-trigger if BOTH are selected and they are NEW files
+    if (frontFile && backFile && !isExtracting) {
+      // Check if we've already extracted this specific pair
+      if (
+        lastExtractedRef.current.front === frontFile.name &&
+        lastExtractedRef.current.back === backFile.name
+      ) {
+        return;
+      }
+
+      lastExtractedRef.current = {
+        front: frontFile.name,
+        back: backFile.name,
+      };
+      handleExtract();
+    }
+  }, [frontPreview, backPreview, isExtracting]);
 
   const handleCountryChange = (e) => {
     const country = e.target.value.split("%")[0];
@@ -78,11 +108,13 @@ function UpdateProfileForm({ guest, children }) {
   }, [selectedCountry, defaultIdType]);
 
   const handleExtract = async () => {
-    const file = frontImageRef.current?.files?.[0];
-    if (!file) {
+    const frontFile = frontImageRef.current?.files?.[0];
+    const backFile = backImageRef.current?.files?.[0];
+
+    if (!frontFile && !backFile) {
       setExtractMsg({
         type: "error",
-        text: "Please browse and select a Front ID image below first.",
+        text: "Please select at least one ID image above (Front or Back) first.",
       });
       return;
     }
@@ -90,95 +122,97 @@ function UpdateProfileForm({ guest, children }) {
     setIsExtracting(true);
     setExtractMsg({ type: "", text: "" });
 
+    const readFileAsBase64 = (file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    };
+
     try {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = async () => {
-        try {
-          const base64 = reader.result;
-          const data = await extractIdDetailsAction(base64);
+      const imagesToProcess = [];
+      if (frontFile) imagesToProcess.push(await readFileAsBase64(frontFile));
+      if (backFile) imagesToProcess.push(await readFileAsBase64(backFile));
 
-          if (data.error) throw new Error(data.error);
+      const data = await extractIdDetailsAction(imagesToProcess);
 
-          // Autofill form
-          if (data.idType) {
-            const typeSelect = formRef.current?.querySelector(
-              'select[name="idType"]',
-            );
-            if (typeSelect) {
-              let mappedType = "other";
-              const dt = data.idType.toLowerCase();
-              if (dt.includes("aadhar") || dt.includes("national"))
-                mappedType = "aadhar";
-              else if (dt.includes("driver") || dt.includes("driving"))
-                mappedType = "driver";
-              else if (dt.includes("pan")) mappedType = "pan";
-              else if (dt.includes("voter") || dt.includes("voting"))
-                mappedType = "voter";
-              else if (dt.includes("passport")) mappedType = "passport";
+      if (data.error) throw new Error(data.error);
 
-              typeSelect.value = mappedType;
-              if (mappedType) setSelectedIdType(mappedType);
-            }
-          }
-
-          const detectedIdNumber =
-            data.idNumber ||
-            data.nationalId ||
-            data.passport ||
-            data.passportNumber ||
-            data.id_number;
-          if (detectedIdNumber) {
-            const idInput = formRef.current?.querySelector(
-              'input[name="idNumber"]',
-            );
-            if (idInput) {
-              idInput.value = detectedIdNumber;
-              idInput.disabled = false;
-            }
-          }
-
-          if (data.fullName) {
-            const nameInput = formRef.current?.querySelector(
-              'input[name="fullName"]',
-            );
-            if (nameInput) nameInput.value = data.fullName;
-          }
-
-          if (data.address) {
-            const addressInput = formRef.current?.querySelector(
-              'textarea[name="address"]',
-            );
-            if (addressInput) addressInput.value = data.address;
-          }
-
-          setExtractMsg({
-            type: "success",
-            text: "ID details extracted successfully! Please verify them.",
-          });
-        } catch (error) {
-          setExtractMsg({
-            type: "error",
-            text: error.message || "Failed to read ID.",
-          });
-        } finally {
-          setIsExtracting(false);
+      // Autofill form
+      const detectedIdNumber =
+        data.idNumber ||
+        data.nationalId ||
+        data.passport ||
+        data.passportNumber ||
+        data.id_number;
+      if (detectedIdNumber) {
+        const idInput = formRef.current?.querySelector(
+          'input[name="idNumber"]',
+        );
+        if (idInput) {
+          idInput.value = detectedIdNumber;
+          idInput.disabled = false;
         }
-      };
-    } catch (err) {
-      setIsExtracting(false);
+      }
+
+      if (data.fullName) {
+        const nameInput = formRef.current?.querySelector(
+          'input[name="fullName"]',
+        );
+        if (nameInput) nameInput.value = data.fullName;
+      }
+
+      if (data.address) {
+        const addressInput = formRef.current?.querySelector(
+          'textarea[name="address"]',
+        );
+        if (addressInput) addressInput.value = data.address;
+      }
+
+      setExtractMsg({
+        type: "success",
+        text: "ID details extracted successfully! Please verify them.",
+      });
+    } catch (error) {
       setExtractMsg({
         type: "error",
-        text: "Error processing the image file.",
+        text: error.message || "Failed to read ID.",
+      });
+    } finally {
+      setIsExtracting(false);
+    }
+  };
+
+  const handleSubmit = async (formData) => {
+    setSubmitMsg({ type: "", text: "" });
+    try {
+      const result = await updateGuest(formData);
+      if (result?.success) {
+        setSubmitMsg({ type: "success", text: result.message });
+        setFormKey(Date.now());
+        router.refresh();
+      } else {
+        setSubmitMsg({
+          type: "error",
+          text: result?.message || "Something went wrong.",
+        });
+      }
+    } catch (error) {
+      setSubmitMsg({
+        type: "error",
+        text: error.message || "Failed to update profile.",
       });
     }
   };
 
   return (
     <form
+      key={formKey}
       ref={formRef}
       className="bg-primary-900/40 backdrop-blur-md border border-white/5 shadow-2xl rounded-2xl sm:rounded-3xl py-8 sm:py-10 px-5 sm:px-10 flex flex-col gap-6 sm:gap-8 overflow-hidden relative"
-      action={updateGuest}
+      action={handleSubmit}
     >
       <div className="absolute top-0 right-0 w-64 h-64 bg-accent-500/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
 
@@ -187,6 +221,9 @@ function UpdateProfileForm({ guest, children }) {
         <div className="space-y-2">
           <label className="block text-xs font-bold text-primary-400 uppercase tracking-wider">
             Full name (As on ID)
+            <span className="ml-2 inline-flex items-center gap-1 text-[10px] text-accent-400 bg-accent-500/10 px-2 py-0.5 rounded-full border border-accent-500/20">
+              <Sparkles className="w-2.5 h-2.5" /> Supports Autofill
+            </span>
           </label>
           <input
             readOnly
@@ -310,6 +347,9 @@ function UpdateProfileForm({ guest, children }) {
               {selectedCountry === "India"
                 ? "National ID Number"
                 : "Passport/ID Number"}
+              <span className="ml-2 inline-flex items-center gap-1 text-[10px] text-accent-400 bg-accent-500/10 px-2 py-0.5 rounded-full border border-accent-500/20">
+                <Sparkles className="w-2.5 h-2.5" /> Supports Autofill
+              </span>
             </label>
             <input
               name="idNumber"
@@ -451,8 +491,8 @@ function UpdateProfileForm({ guest, children }) {
         <div className="pt-6 mt-6 border-t border-primary-800/50">
           <h4 className="text-white font-bold mb-4 flex items-center gap-2">
             Address Information
-            <span className="text-[10px] bg-primary-800 text-primary-400 px-2 py-0.5 rounded-sm uppercase tracking-tighter">
-              Required for KYC
+            <span className="inline-flex items-center gap-1 text-[10px] text-accent-400 bg-accent-500/10 px-2 py-0.5 rounded-full border border-accent-500/20">
+              <Sparkles className="w-2.5 h-2.5" /> Supports Autofill
             </span>
           </h4>
           <div className="space-y-2 sm:col-span-2">
@@ -466,6 +506,19 @@ function UpdateProfileForm({ guest, children }) {
           </div>
         </div>
       </div>
+
+      {submitMsg.text && (
+        <div
+          className={`flex items-start gap-3 p-4 rounded-xl text-sm relative z-10 w-full animate-in fade-in slide-in-from-bottom-2 ${submitMsg.type === "error" ? "bg-red-500/10 text-red-400 border border-red-500/20" : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"}`}
+        >
+          {submitMsg.type === "error" ? (
+            <AlertCircle className="w-5 h-5 shrink-0" />
+          ) : (
+            <CheckCircle2 className="w-5 h-5 shrink-0" />
+          )}
+          <p>{submitMsg.text}</p>
+        </div>
+      )}
 
       <div className="flex justify-end pt-4 relative z-10 w-full">
         <Button />
