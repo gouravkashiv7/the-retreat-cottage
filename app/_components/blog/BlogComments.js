@@ -70,7 +70,7 @@ export default function BlogComments({ blogId, initialComments = [] }) {
               name="content"
               required
               placeholder="Tell us about a hidden gem or a must-visit spot we should include..."
-              className="w-full p-5 bg-primary-800/40 border border-white/10 rounded-2xl text-primary-100 placeholder:text-primary-600 focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 outline-none transition-all resize-none min-h-[140px] text-lg"
+              className="w-full p-5 bg-primary-800/40 border border-white/10 rounded-2xl text-primary-100 placeholder:text-primary-600 focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 outline-none transition-all resize-none min-h-35 text-lg"
             />
             <div className="flex justify-end">
               <button
@@ -89,7 +89,7 @@ export default function BlogComments({ blogId, initialComments = [] }) {
             <p className="text-primary-300 text-lg mb-6 leading-relaxed">
               Login to suggest a new place for our travel guide.
             </p>
-            <div className="inline-block p-1 rounded-2xl bg-gradient-to-r from-accent-500/20 via-yellow-500/20 to-accent-500/20">
+            <div className="inline-block p-1 rounded-2xl bg-linear-to-r from-accent-500/20 via-yellow-500/20 to-accent-500/20">
               <div className="bg-primary-900 rounded-xl px-8 py-3 border border-white/5 font-black text-accent-500">
                 Sign in to Suggest
               </div>

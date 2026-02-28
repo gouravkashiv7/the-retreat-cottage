@@ -66,7 +66,7 @@ export default function FooterClient() {
             </Link>
             <p className="text-primary-300 text-sm leading-relaxed mb-6 max-w-xs">
               A luxury homestay nestled in the Himalayan pine valleys near
-              Dharampur. Experience the harmony of nature and mountain luxury.
+              Kasauli. Experience the harmony of nature and mountain luxury.
             </p>
 
             {/* Social Icons */}

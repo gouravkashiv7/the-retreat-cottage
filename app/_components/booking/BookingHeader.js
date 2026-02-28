@@ -32,7 +32,7 @@ export default function BookingHeader({
         className="relative mb-6 sm:mb-8 group mx-2 sm:mx-0 scroll-mt-24"
       >
         {/* Golden glow effect - Reduced on mobile */}
-        <div className="absolute -inset-0.5 sm:-inset-1 bg-gradient-to-r from-gold-500 to-yellow-200 rounded-xl sm:rounded-2xl blur opacity-20 sm:opacity-30 group-hover:opacity-40 sm:group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
+        <div className="absolute -inset-0.5 sm:-inset-1 bg-linear-to-r from-gold-500 to-yellow-200 rounded-xl sm:rounded-2xl blur opacity-20 sm:opacity-30 group-hover:opacity-40 sm:group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
 
         <div className="relative p-6 sm:p-8 bg-primary-900/40 border border-gold-400/20 rounded-2xl shadow-3xl backdrop-blur-md">
           {/* Decorative elements */}
@@ -43,7 +43,7 @@ export default function BookingHeader({
 
           {/* Title Section */}
           <div className="text-center mb-6">
-            <h3 className="text-2xl sm:text-3xl font-black text-gold-300 mb-2 bg-gradient-to-r from-gold-400 via-yellow-200 to-gold-400 bg-clip-text text-transparent tracking-tight">
+            <h3 className="text-2xl sm:text-3xl font-black text-gold-300 mb-2 bg-linear-to-r from-gold-400 via-yellow-200 to-gold-400 bg-clip-text text-transparent tracking-tight">
               Select Your Dates
             </h3>
             <div className="flex items-center justify-center gap-2">

@@ -12,7 +12,7 @@ export default function Page() {
           {/* Decorative Corner */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent-500/5 rounded-bl-full -mr-16 -mt-16"></div>
 
-          <h1 className="text-4xl sm:text-5xl font-black text-gold-300 mb-8 tracking-tight bg-gradient-to-r from-gold-400 to-yellow-200 bg-clip-text text-transparent">
+          <h1 className="text-4xl sm:text-5xl font-black text-gold-300 mb-8 tracking-tight bg-linear-to-r from-gold-400 to-yellow-200 bg-clip-text text-transparent">
             Refund & Cancellation Policy
           </h1>
 

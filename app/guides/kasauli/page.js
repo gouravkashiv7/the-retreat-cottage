@@ -170,10 +170,10 @@ export default async function KasauliGuide() {
             >
               {/* Image Side - Grid Style */}
               <div className="w-full lg:w-1/2 relative group">
-                <div className="absolute -inset-4 bg-gradient-to-r from-accent-500/10 to-transparent rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition duration-700"></div>
+                <div className="absolute -inset-4 bg-linear-to-r from-accent-500/10 to-transparent rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition duration-700"></div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-3xl border border-white/10 shadow-2xl transform transition-transform duration-700 group-hover:-translate-y-2 group-hover:-rotate-1">
+                  <div className="relative aspect-3/4 overflow-hidden rounded-3xl border border-white/10 shadow-2xl transform transition-transform duration-700 group-hover:-translate-y-2 group-hover:-rotate-1">
                     <Image
                       src={loc.images[0]}
                       alt={`${loc.name} view 1`}
@@ -182,7 +182,7 @@ export default async function KasauliGuide() {
                       className="object-cover transition-transform duration-1000 group-hover:scale-110"
                     />
                   </div>
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-3xl border border-white/10 shadow-2xl mt-8 transform transition-transform duration-700 group-hover:translate-y-2 group-hover:rotate-1">
+                  <div className="relative aspect-3/4 overflow-hidden rounded-3xl border border-white/10 shadow-2xl mt-8 transform transition-transform duration-700 group-hover:translate-y-2 group-hover:rotate-1">
                     <Image
                       src={loc.images[1]}
                       alt={`${loc.name} view 2`}

@@ -194,10 +194,10 @@ export default async function SolanGuide() {
             >
               {/* Image Side */}
               <div className="w-full lg:w-1/2 relative group">
-                <div className="absolute -inset-4 bg-gradient-to-r from-accent-500/10 to-transparent rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition duration-700"></div>
+                <div className="absolute -inset-4 bg-linear-to-r from-accent-500/10 to-transparent rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition duration-700"></div>
 
                 {loc.images.length === 1 ? (
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
+                  <div className="relative aspect-4/3 overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
                     <Image
                       src={loc.images[0]}
                       alt={loc.name}
@@ -205,11 +205,11 @@ export default async function SolanGuide() {
                       sizes="(max-width: 768px) 100vw, 500px"
                       className="object-cover transition-transform duration-1000 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary-950/60 via-transparent to-transparent"></div>
+                    <div className="absolute inset-0 bg-linear-to-t from-primary-950/60 via-transparent to-transparent"></div>
                   </div>
                 ) : loc.images.length === 2 ? (
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="relative aspect-[3/4] overflow-hidden rounded-3xl border border-white/10 shadow-2xl transform transition-transform duration-700 group-hover:-translate-y-2 group-hover:-rotate-1">
+                    <div className="relative aspect-3/4 overflow-hidden rounded-3xl border border-white/10 shadow-2xl transform transition-transform duration-700 group-hover:-translate-y-2 group-hover:-rotate-1">
                       <Image
                         src={loc.images[0]}
                         alt={`${loc.name} view 1`}
@@ -218,7 +218,7 @@ export default async function SolanGuide() {
                         className="object-cover transition-transform duration-1000 group-hover:scale-110"
                       />
                     </div>
-                    <div className="relative aspect-[3/4] overflow-hidden rounded-3xl border border-white/10 shadow-2xl mt-8 transform transition-transform duration-700 group-hover:translate-y-2 group-hover:rotate-1">
+                    <div className="relative aspect-3/4 overflow-hidden rounded-3xl border border-white/10 shadow-2xl mt-8 transform transition-transform duration-700 group-hover:translate-y-2 group-hover:rotate-1">
                       <Image
                         src={loc.images[1]}
                         alt={`${loc.name} view 2`}
@@ -235,12 +235,12 @@ export default async function SolanGuide() {
                         key={i}
                         className={`relative overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 shadow-xl transition-all duration-700 group-hover:shadow-accent-500/10 ${
                           i === 0
-                            ? "aspect-[4/5]"
+                            ? "aspect-4/5"
                             : i === 1
-                              ? "aspect-[1/1] mt-4 sm:mt-6"
+                              ? "aspect-square mt-4 sm:mt-6"
                               : i === 2
-                                ? "aspect-[1/1] -mt-4 sm:-mt-6"
-                                : "aspect-[4/5]"
+                                ? "aspect-square -mt-4 sm:-mt-6"
+                                : "aspect-4/5"
                         }`}
                       >
                         <Image

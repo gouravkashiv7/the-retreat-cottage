@@ -26,14 +26,14 @@ export default function RetreatsList({ title, retreats, type }) {
               className="group flex flex-col sm:flex-row gap-4 sm:gap-6 p-4 border border-accent-400/5 bg-primary-800/20 hover:bg-primary-800/40 rounded-2xl transition-all duration-300 hover:border-accent-400/20 shadow-lg hover:shadow-accent-500/5"
             >
               {retreat.image && (
-                <div className="w-full sm:w-32 h-40 sm:h-32 relative flex-shrink-0 overflow-hidden rounded-xl">
+                <div className="w-full sm:w-32 h-40 sm:h-32 relative shrink-0 overflow-hidden rounded-xl">
                   <Image
                     src={retreat.image}
                     alt={retreat.name}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-950/60 to-transparent opacity-60"></div>
+                  <div className="absolute inset-0 bg-linear-to-t from-primary-950/60 to-transparent opacity-60"></div>
                 </div>
               )}
 
@@ -61,7 +61,7 @@ export default function RetreatsList({ title, retreats, type }) {
                 </div>
 
                 {/* Pricing Section */}
-                <div className="flex justify-between sm:flex-col sm:justify-center sm:items-end gap-2 sm:min-w-[140px] pl-0 sm:pl-6 border-l-0 sm:border-l border-accent-400/10">
+                <div className="flex justify-between sm:flex-col sm:justify-center sm:items-end gap-2 sm:min-w-35 pl-0 sm:pl-6 border-l-0 sm:border-l border-accent-400/10">
                   <div className="text-right flex flex-col items-end">
                     {discount > 0 ? (
                       <>

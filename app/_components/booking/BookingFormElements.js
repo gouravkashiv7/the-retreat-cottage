@@ -23,14 +23,14 @@ function SubmitButton({ canConfirmBooking, packageName }) {
       <div
         className={`absolute inset-0 transition-all duration-500 ${
           canConfirmBooking && !pending
-            ? "bg-gradient-to-r from-accent-600 via-accent-400 to-accent-600 bg-[length:200%_auto] group-hover:bg-[100%_auto]"
+            ? "bg-linear-to-r from-accent-600 via-accent-400 to-accent-600 bg-size-[200%_auto] group-hover:bg-size-[100%_auto]"
             : "bg-primary-800"
         }`}
       ></div>
 
       {/* Shine effect */}
       {canConfirmBooking && !pending && (
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity bg-white/20 skew-x-12 translate-x-full group-hover:translate-x-[-100%] duration-1000 ease-in-out pointer-events-none"></div>
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity bg-white/20 skew-x-12 translate-x-full group-hover:-translate-x-full duration-1000 ease-in-out pointer-events-none"></div>
       )}
 
       {/* Text layer */}
@@ -252,7 +252,7 @@ export default function BookingFormElements({
               value={specialRequirements}
               onChange={(e) => setSpecialRequirements(e.target.value)}
               placeholder="Any dietary preferences, early check-in requests, or special occasions?"
-              className="w-full p-3 border border-accent-400/20 rounded-xl bg-primary-800/40 text-primary-100 font-medium placeholder:text-primary-600 focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all min-h-[100px] resize-none"
+              className="w-full p-3 border border-accent-400/20 rounded-xl bg-primary-800/40 text-primary-100 font-medium placeholder:text-primary-600 focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all min-h-25 resize-none"
             />
           </div>
         )}

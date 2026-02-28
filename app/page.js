@@ -20,7 +20,7 @@ export default function Home() {
     name: "The Retreat Cottage",
     image: "https://retreatcottage.in/retreat.webp",
     description:
-      "A luxury homestay nestled in the Himalayan pine valleys near Dharampur. Experience bespoke stays in our charming wooden cabins & elegant rooms.",
+      "A luxury homestay nestled in the Himalayan pine valleys near Kasauli. Experience bespoke stays in our charming wooden cabins & elegant rooms.",
     address: {
       "@type": "PostalAddress",
       streetAddress: "The Retreat Cottage, Dharampur",
@@ -73,7 +73,7 @@ export default function Home() {
             className="mb-6 md:mb-10"
           >
             <span className="inline-block text-accent-400 font-bold tracking-[0.4em] uppercase text-[10px] sm:text-xs mb-4 bg-accent-500/10 px-6 py-2 rounded-full border border-accent-500/20 backdrop-blur-xl">
-              Luxury Homestay Near Dharampur
+              Luxury Homestay Near Kasauli
             </span>
           </m.div>
 
