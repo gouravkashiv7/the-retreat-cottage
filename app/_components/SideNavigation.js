@@ -3,6 +3,7 @@ import {
   HomeIcon,
   UserIcon,
 } from "@heroicons/react/24/solid";
+import { UtensilsCrossed, Receipt } from "lucide-react";
 import SignOutButton from "./SignOutButton";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,6 +23,16 @@ const navLinks = [
     name: "Guest profile",
     href: "/account/profile",
     icon: <UserIcon className="h-5 w-5 text-primary-600" />,
+  },
+  {
+    name: "Food Menu",
+    href: "/account/menu",
+    icon: <UtensilsCrossed className="h-5 w-5 text-primary-600" />,
+  },
+  {
+    name: "Receipts",
+    href: "/account/receipts",
+    icon: <Receipt className="h-5 w-5 text-primary-600" />,
   },
 ];
 

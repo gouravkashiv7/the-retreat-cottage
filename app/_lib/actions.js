@@ -402,3 +402,68 @@ export async function extractIdDetailsAction(images) {
     return { error: error.message || "Failed to extract details" };
   }
 }
+
+export async function placeOrderAction(bookingId, items) {
+  const session = await auth();
+  if (!session) throw new Error("You must be Logged In!!");
+
+  const guestId = session.user.guestId;
+
+  const totalPrice = items.reduce(
+    (acc, item) => acc + item.unitPrice * item.quantity,
+    0,
+  );
+
+  // Insert order header
+  const { data: order, error: orderError } = await supabaseAdmin
+    .from("orders")
+    .insert([
+      {
+        bookingId,
+        guestId,
+        totalPrice,
+        status: "unconfirmed",
+        isPaid: false,
+        orderTime: new Date().toISOString(),
+      },
+    ])
+    .select()
+    .single();
+
+  if (orderError) {
+    console.error("Order insert error:", orderError);
+    return {
+      success: false,
+      message: "Failed to place order. Please try again.",
+    };
+  }
+
+  // Insert order items
+  const orderItems = items.map((item) => ({
+    orderId: order.id,
+    menuItemId: item.menuItemId,
+    quantity: item.quantity,
+    unitPrice: item.unitPrice,
+  }));
+
+  const { error: itemsError } = await supabaseAdmin
+    .from("order_items")
+    .insert(orderItems);
+
+  if (itemsError) {
+    // Rollback the order
+    await supabaseAdmin.from("orders").delete().eq("id", order.id);
+    console.error("Order items insert error:", itemsError);
+    return {
+      success: false,
+      message: "Failed to save order items. Please try again.",
+    };
+  }
+
+  revalidatePath("/account/menu");
+  return {
+    success: true,
+    message: "Order placed successfully!",
+    orderId: order.id,
+  };
+}

@@ -250,6 +250,95 @@ export async function getCountries() {
   }
 }
 
+// MENU & ORDERS
+
+export async function getMenu() {
+  const { data, error } = await supabaseAdmin
+    .from("menu_items")
+    .select("*")
+    .order("category", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching menu:", error);
+    throw new Error("Menu could not be loaded");
+  }
+
+  return data;
+}
+
+export async function getCheckedInBooking(guestId) {
+  const { data, error } = await supabaseAdmin
+    .from("bookings")
+    .select("id, startDate, endDate, numNights, numGuests, totalPrice, status")
+    .eq("guestId", guestId)
+    .eq("status", "checked-in")
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Error fetching checked-in booking:", error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function getCheckedOutBookings(guestId) {
+  const { data, error } = await supabaseAdmin
+    .from("bookings")
+    .select(
+      `id, startDate, endDate, numNights, numGuests, totalPrice, status,
+       booking_cabins ( bookingCabinPrice, cabins ( name ) ),
+       booking_rooms  ( bookingRoomPrice,  rooms  ( name ) )`,
+    )
+    .eq("guestId", guestId)
+    .eq("status", "checked-out")
+    .order("endDate", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching checked-out bookings:", error);
+    throw new Error("Receipts could not be loaded");
+  }
+
+  return data || [];
+}
+
+export async function getOrdersForBooking(bookingId) {
+  const { data, error } = await supabaseAdmin
+    .from("orders")
+    .select(
+      `id, totalPrice, orderTime, status,
+       order_items ( quantity, unitPrice, menu_items ( name ) )`,
+    )
+    .eq("bookingId", bookingId)
+    .neq("status", "cancelled");
+
+  if (error) {
+    console.error("Error fetching orders:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
+export async function getGuestOrders(guestId) {
+  const { data, error } = await supabaseAdmin
+    .from("orders")
+    .select(
+      `id, totalPrice, orderTime, status, bookingId,
+       order_items ( quantity, unitPrice, menu_items ( name ) )`,
+    )
+    .eq("guestId", guestId)
+    .order("orderTime", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching guest orders:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
 /////////////
 // CREATE
 
