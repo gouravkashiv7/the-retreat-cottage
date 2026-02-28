@@ -234,13 +234,7 @@ export default async function SolanGuide() {
                       <div
                         key={i}
                         className={`relative overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 shadow-xl transition-all duration-700 group-hover:shadow-accent-500/10 ${
-                          i === 0
-                            ? "aspect-4/5"
-                            : i === 1
-                              ? "aspect-square mt-4 sm:mt-6"
-                              : i === 2
-                                ? "aspect-square -mt-4 sm:-mt-6"
-                                : "aspect-4/5"
+                          i === 1 ? "aspect-square mt-8 sm:mt-12" : "aspect-4/5"
                         }`}
                       >
                         <Image

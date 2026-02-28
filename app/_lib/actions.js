@@ -214,8 +214,10 @@ export async function updateGuest(formData) {
   const fullName = formData.get("fullName");
   const address = formData.get("address");
 
-  const isValidPhone = /^[\+]?[1-9][\d]{0,15}$/.test(phone.replace(/\D/g, ""));
-  if (!isValidPhone) throw new Error("Invalid phone number format");
+  const isValidPhone =
+    !phone ||
+    /^[\+]?[1-9][\d]{0,15}$/.test(phone.toString().replace(/\D/g, ""));
+  if (phone && !isValidPhone) throw new Error("Invalid phone number format");
   // Validate ID based on country and type
   if (country === "India") {
     if (!idType) throw new Error("Please select an ID type for India");
@@ -247,7 +249,11 @@ export async function updateGuest(formData) {
   // We need supabaseAdmin to bypass RLS for uploads if client lacks permissions,
   // but if we are already logged in we can use supabase client. We will use supabaseAdmin.
 
-  if (idFrontFile && idFrontFile.size > 0 && idFrontFile.name !== "undefined") {
+  if (
+    idFrontFile instanceof File &&
+    idFrontFile.size > 0 &&
+    idFrontFile.name !== "undefined"
+  ) {
     const fileName = `guest-${session.user.guestId}-front-${Date.now()}`;
     const { error: frontError } = await supabaseAdmin.storage
       .from("avatars")
@@ -257,7 +263,11 @@ export async function updateGuest(formData) {
     idFrontUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/avatars/${fileName}`;
   }
 
-  if (idBackFile && idBackFile.size > 0 && idBackFile.name !== "undefined") {
+  if (
+    idBackFile instanceof File &&
+    idBackFile.size > 0 &&
+    idBackFile.name !== "undefined"
+  ) {
     const fileName = `guest-${session.user.guestId}-back-${Date.now()}`;
     const { error: backError } = await supabaseAdmin.storage
       .from("avatars")

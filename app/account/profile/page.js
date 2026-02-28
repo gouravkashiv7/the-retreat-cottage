@@ -26,7 +26,7 @@ export default async function Page() {
         <SelectCountry
           name="country"
           id="country"
-          className="px-4 sm:px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm text-sm sm:text-base"
+          className="w-full p-4 border border-white/10 bg-primary-800/40 rounded-xl text-primary-100 font-medium focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all hover:border-white/20 [&>option]:bg-primary-900 [&>option]:text-white"
           defaultCountry={guest.country || "India"}
         />
       </UpdateProfileForm>

@@ -11,20 +11,6 @@ import {
 } from "lucide-react";
 
 function UpdateProfileForm({ guest, children }) {
-  const [selectedCountry, setSelectedCountry] = useState(
-    guest.country || "India",
-  );
-  const formRef = useRef();
-
-  // AI extraction states
-  const [isExtracting, setIsExtracting] = useState(false);
-  const [extractMsg, setExtractMsg] = useState({ type: "", text: "" });
-  const frontImageRef = useRef(null);
-  const backImageRef = useRef(null);
-
-  const [frontPreview, setFrontPreview] = useState(null);
-  const [backPreview, setBackPreview] = useState(null);
-
   const {
     fullName,
     email,
@@ -35,6 +21,21 @@ function UpdateProfileForm({ guest, children }) {
     passport,
     address,
   } = guest;
+
+  const [selectedCountry, setSelectedCountry] = useState(
+    guest.country || "India",
+  );
+  const formRef = useRef();
+
+  // AI extraction states
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [extractMsg, setExtractMsg] = useState({ type: "", text: "" });
+  const [selectedIdType, setSelectedIdType] = useState(defaultIdType || "");
+  const frontImageRef = useRef(null);
+  const backImageRef = useRef(null);
+
+  const [frontPreview, setFrontPreview] = useState(null);
+  const [backPreview, setBackPreview] = useState(null);
 
   const handleCountryChange = (e) => {
     const country = e.target.value.split("%")[0];
@@ -71,6 +72,7 @@ function UpdateProfileForm({ guest, children }) {
 
     if (selectedCountry !== "India") {
       idTypeSelect.value = "passport";
+      setSelectedIdType("passport");
       idNumberInput.disabled = false;
     }
   }, [selectedCountry, defaultIdType]);
@@ -116,15 +118,22 @@ function UpdateProfileForm({ guest, children }) {
               else if (dt.includes("passport")) mappedType = "passport";
 
               typeSelect.value = mappedType;
+              if (mappedType) setSelectedIdType(mappedType);
             }
           }
 
-          if (data.nationalId) {
+          const detectedIdNumber =
+            data.idNumber ||
+            data.nationalId ||
+            data.passport ||
+            data.passportNumber ||
+            data.id_number;
+          if (detectedIdNumber) {
             const idInput = formRef.current?.querySelector(
               'input[name="idNumber"]',
             );
             if (idInput) {
-              idInput.value = data.nationalId;
+              idInput.value = detectedIdNumber;
               idInput.disabled = false;
             }
           }
@@ -235,214 +244,225 @@ function UpdateProfileForm({ guest, children }) {
         </div>
       </div>
 
-      <div className="h-px w-full bg-linear-to-r from-transparent via-primary-700/50 to-transparent my-2" />
-
-      {/* ID Upload & Extraction Section */}
-      <div className="bg-primary-950/40 border border-primary-800/50 rounded-2xl p-6 sm:p-8 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-primary-800/50 pb-5">
+      <div className="bg-primary-950/40 border border-primary-800/50 rounded-2xl p-6 sm:p-8 space-y-6 relative z-10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-2">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-accent-500/10 flex items-center justify-center border border-accent-500/20">
               <ShieldCheck className="w-5 h-5 text-accent-400" />
             </div>
             <div>
-              <h3 className="text-white font-bold text-lg">Verify Identity</h3>
+              <h3 className="text-white font-bold text-lg">Identity Details</h3>
               <p className="text-primary-400 text-xs">
-                Upload your ID front and back
+                Select ID type to enable upload & verification
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={handleExtract}
-            disabled={isExtracting}
-            className={`flex items-center gap-2 bg-accent-500/20 hover:bg-accent-500/30 text-accent-400 border border-accent-500/30 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${isExtracting ? "opacity-50 cursor-not-allowed" : "hover:scale-105 hover:shadow-lg shadow-accent-500/10"}`}
-          >
-            {isExtracting ? (
-              <div className="w-4 h-4 border-2 border-accent-400 border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <Sparkles className="w-4 h-4" />
-            )}
-            {isExtracting ? "Scanning ID..." : "Smart Autofill from ID"}
-          </button>
         </div>
 
-        {extractMsg.text && (
-          <div
-            className={`flex items-start gap-3 p-4 rounded-xl text-sm ${extractMsg.type === "error" ? "bg-red-500/10 text-red-400 border border-red-500/20" : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"}`}
-          >
-            {extractMsg.type === "error" ? (
-              <AlertCircle className="w-5 h-5 shrink-0" />
-            ) : (
-              <CheckCircle2 className="w-5 h-5 shrink-0" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+          <div className="space-y-2">
+            <label
+              htmlFor="idType"
+              className="block text-xs font-bold text-primary-400 uppercase tracking-wider"
+            >
+              Step 1: Select ID Type
+            </label>
+            <select
+              name="idType"
+              defaultValue={defaultIdType || ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSelectedIdType(val);
+                const idNumberInput = e.target.form?.querySelector(
+                  'input[name="idNumber"]',
+                );
+                if (idNumberInput) {
+                  idNumberInput.disabled = !val;
+                  if (!val) idNumberInput.value = "";
+                }
+              }}
+              className="w-full p-4 border border-white/10 bg-primary-800/40 rounded-xl text-primary-100 font-medium focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all hover:border-white/20 [&>option]:bg-primary-900 [&>option]:text-white"
+            >
+              <option value="">Select ID Type</option>
+              {selectedCountry === "India" ? (
+                <>
+                  <option value="aadhar">Aadhar Card</option>
+                  <option value="driver">Driver License</option>
+                  <option value="pan">PAN Card</option>
+                  <option value="voter">Voter Card</option>
+                  <option value="passport">Passport</option>
+                  <option value="other">Other Government ID</option>
+                </>
+              ) : (
+                <>
+                  <option value="passport">Passport</option>
+                  <option value="other">Other Government ID</option>
+                </>
+              )}
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="idNumber"
+              className="block text-xs font-bold text-primary-400 uppercase tracking-wider"
+            >
+              {selectedCountry === "India"
+                ? "National ID Number"
+                : "Passport/ID Number"}
+            </label>
+            <input
+              name="idNumber"
+              disabled={!selectedIdType}
+              defaultValue={
+                selectedCountry === "India" ? nationalId : passport || ""
+              }
+              className="w-full p-4 border border-white/10 bg-primary-800/40 rounded-xl text-primary-100 font-medium focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all hover:border-white/20 disabled:cursor-not-allowed disabled:bg-primary-800/20 disabled:text-primary-500 disabled:border-transparent"
+              placeholder={
+                selectedIdType
+                  ? "Enter ID number..."
+                  : "Select type above first"
+              }
+            />
+          </div>
+        </div>
+
+        {selectedIdType && (
+          <div className="pt-6 mt-6 border-t border-primary-800/50 animate-in fade-in slide-in-from-top-4 duration-500">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div>
+                <h4 className="text-white font-bold">
+                  Step 2: Upload ID (For Smoother Check-in)
+                </h4>
+                <p className="text-primary-400 text-xs mt-1 italic">
+                  Upload your ID images to automatically fill name & address.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleExtract}
+                disabled={isExtracting}
+                className={`flex items-center gap-2 bg-accent-500/20 hover:bg-accent-500/30 text-accent-400 border border-accent-500/30 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${isExtracting ? "opacity-50 cursor-not-allowed" : "hover:scale-105 hover:shadow-lg shadow-accent-500/10"}`}
+              >
+                {isExtracting ? (
+                  <div className="w-4 h-4 border-2 border-accent-400 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Sparkles className="w-4 h-4" />
+                )}
+                {isExtracting ? "Scanning..." : "Smart Autofill"}
+              </button>
+            </div>
+
+            {extractMsg.text && (
+              <div
+                className={`flex items-start gap-3 p-4 mb-6 rounded-xl text-sm ${extractMsg.type === "error" ? "bg-red-500/10 text-red-400 border border-red-500/20" : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"}`}
+              >
+                {extractMsg.type === "error" ? (
+                  <AlertCircle className="w-5 h-5 shrink-0" />
+                ) : (
+                  <CheckCircle2 className="w-5 h-5 shrink-0" />
+                )}
+                <p>{extractMsg.text}</p>
+              </div>
             )}
-            <p>{extractMsg.text}</p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <label className="block text-xs font-bold text-primary-400 uppercase tracking-wider">
+                  Front Side
+                </label>
+                <div
+                  className={`relative border-2 border-dashed h-48 ${frontPreview ? "border-accent-500/50" : "border-primary-700/50 hover:border-primary-500"} rounded-xl transition-colors flex flex-col items-center justify-center text-center group overflow-hidden bg-primary-900/20`}
+                >
+                  <input
+                    type="file"
+                    name="idFrontImage"
+                    ref={frontImageRef}
+                    accept="image/*"
+                    onChange={(e) => handleImageChange(e, setFrontPreview)}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                  />
+                  {frontPreview ? (
+                    <div className="absolute inset-0 z-10">
+                      <img
+                        src={frontPreview}
+                        alt="Front ID Preview"
+                        className="w-full h-full object-cover opacity-60"
+                      />
+                      <div className="absolute inset-0 bg-primary-950/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-white font-bold text-sm">
+                          Change
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <UploadCloud className="w-8 h-8 text-primary-500 mb-2 group-hover:text-accent-400 transition-colors" />
+                      <p className="text-xs font-medium text-primary-300">
+                        Front Image
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="block text-xs font-bold text-primary-400 uppercase tracking-wider">
+                  Back Side
+                </label>
+                <div
+                  className={`relative border-2 border-dashed h-48 ${backPreview ? "border-accent-500/50" : "border-primary-700/50 hover:border-primary-500"} rounded-xl transition-colors flex flex-col items-center justify-center text-center group overflow-hidden bg-primary-900/20`}
+                >
+                  <input
+                    type="file"
+                    name="idBackImage"
+                    ref={backImageRef}
+                    accept="image/*"
+                    onChange={(e) => handleImageChange(e, setBackPreview)}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                  />
+                  {backPreview ? (
+                    <div className="absolute inset-0 z-10">
+                      <img
+                        src={backPreview}
+                        alt="Back ID Preview"
+                        className="w-full h-full object-cover opacity-60"
+                      />
+                      <div className="absolute inset-0 bg-primary-950/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-white font-bold text-sm">
+                          Change
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <UploadCloud className="w-8 h-8 text-primary-500 mb-2 group-hover:text-accent-400 transition-colors" />
+                      <p className="text-xs font-medium text-primary-300">
+                        Back Image
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Upload grids */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div className="space-y-3">
-            <label className="block text-xs font-bold text-primary-400 uppercase tracking-wider">
-              ID Front Image
-            </label>
-            <div
-              className={`relative border-2 border-dashed ${frontPreview ? "border-accent-500/50" : "border-primary-700/50 hover:border-primary-500"} rounded-xl p-8 transition-colors flex flex-col items-center justify-center text-center group overflow-hidden bg-primary-900/20`}
-            >
-              <input
-                type="file"
-                name="idFrontImage"
-                ref={frontImageRef}
-                accept="image/*"
-                onChange={(e) => handleImageChange(e, setFrontPreview)}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
-              />
-              {frontPreview ? (
-                <div className="absolute inset-0 z-10">
-                  <img
-                    src={frontPreview}
-                    alt="Front ID Preview"
-                    className="w-full h-full object-cover opacity-60"
-                  />
-                  <div className="absolute inset-0 bg-primary-950/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-white font-bold text-sm">
-                      Change Image
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <UploadCloud className="w-8 h-8 text-primary-500 mb-3 group-hover:text-accent-400 transition-colors" />
-                  <p className="text-sm font-medium text-primary-300">
-                    Browse or drag Front ID
-                  </p>
-                  <p className="text-xs text-primary-500 mt-1">
-                    JPG, PNG up to 5MB
-                  </p>
-                </>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <label className="block text-xs font-bold text-primary-400 uppercase tracking-wider">
-              ID Back Image
-            </label>
-            <div
-              className={`relative border-2 border-dashed ${backPreview ? "border-accent-500/50" : "border-primary-700/50 hover:border-primary-500"} rounded-xl p-8 transition-colors flex flex-col items-center justify-center text-center group overflow-hidden bg-primary-900/20`}
-            >
-              <input
-                type="file"
-                name="idBackImage"
-                ref={backImageRef}
-                accept="image/*"
-                onChange={(e) => handleImageChange(e, setBackPreview)}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
-              />
-              {backPreview ? (
-                <div className="absolute inset-0 z-10">
-                  <img
-                    src={backPreview}
-                    alt="Back ID Preview"
-                    className="w-full h-full object-cover opacity-60"
-                  />
-                  <div className="absolute inset-0 bg-primary-950/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-white font-bold text-sm">
-                      Change Image
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <UploadCloud className="w-8 h-8 text-primary-500 mb-3 group-hover:text-accent-400 transition-colors" />
-                  <p className="text-sm font-medium text-primary-300">
-                    Browse or drag Back ID
-                  </p>
-                  <p className="text-xs text-primary-500 mt-1">
-                    JPG, PNG up to 5MB
-                  </p>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Extracted/Manual Form fields */}
-        <div className="pt-4 border-t border-primary-800/50">
-          <h4 className="text-white font-bold text-lg mb-4">
-            Autofilled Details
+        <div className="pt-6 mt-6 border-t border-primary-800/50">
+          <h4 className="text-white font-bold mb-4 flex items-center gap-2">
+            Address Information
+            <span className="text-[10px] bg-primary-800 text-primary-400 px-2 py-0.5 rounded-sm uppercase tracking-tighter">
+              Required for KYC
+            </span>
           </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label
-                htmlFor="idType"
-                className="block text-xs font-bold text-primary-400 uppercase tracking-wider"
-              >
-                ID Type
-              </label>
-              <select
-                name="idType"
-                defaultValue={defaultIdType || ""}
-                onChange={(e) => {
-                  const idNumberInput = e.target.form?.querySelector(
-                    'input[name="idNumber"]',
-                  );
-                  if (idNumberInput) {
-                    idNumberInput.disabled = !e.target.value;
-                  }
-                }}
-                className="w-full p-4 border border-white/10 bg-primary-800/40 rounded-xl text-primary-100 font-medium focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all hover:border-white/20"
-              >
-                <option value="">Select ID Type</option>
-                {selectedCountry === "India" ? (
-                  <>
-                    <option value="aadhar">Aadhar Card</option>
-                    <option value="driver">Driver License</option>
-                    <option value="pan">PAN Card</option>
-                    <option value="voter">Voter Card</option>
-                    <option value="passport">Passport</option>
-                    <option value="other">Other Government ID</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="passport">Passport</option>
-                    <option value="other">Other Government ID</option>
-                  </>
-                )}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label
-                htmlFor="idNumber"
-                className="block text-xs font-bold text-primary-400 uppercase tracking-wider"
-              >
-                {selectedCountry === "India"
-                  ? "National ID Number"
-                  : "Passport/ID Number"}
-              </label>
-              <input
-                name="idNumber"
-                disabled={!defaultIdType}
-                defaultValue={
-                  selectedCountry === "India" ? nationalId : passport || ""
-                }
-                className="w-full p-4 border border-white/10 bg-primary-800/40 rounded-xl text-primary-100 font-medium focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all hover:border-white/20 disabled:cursor-not-allowed disabled:bg-primary-800/20 disabled:text-primary-500 disabled:border-transparent"
-                placeholder="Enter details..."
-              />
-            </div>
-
-            <div className="space-y-2 sm:col-span-2">
-              <label className="block text-xs font-bold text-primary-400 uppercase tracking-wider">
-                Address
-              </label>
-              <textarea
-                name="address"
-                defaultValue={address}
-                rows={2}
-                className="w-full p-4 border border-white/10 bg-primary-800/40 rounded-xl text-primary-100 font-medium focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all hover:border-white/20"
-                placeholder="Address extracted from ID or entered manually"
-              />
-            </div>
+          <div className="space-y-2 sm:col-span-2">
+            <textarea
+              name="address"
+              defaultValue={address}
+              rows={3}
+              className="w-full p-4 border border-white/10 bg-primary-800/40 rounded-xl text-primary-100 font-medium focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all hover:border-white/20"
+              placeholder="Full address as per your ID document..."
+            />
           </div>
         </div>
       </div>
