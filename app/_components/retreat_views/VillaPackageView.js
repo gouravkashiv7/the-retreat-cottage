@@ -9,20 +9,20 @@ function VillaPackageView({ rooms, cabins, bookedDates, guestId }) {
   const [isVillaLoading, setIsVillaLoading] = useState(false);
   const totalCapacity = [...rooms, ...cabins].reduce(
     (sum, retreat) => sum + retreat.maxCapacity,
-    0
+    0,
   );
 
   // Calculate total price for the complete villa package
   const totalRegularPrice = [...rooms, ...cabins].reduce(
     (sum, retreat) => sum + retreat.regularPrice,
-    0
+    0,
   );
 
   // Calculate total discount for the complete villa package
   const totalDiscount = [...rooms, ...cabins].reduce(
     (sum, retreat) =>
       sum + Math.round((retreat.regularPrice * (retreat.discount || 0)) / 100),
-    0
+    0,
   );
 
   const finalPrice = totalRegularPrice - totalDiscount;
@@ -44,17 +44,18 @@ function VillaPackageView({ rooms, cabins, bookedDates, guestId }) {
 
         // Filter bookedDates for this specific retreat
         const retreatBookedDates = (bookedDates || []).filter((booking) => {
-          // Check if booking has retreatId property and matches current retreat
-          const matchesRetreat = booking.retreatId === retreat.id;
-          return matchesRetreat;
+          const matchesId = Number(booking.retreatId) === Number(retreat.id);
+          const matchesType = booking.type === retreat.type;
+          return matchesId && matchesType;
         });
 
         // Create filtered bookedDates based on status and guest
         const filteredBookedDates = retreatBookedDates.filter((booking) => {
-          // Always include confirmed and checked-in bookings
+          // Always include confirmed, checked-in, and blocked bookings
           if (
             booking.status === "confirmed" ||
-            booking.status === "checked-in"
+            booking.status === "checked-in" ||
+            booking.status === "blocked"
           ) {
             return true;
           }
@@ -160,23 +161,31 @@ function VillaPackageView({ rooms, cabins, bookedDates, guestId }) {
               </span>
             </div>
 
-            {/* Booking Button */}
-            <Link
-              href="/booking/villa"
-              className={`bg-accent-500 hover:bg-accent-600 text-primary-800 py-3 px-6 rounded-lg font-semibold transition-all text-base sm:text-lg text-center whitespace-nowrap flex items-center justify-center gap-2 ${
-                isVillaLoading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              onClick={() => setIsVillaLoading(true)}
-            >
-              {isVillaLoading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-primary-800 border-t-transparent rounded-full animate-spin" />
-                  Loading...
-                </>
-              ) : (
-                "Book Complete Villa →"
-              )}
-            </Link>
+            {/* Booking Button or Not Available Message */}
+            {range?.from &&
+            range?.to &&
+            filteredRetreats.length < comboRetreats.length ? (
+              <div className="bg-red-500/20 border border-red-500 rounded-lg py-3 px-6 text-red-500 font-semibold text-center italic">
+                Sold Out for Selected Dates
+              </div>
+            ) : (
+              <Link
+                href="/booking/villa"
+                className={`bg-accent-500 hover:bg-accent-600 text-primary-800 py-3 px-6 rounded-lg font-semibold transition-all text-base sm:text-lg text-center whitespace-nowrap flex items-center justify-center gap-2 ${
+                  isVillaLoading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                onClick={() => setIsVillaLoading(true)}
+              >
+                {isVillaLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-primary-800 border-t-transparent rounded-full animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  "Book Complete Villa →"
+                )}
+              </Link>
+            )}
           </div>
         </div>
       </div>

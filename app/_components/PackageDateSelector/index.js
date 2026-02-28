@@ -2,51 +2,40 @@
 import { useReservation } from "../contexts/ReservationContext";
 import DatePicker from "./DatePicker";
 import { useDateValidation } from "./hooks/useDateValidation";
-import { useLiveAvailability } from "../../_hooks/useLiveAvailability";
 
 function PackageDateSelector({ settings, retreats, bookedDates, guestId }) {
+  const { range, setRange, resetRange } = useReservation();
   // Get all retreat IDs from retreat[] object
   const retreatIds = retreats?.map((retreatItem) => retreatItem.id) || [];
 
-  // Create packBookedDates where bookedDates[].retreatId includes retreat IDs
-  const packBookedDates = bookedDates.filter((booking) => {
-    const includesRetreatId = retreatIds.includes(booking.retreatId);
-    return includesRetreatId;
-  });
-
-  const { range, setRange, resetRange } = useReservation();
-
   // Filter bookedDates based on status and guest
-  const filteredBookedDates = packBookedDates.filter((booking) => {
-    // Always include confirmed and checked-in bookings
-    if (booking.status === "confirmed" || booking.status === "checked-in") {
-      return true;
-    }
+  const combinedBookedDates = bookedDates
+    .filter((booking) => {
+      // 1. Ensure this booking actually belongs to one of our package units
+      const isPackageUnit = retreatIds.includes(booking.retreatId);
+      if (!isPackageUnit) return false;
 
-    // For unconfirmed bookings, only include if it's the same guest
-    if (booking.status === "unconfirmed" && guestId) {
-      return booking.guestId === guestId;
-    }
+      // 2. Include confirmed, checked-in, or admin blocked bookings
+      // (Live external OTA bookings are also tagged with 'confirmed')
+      if (
+        booking.status === "confirmed" ||
+        booking.status === "checked-in" ||
+        booking.status === "blocked"
+      ) {
+        return true;
+      }
 
-    // Exclude all other cases
-    return false;
-  });
+      // 3. For unconfirmed bookings, only include if it's the same guest
+      if (booking.status === "unconfirmed" && guestId) {
+        return booking.guestId === guestId;
+      }
 
-  // Create new bookedDates object with only startDate and endDate
-  const formattedBookedDates = filteredBookedDates.map((booking) => ({
-    startDate: booking.startDate,
-    endDate: booking.endDate,
-  }));
-
-  // Fetch live availability using the first retreat as representative for the package block
-  // (Usually packages block all associated units, so checking the first is a good proxy)
-  const firstRetreat = retreats?.[0];
-  const { liveBookedDates } = useLiveAvailability(
-    firstRetreat?.type === "retreat" ? firstRetreat?.id : undefined,
-    firstRetreat?.type === "cabin" ? firstRetreat?.id : undefined,
-  );
-
-  const combinedBookedDates = [...formattedBookedDates, ...liveBookedDates];
+      return false;
+    })
+    .map((booking) => ({
+      startDate: booking.startDate,
+      endDate: booking.endDate,
+    }));
 
   const { isAlreadyBooked, isDateDisabled, handleDateSelect } =
     useDateValidation(combinedBookedDates, range, setRange, resetRange);
@@ -115,27 +104,26 @@ function PackageDateSelector({ settings, retreats, bookedDates, guestId }) {
         maxBookingLength={settings.maxBookingLength}
       />
 
-      {/* Package Availability Status */}
-      {retreats && range?.from && range?.to && (
-        <div
-          className={`mt-3 p-3 rounded-lg text-sm font-medium ${
-            packageAvailable
-              ? "bg-green-50 border border-green-200 text-green-700"
-              : "bg-red-50 border border-red-200 text-red-700"
-          }`}
-        >
-          {packageAvailable
-            ? "✓ Package is available for selected dates"
-            : "✗ Package is not available for selected dates"}
-        </div>
-      )}
-
       {/* Optional: Show clear dates button */}
       {range?.from || range?.to ? (
         <button
-          className="mt-4 border border-primary-800 py-2 px-4 text-sm font-semibold rounded-lg hover:bg-accent-600 transition-colors w-full"
+          className="mt-4 border border-gold-500/30 py-2.5 px-4 text-sm font-semibold rounded-xl text-gold-400 hover:bg-gold-500/10 transition-colors w-full flex items-center justify-center gap-2"
           onClick={resetRange}
         >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
           Clear Dates
         </button>
       ) : null}

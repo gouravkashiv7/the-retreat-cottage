@@ -16,17 +16,19 @@ function GuestRetreatsView({ allRetreats, guestCount, bookedDates, guestId }) {
 
         // Filter bookedDates for this specific retreat
         const retreatBookedDates = (bookedDates || []).filter((booking) => {
-          // Check if booking has retreatId property and matches current retreat
-          const matchesRetreat = booking.retreatId === retreat.id;
-          return matchesRetreat;
+          // Check both retreatId AND type to avoid conflicts between rooms and cabins with same IDs
+          const matchesId = Number(booking.retreatId) === Number(retreat.id);
+          const matchesType = booking.type === retreat.type;
+          return matchesId && matchesType;
         });
 
         // Create filtered bookedDates based on status and guest
         const filteredBookedDates = retreatBookedDates.filter((booking) => {
-          // Always include confirmed and checked-in bookings
+          // Always include confirmed, checked-in, and blocked bookings
           if (
             booking.status === "confirmed" ||
-            booking.status === "checked-in"
+            booking.status === "checked-in" ||
+            booking.status === "blocked"
           ) {
             return true;
           }
@@ -48,6 +50,21 @@ function GuestRetreatsView({ allRetreats, guestCount, bookedDates, guestId }) {
 
         // Check if range overlaps with any booked dates
         const isOverlapping = isAlreadyBooked(range, formattedBookedDates);
+
+        // LOGGING FOR DEBUGGING
+        if (formattedBookedDates.length > 0) {
+          console.log(
+            `[GuestRetreatsView] ${retreat.type} #${retreat.id} "${retreat.name}":`,
+            {
+              range: {
+                from: range.from.toISOString(),
+                to: range.to.toISOString(),
+              },
+              isOverlapping,
+              bookedDates: formattedBookedDates,
+            },
+          );
+        }
 
         // Only show the item if there's NO overlap
         return !isOverlapping;
@@ -81,7 +98,7 @@ function GuestRetreatsView({ allRetreats, guestCount, bookedDates, guestId }) {
   }
 
   const smallRetreats = filteredRetreats.filter(
-    (retreat) => retreat.maxCapacity >= guestCount
+    (retreat) => retreat.maxCapacity >= guestCount,
   );
 
   return (

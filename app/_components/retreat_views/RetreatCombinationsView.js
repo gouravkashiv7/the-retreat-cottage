@@ -19,14 +19,14 @@ function RetreatCombinationsView({
     combinations?.map((combination, index) => {
       const totalPrice = combination.retreats.reduce((sum, retreat) => {
         const discount = Math.round(
-          (retreat.regularPrice * (retreat.discount || 0)) / 100
+          (retreat.regularPrice * (retreat.discount || 0)) / 100,
         );
         return sum + (retreat.regularPrice - discount);
       }, 0);
 
       const totalOriginalPrice = combination.retreats.reduce(
         (sum, retreat) => sum + retreat.regularPrice,
-        0
+        0,
       );
 
       const hasDiscount = totalPrice < totalOriginalPrice;
@@ -54,9 +54,10 @@ function RetreatCombinationsView({
         const allRetreatsAvailable = combination.retreats?.every((retreat) => {
           // Filter bookedDates for this specific retreat
           const retreatBookedDates = (bookedDates || []).filter((booking) => {
-            // Check if booking has retreatId property and matches current retreat
-            const matchesRetreat = booking.retreatId === retreat.id;
-            return matchesRetreat;
+            // Check both retreatId AND type to avoid conflicts between rooms and cabins with same IDs
+            const matchesId = Number(booking.retreatId) === Number(retreat.id);
+            const matchesType = booking.type === retreat.type;
+            return matchesId && matchesType;
           });
 
           // Create filtered bookedDates based on status and guest
@@ -87,6 +88,21 @@ function RetreatCombinationsView({
           // Check if range overlaps with any booked dates for this retreat
           const isOverlapping = isAlreadyBooked(range, formattedBookedDates);
 
+          // LOGGING FOR DEBUGGING
+          if (formattedBookedDates.length > 0) {
+            console.log(
+              `[CombinationsView] ${retreat.type} #${retreat.id} "${retreat.name}":`,
+              {
+                range: {
+                  from: range.from.toISOString(),
+                  to: range.to.toISOString(),
+                },
+                isOverlapping,
+                bookedDates: formattedBookedDates,
+              },
+            );
+          }
+
           // This retreat is available if there's NO overlap
           return !isOverlapping;
         });
@@ -98,7 +114,7 @@ function RetreatCombinationsView({
         // Show combination if there's an error in filtering
         return true;
       }
-    }
+    },
   );
 
   function isAlreadyBooked(range, bookedDates) {

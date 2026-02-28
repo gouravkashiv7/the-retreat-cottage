@@ -8,10 +8,15 @@ import supabase from "./supabase";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { sendBookingEmail } from "./email";
+
 export async function createPackageBooking(formData) {
   const session = await auth();
   if (!session) throw new Error("User must be logged in");
   const guestId = session.user.guestId;
+  const guestEmail = session.user.email;
+  const guestName = session.user.name;
+
   try {
     // Extract form data
     const startDate = formData.get("startDate");
@@ -21,12 +26,24 @@ export async function createPackageBooking(formData) {
     const totalPrice = parseFloat(formData.get("totalPrice"));
     const accommodationPrice = parseFloat(formData.get("accommodationPrice"));
     const observations = sanitizeObservations(
-      formData.get("observations" || "")
+      formData.get("observations" || ""),
     );
     const retreatIdsString = formData.getAll("retreatIds");
     const packageName = formData.get("packageName");
     const retreatIds = JSON.parse(retreatIdsString);
     const { extraGuestPrice } = await getSettings();
+
+    // Check if phone is provided in formData (from a new input field)
+    const phone = formData.get("phone");
+    if (phone) {
+      const { error: guestError } = await supabase
+        .from("guests")
+        .update({ phone })
+        .eq("id", guestId);
+
+      if (guestError)
+        console.error("Could not update guest phone:", guestError);
+    }
 
     await validateDateAvailability(retreatIds, startDate, endDate);
     const newBooking = {
@@ -54,6 +71,18 @@ export async function createPackageBooking(formData) {
     }
     await processRetreats(data.id, retreatIds, numGuests, extraGuestPrice);
 
+    // Send the booking email
+    await sendBookingEmail({
+      guestName,
+      guestEmail,
+      packageName,
+      startDate,
+      endDate,
+      totalPrice,
+      numNights,
+      numGuests,
+    });
+
     if (packageName === "First Floor") {
       revalidatePath(`/booking/first`);
     }
@@ -74,7 +103,7 @@ async function processRetreats(
   bookingId,
   retreatIds,
   numGuests,
-  extraGuestPrice
+  extraGuestPrice,
 ) {
   try {
     // Seperating cabins and rooms
@@ -139,7 +168,7 @@ async function processCabins(cabinIds, bookingId, numGuests, extraGuestPrice) {
         cabinId: cabin2,
         bookingCabinPrice: cabin2Price,
         isFull: cabin2Full,
-      }
+      },
     );
   }
 
@@ -154,9 +183,8 @@ async function processRooms(roomIds, bookingId) {
 
   const roomsData = await Promise.all(
     roomIds.map(async (roomId) => {
-      const { regularPrice, discount: discountPercentage } = await getRoomPrice(
-        roomId
-      );
+      const { regularPrice, discount: discountPercentage } =
+        await getRoomPrice(roomId);
       const roomPrice =
         regularPrice - Math.round(regularPrice * (discountPercentage / 100));
 
@@ -165,7 +193,7 @@ async function processRooms(roomIds, bookingId) {
         roomId: roomId,
         bookingRoomPrice: roomPrice,
       };
-    })
+    }),
   );
 
   const { error } = await supabase.from("booking_rooms").insert(roomsData);
@@ -189,7 +217,7 @@ async function validateDateAvailability(retreatIds, startDate, endDate) {
       throw new Error(
         `${
           type.charAt(0).toUpperCase() + type.slice(1)
-        } ${retreatNum} is already booked for the selected dates. Please choose different dates.`
+        } ${retreatNum} is already booked for the selected dates. Please choose different dates.`,
       );
     }
   }

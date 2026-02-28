@@ -11,19 +11,19 @@ function FloorPackagesView({ rooms, bookedDates, cabins, guestId }) {
   const createPackageDetails = (retreats) => {
     const totalCapacity = retreats.reduce(
       (sum, retreat) => sum + retreat.maxCapacity,
-      0
+      0,
     );
 
     const totalPrice = retreats.reduce((sum, retreat) => {
       const discount = Math.round(
-        (retreat.regularPrice * (retreat.discount || 0)) / 100
+        (retreat.regularPrice * (retreat.discount || 0)) / 100,
       );
       return sum + (retreat.regularPrice - discount);
     }, 0);
 
     const totalOriginalPrice = retreats.reduce(
       (sum, retreat) => sum + retreat.regularPrice,
-      0
+      0,
     );
 
     return {
@@ -44,11 +44,16 @@ function FloorPackagesView({ rooms, bookedDates, cabins, guestId }) {
     return packageRetreats.every((retreat) => {
       const retreatBookedDates = bookedDates.filter(
         (booking) =>
-          booking.retreatId === retreat.id && booking.type === retreat.type
+          Number(booking.retreatId) === Number(retreat.id) &&
+          booking.type === retreat.type,
       );
 
       const relevantBookings = retreatBookedDates.filter((booking) => {
-        if (booking.status === "confirmed" || booking.status === "checked-in") {
+        if (
+          booking.status === "confirmed" ||
+          booking.status === "checked-in" ||
+          booking.status === "blocked"
+        ) {
           return true;
         }
         if (booking.status === "unconfirmed" && guestId) {
@@ -83,7 +88,7 @@ function FloorPackagesView({ rooms, bookedDates, cabins, guestId }) {
       hasDiscount: groundFloorDetails.hasDiscount,
       bookingUrl: "/booking/ground",
       isAvailable: isPackageAvailable(
-        groundFloorRooms.map((room) => ({ ...room, type: "room" }))
+        groundFloorRooms.map((room) => ({ ...room, type: "room" })),
       ),
     });
   }
@@ -103,7 +108,7 @@ function FloorPackagesView({ rooms, bookedDates, cabins, guestId }) {
       hasDiscount: firstFloorDetails.hasDiscount,
       bookingUrl: "/booking/first",
       isAvailable: isPackageAvailable(
-        firstFloorCabins.map((cabin) => ({ ...cabin, type: "cabin" }))
+        firstFloorCabins.map((cabin) => ({ ...cabin, type: "cabin" })),
       ),
     });
   }

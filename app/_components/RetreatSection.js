@@ -25,17 +25,18 @@ function RetreatSection({
 
         // Filter bookedDates for this specific retreat
         const retreatBookedDates = (bookedDates || []).filter((booking) => {
-          // Check if booking has retreatId property and matches current retreat
-          const matchesRetreat = booking.retreatId === retreat.id;
-          return matchesRetreat;
+          const matchesId = Number(booking.retreatId) === Number(retreat.id);
+          const matchesType = booking.type === type;
+          return matchesId && matchesType;
         });
 
         // Create filtered bookedDates based on status and guest
         const filteredBookedDates = retreatBookedDates.filter((booking) => {
-          // Always include confirmed and checked-in bookings
+          // Always include confirmed, checked-in, and BLOCKED (admin blocks)
           if (
             booking.status === "confirmed" ||
-            booking.status === "checked-in"
+            booking.status === "checked-in" ||
+            booking.status === "blocked"
           ) {
             return true;
           }
@@ -49,10 +50,10 @@ function RetreatSection({
           return false;
         });
 
-        // Format for date validation
         const formattedBookedDates = filteredBookedDates.map((booking) => ({
           startDate: booking.startDate,
           endDate: booking.endDate,
+          status: booking.status,
         }));
 
         // Check if range overlaps with any booked dates
@@ -69,7 +70,7 @@ function RetreatSection({
   function isAlreadyBooked(range, bookedDates) {
     if (!range?.from || !range?.to) return false;
 
-    return bookedDates.some((booking, index) => {
+    return bookedDates.some((booking) => {
       const bookingStart = new Date(booking.startDate);
       const bookingEnd = new Date(booking.endDate);
       const rangeFrom = new Date(range.from);

@@ -1,4 +1,4 @@
-import supabase from "./supabase";
+import { supabaseAdmin as supabase } from "./supabase";
 
 export async function getBookedDatesById(id, type) {
   let today = new Date();
@@ -21,10 +21,10 @@ export async function getBookedDatesById(id, type) {
         booking_rooms!inner (
           roomId
         )
-      `
+      `,
       )
       .eq("booking_rooms.roomId", id)
-      .or(`startDate.gte.${today},status.eq.checked-in`);
+      .or(`endDate.gte.${today},status.eq.checked-in`);
   } else if (type === "cabin") {
     // Query bookings that have this cabin in booking_cabins
     query = supabase
@@ -39,10 +39,10 @@ export async function getBookedDatesById(id, type) {
         booking_cabins!inner (
           cabinId
         )
-      `
+      `,
       )
       .eq("booking_cabins.cabinId", id)
-      .or(`startDate.gte.${today},status.eq.checked-in`);
+      .or(`endDate.gte.${today},status.eq.checked-in`);
   } else {
     throw new Error("Invalid type. Must be 'room' or 'cabin'");
   }
@@ -95,9 +95,9 @@ export async function getAllBookedDates() {
         booking_cabins (
           cabinId
         )
-      `
+      `,
       )
-      .gte("startDate", todayISO)
+      .gte("endDate", todayISO)
       .neq("status", "checked-out"); // Exclude only checked-out bookings
 
     if (error) {

@@ -105,6 +105,36 @@ export async function getGuest(email) {
   return data;
 }
 
+export async function getAdminUser(email = "admin@retreatcottage.in") {
+  // Use the Auth Admin API to fetch users from the auth schema
+  const {
+    data: { users },
+    error,
+  } = await supabaseAdmin.auth.admin.listUsers();
+
+  if (error) {
+    console.error("Error fetching auth users:", error.message || error);
+    return null;
+  }
+
+  const admin = users?.find((u) => u.email === email);
+
+  if (!admin) {
+    console.warn(`No user found in auth schema with email: ${email}`);
+    return null;
+  }
+
+  // Profile details are split into two metadata fields in this project:
+  // Name & Image: Stored in user_metadata
+  // Role: Stored in app_metadata
+  return {
+    fullName: admin.user_metadata?.fullName || "Gourav Kashiv",
+    email: admin.email,
+    image: admin.user_metadata?.avatar || null,
+    role: admin.app_metadata?.role || "Owner & Admin",
+  };
+}
+
 export async function getBooking(id) {
   if (!id) throw new Error("Invalid Id!");
   const { data, error } = await supabase

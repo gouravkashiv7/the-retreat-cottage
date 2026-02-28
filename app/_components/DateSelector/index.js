@@ -4,41 +4,35 @@ import DatePicker from "./DatePicker";
 import PriceDisplay from "./PriceDisplay";
 import GuestInfo from "./GuestInfo";
 import { useDateValidation } from "./hooks/useDateValidation";
-import { useLiveAvailability } from "../../_hooks/useLiveAvailability";
 
 function DateSelector({ settings, retreat, bookedDates, type, guestId }) {
   const { range, setRange, resetRange, numGuests } = useReservation();
 
-  // Filter bookedDates based on status and guest
-  const filteredBookedDates = bookedDates.filter((booking) => {
-    // Always include confirmed and checked-in bookings
-    if (booking.status === "confirmed" || booking.status === "checked-in") {
-      return true;
-    }
+  // The 'bookedDates' prop already contains unified data from getUnifiedBookedDatesById
+  // (both internal Supabase and external OTA bookings fetched via Edge function proxy)
+  const combinedBookedDates = bookedDates
+    .filter((booking) => {
+      // Always include confirmed, checked-in, or blocked bookings
+      // (OTA bookings are tagged as 'confirmed')
+      if (
+        booking.status === "confirmed" ||
+        booking.status === "checked-in" ||
+        booking.status === "blocked"
+      ) {
+        return true;
+      }
 
-    // For unconfirmed bookings, only include if it's the same guest
-    if (booking.status === "unconfirmed" && guestId) {
-      return booking.guestId === guestId;
-    }
+      // For unconfirmed bookings, only include if it's the same guest
+      if (booking.status === "unconfirmed" && guestId) {
+        return booking.guestId === guestId;
+      }
 
-    // Exclude all other cases
-    return false;
-  });
-
-  // Create new bookedDates object with only startDate and endDate
-  const formattedBookedDates = filteredBookedDates.map((booking) => ({
-    startDate: booking.startDate,
-    endDate: booking.endDate,
-  }));
-
-  // Fetch live availability from external OTAs and internal DB combined
-  const { liveBookedDates, isLoadingLiveAvail } = useLiveAvailability(
-    type === "retreat" ? retreat?.id : undefined,
-    type === "cabin" ? retreat?.id : undefined,
-  );
-
-  // Combine local filtered booked dates with live external dates
-  const combinedBookedDates = [...formattedBookedDates, ...liveBookedDates];
+      return false;
+    })
+    .map((booking) => ({
+      startDate: booking.startDate,
+      endDate: booking.endDate,
+    }));
 
   const { isAlreadyBooked, isDateDisabled, handleDateSelect } =
     useDateValidation(combinedBookedDates, range, setRange, resetRange);
@@ -55,7 +49,7 @@ function DateSelector({ settings, retreat, bookedDates, type, guestId }) {
         maxBookingLength={settings.maxBookingLength}
       />
 
-      <div className="flex flex-col sm:flex-row items-center justify-between px-4 sm:px-8 bg-accent-500 text-primary-800 py-4 md:px-3 md:py-1 md:h-full sm:py-0 sm:h-[72px] gap-4 sm:gap-0">
+      <div className="flex flex-col sm:flex-row items-center justify-between px-4 sm:px-8 bg-accent-500 text-primary-800 py-4 md:px-3 md:py-1 md:h-full sm:py-0 sm:h-18 gap-4 sm:gap-0">
         <PriceDisplay
           range={displayRange}
           retreat={retreat}

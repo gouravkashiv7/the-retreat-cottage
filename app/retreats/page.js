@@ -6,7 +6,7 @@ import Filter from "../_components/Filter";
 // import ReservationReminder from "../_components/ReservationReminder";
 import DateRangeSelector from "../_components/DateRangeSelector";
 
-export const revalidate = 3600;
+export const revalidate = 300;
 
 export const metadata = {
   title: "Luxury Retreats",
@@ -43,7 +43,7 @@ export default async function RetreatsPage({ searchParams }) {
           <Filter />
         </div>
       </div>
-      <Suspense fallback={<Spinner />} key={filter}>
+      <Suspense fallback={<Spinner />} key={JSON.stringify(param)}>
         <RetreatList filter={filter} />
         {/* <ReservationReminder /> */}
       </Suspense>

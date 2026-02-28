@@ -3,14 +3,14 @@ import ReservationForm from "@/app/_components/ReservationForm";
 import { getSettings } from "../_lib/data-service";
 import { auth } from "../_lib/auth";
 import LoginMessage from "./LoginMessage";
-import { getBookedDatesById } from "../_lib/dates";
+import { getUnifiedBookedDatesById } from "../_lib/live-availability";
 
 async function Reservations({ retreat, type }) {
   const { name, id } = retreat;
 
   const [settings, bookedDates] = await Promise.all([
     getSettings(),
-    getBookedDatesById(id, type),
+    getUnifiedBookedDatesById(id, type),
   ]);
   const session = await auth();
 
@@ -20,7 +20,7 @@ async function Reservations({ retreat, type }) {
         Reserve {type.charAt(0).toUpperCase() + type.slice(1)} {name} today. Pay
         on arrival.
       </h2>
-      <div className="grid grid-cols-1 lg:grid-cols-5 border border-primary-800 min-h-[300px] sm:min-h-[400px]">
+      <div className="grid grid-cols-1 lg:grid-cols-5 border border-primary-800 min-h-75 sm:min-h-100">
         <div className="lg:col-span-3">
           <DateSelector
             settings={settings}

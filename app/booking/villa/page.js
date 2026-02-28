@@ -5,7 +5,7 @@ import BookingHeader from "@/app/_components/booking/BookingHeader";
 import RetreatsList from "@/app/_components/booking/RetreatsList";
 import PackageFeatures from "@/app/_components/booking/PackageFeatures";
 import BookingSummary from "@/app/_components/booking/BookingSummary";
-import { getAllBookedDates } from "@/app/_lib/dates";
+import { getUnifiedBookedDates } from "@/app/_lib/live-availability";
 import { auth } from "@/app/_lib/auth";
 
 export default async function VillaPackageBookingPage() {
@@ -21,18 +21,18 @@ export default async function VillaPackageBookingPage() {
 
   const totalCapacity = allRetreats.reduce(
     (sum, retreat) => sum + retreat.maxCapacity,
-    0
+    0,
   );
   const totalPrice = allRetreats.reduce((sum, retreat) => {
     const discount = Math.round(
-      (retreat.regularPrice * (retreat.discount || 0)) / 100
+      (retreat.regularPrice * (retreat.discount || 0)) / 100,
     );
     return sum + (retreat.regularPrice - discount);
   }, 0);
 
   const totalOriginalPrice = allRetreats.reduce(
     (sum, retreat) => sum + retreat.regularPrice,
-    0
+    0,
   );
 
   const pricing = {
@@ -66,7 +66,7 @@ export default async function VillaPackageBookingPage() {
   // Custom guest options for villa: 10-12 guests
   const guestOptions = Array.from({ length: 3 }, (_, i) => i + 10); // [10, 11, 12]
   const settings = await getSettings();
-  const bookedDates = await getAllBookedDates();
+  const bookedDates = await getUnifiedBookedDates();
 
   return (
     <BookingLayout>

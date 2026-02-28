@@ -8,10 +8,16 @@ import { MapPin, Phone, Mail, Instagram, ExternalLink } from "lucide-react";
 const quickLinks = [
   { href: "/", label: "Home" },
   { href: "/retreats", label: "Retreats" },
-  { href: "/about", label: "About" },
+  { href: "/about", label: "About Us" },
+];
+
+const blogLinks = [
+  { href: "/guides/kasauli", label: "Visit Kasauli" },
+  { href: "/guides/solan", label: "Discover Solan" },
 ];
 
 const legalLinks = [
+  { href: "/refund-policy", label: "Refund Policy" },
   { href: "/terms", label: "Terms of Service" },
   { href: "/privacy", label: "Privacy Policy" },
 ];
@@ -116,9 +122,35 @@ export default function FooterClient() {
             </ul>
           </m.div>
 
-          {/* Legal */}
+          {/* Travel Guide */}
           <m.div
             custom={2}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={fadeUp}
+          >
+            <h4 className="text-white font-semibold text-sm uppercase tracking-widest mb-5">
+              Travel Guide
+            </h4>
+            <ul className="space-y-3">
+              {blogLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-primary-300 hover:text-accent-400 transition-colors duration-300 text-sm flex items-center gap-2 group"
+                  >
+                    <span className="w-0 group-hover:w-3 h-px bg-accent-500 transition-all duration-300" />
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </m.div>
+
+          {/* Legal */}
+          <m.div
+            custom={3}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
