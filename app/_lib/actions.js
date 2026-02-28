@@ -1,7 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
 import { auth, signIn, signOut } from "./auth";
-import supabase from "./supabase";
+import { supabase, supabaseAdmin } from "./supabase";
 import { revalidatePath } from "next/cache";
 import { getBookings, getSettings } from "./data-service";
 import { getBookedDatesById } from "./dates";
@@ -62,7 +62,7 @@ export async function createBooking(bookingData, formData) {
       retreatId,
       numGuests,
       accommodationPrice,
-      numNights
+      numNights,
     );
 
     if (retreatId) {
@@ -80,7 +80,7 @@ async function processRetreats(
   retreatId,
   numGuests,
   accommodationPrice,
-  numNights
+  numNights,
 ) {
   try {
     const retreatIds = parseRetreatIds(retreatId);
@@ -126,7 +126,7 @@ async function validateDateAvailability(retreatId, startDate, endDate) {
       throw new Error(
         `${
           type.charAt(0).toUpperCase() + type.slice(1)
-        } ${retreatNum} is already booked for the selected dates. Please choose different dates.`
+        } ${retreatNum} is already booked for the selected dates. Please choose different dates.`,
       );
     }
   }
@@ -211,44 +211,75 @@ export async function updateGuest(formData) {
   const idType = formData.get("idType");
   const idNumber = formData.get("idNumber");
   const phone = formData.get("phone");
+  const fullName = formData.get("fullName");
+  const address = formData.get("address");
 
   const isValidPhone = /^[\+]?[1-9][\d]{0,15}$/.test(phone.replace(/\D/g, ""));
   if (!isValidPhone) throw new Error("Invalid phone number format");
   // Validate ID based on country and type
   if (country === "India") {
-    if (!idType) {
-      throw new Error("Please select an ID type for India");
-    }
+    if (!idType) throw new Error("Please select an ID type for India");
+    if (!idNumber) throw new Error("Please enter your ID number");
 
-    if (!idNumber) {
-      throw new Error("Please enter your ID number");
-    }
-
-    // Validate ID based on type
     const isValid = validateIndianId(idType, idNumber);
-    if (!isValid) {
+    if (!isValid)
       throw new Error(`Invalid ${getIndianIdTypeName(idType)} number`);
-    }
   } else {
-    // For non-India countries, validate passport
-    if (!idNumber) {
-      throw new Error("Please enter your passport number");
-    }
+    // For non-India countries, validate passport or other
+    if (!idType) throw new Error("Please select an ID type");
+    if (!idNumber)
+      throw new Error(
+        `Please enter your ${idType === "passport" ? "passport" : "ID"} number`,
+      );
 
-    const isValidPassport = validatePassport(idNumber);
-    if (!isValid) {
-      throw new Error("Invalid passport number");
+    if (idType === "passport") {
+      const isValid = validatePassport(idNumber);
+      if (!isValid) throw new Error("Invalid passport number");
     }
   }
 
+  // Handle optional image uploads
+  const idFrontFile = formData.get("idFrontImage");
+  const idBackFile = formData.get("idBackImage");
+  let idFrontUrl = undefined;
+  let idBackUrl = undefined;
+
+  // We need supabaseAdmin to bypass RLS for uploads if client lacks permissions,
+  // but if we are already logged in we can use supabase client. We will use supabaseAdmin.
+
+  if (idFrontFile && idFrontFile.size > 0 && idFrontFile.name !== "undefined") {
+    const fileName = `guest-${session.user.guestId}-front-${Date.now()}`;
+    const { error: frontError } = await supabaseAdmin.storage
+      .from("avatars")
+      .upload(fileName, idFrontFile, { upsert: true });
+
+    if (frontError) throw new Error("Failed to upload ID Front Image");
+    idFrontUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/avatars/${fileName}`;
+  }
+
+  if (idBackFile && idBackFile.size > 0 && idBackFile.name !== "undefined") {
+    const fileName = `guest-${session.user.guestId}-back-${Date.now()}`;
+    const { error: backError } = await supabaseAdmin.storage
+      .from("avatars")
+      .upload(fileName, idBackFile, { upsert: true });
+
+    if (backError) throw new Error("Failed to upload ID Back Image");
+    idBackUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/avatars/${fileName}`;
+  }
+
   const updateData = {
+    fullName,
+    address,
     country,
     countryFlag,
     nationalId: country === "India" ? idNumber : null,
     passport: country !== "India" ? idNumber : null,
-    idType: country === "India" ? idType : "passport",
+    idType,
     phone,
   };
+
+  if (idFrontUrl !== undefined) updateData.idFrontUrl = idFrontUrl;
+  if (idBackUrl !== undefined) updateData.idBackUrl = idBackUrl;
 
   const { data, error } = await supabase
     .from("guests")
@@ -289,6 +320,13 @@ function validateIndianId(idType, idNumber) {
       // Driver's License: varies by state, basic length check
       return cleanedId.length >= 8 && cleanedId.length <= 20;
 
+    case "passport":
+      return validatePassport(cleanedId);
+
+    case "other":
+      // No strict format for other
+      return cleanedId.length > 3;
+
     default:
       return false;
   }
@@ -306,6 +344,39 @@ function getIndianIdTypeName(idType) {
     pan: "PAN Card",
     voter: "Voter Card",
     driver: "Driver License",
+    passport: "Passport",
+    other: "Other Government ID",
   };
   return typeMap[idType] || "ID";
+}
+
+export async function extractIdDetailsAction(base64Image) {
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in!");
+
+  const edgeFunctionUrl = `${process.env.SUPABASE_URL}/functions/v1/extract-id`; // Adjust if function name differs
+
+  try {
+    const response = await fetch(edgeFunctionUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.SUPABASE_KEY}`,
+      },
+      body: JSON.stringify({ image: base64Image }),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("AI Service Error:", errText);
+      throw new Error(
+        "AI Service failed to read the document. Please try a clearer photo.",
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Extraction error:", error);
+    return { error: error.message || "Failed to extract details" };
+  }
 }

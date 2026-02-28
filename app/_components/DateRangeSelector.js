@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useReservation } from "./contexts/ReservationContext";
+import { CalendarDays, X } from "lucide-react";
 
 export default function DateRangeSelector() {
   const { range, setRange, resetRange } = useReservation();
@@ -10,8 +11,6 @@ export default function DateRangeSelector() {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Sync from URL to context ONLY on initial mount if context is empty
-  // We use a ref to prevent re-syncing from the URL immediately after the user clicks "Clear"
   const isInitialMount = React.useRef(true);
 
   useEffect(() => {
@@ -31,10 +30,8 @@ export default function DateRangeSelector() {
 
   const handleDateChange = (e) => {
     const { name, value } = e.target;
-    // When clearing an input, 'value' is empty string
     const newDate = value ? new Date(value) : undefined;
 
-    // Create new params object to construct the next URL
     const params = new URLSearchParams(searchParams);
     if (value) {
       params.set(name, value);
@@ -42,10 +39,8 @@ export default function DateRangeSelector() {
       params.delete(name);
     }
 
-    // First, push to router so URL updates immediately (outside of setState render cycle)
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
 
-    // Then update context state
     setRange((prev) => ({
       ...prev,
       [name === "startDate" ? "from" : "to"]: newDate,
@@ -53,22 +48,17 @@ export default function DateRangeSelector() {
   };
 
   const clearDates = () => {
-    // 1. Reset local React context state FIRST
     resetRange();
 
-    // 2. Clear URL parameters
     const params = new URLSearchParams(searchParams);
     params.delete("startDate");
     params.delete("endDate");
 
-    // 3. Push empty URL to router
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  // Helper to get today's date string specifically in IST (India Standard Time)
   const getTodayIST = () => {
     const now = new Date();
-    // Format to IST using Intl string, then parse out the YYYY-MM-DD
     const formatter = new Intl.DateTimeFormat("en-IN", {
       timeZone: "Asia/Kolkata",
       year: "numeric",
@@ -82,47 +72,68 @@ export default function DateRangeSelector() {
     return `${year}-${month}-${day}`;
   };
 
-  // Safe date formatting function
   const formatDate = (dateInput) => {
     if (!dateInput) return "";
-
-    // Ensure we have a Date object
     const dateObj = dateInput instanceof Date ? dateInput : new Date(dateInput);
-
-    // Check if it's a valid date
     if (isNaN(dateObj.getTime())) return "";
-
     return dateObj.toLocaleDateString("en-US", {
+      weekday: "short",
       year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
     });
   };
 
-  // Convert Date objects to ISO string for input values
   const dateRange = {
     startDate: range?.from ? range?.from.toISOString().split("T")[0] : "",
     endDate: range?.to ? range?.to.toISOString().split("T")[0] : "",
   };
 
-  // Calculate min date for end date input based on IST
   const todayIST = getTodayIST();
 
   const minEndDate = range?.from
     ? range?.from.toISOString().split("T")[0]
     : todayIST;
 
-  return (
-    <div className="bg-primary-900 border border-primary-800 rounded-lg p-4 sm:p-6 mb-6">
-      <h3 className="text-lg sm:text-xl font-semibold text-accent-400 mb-4 text-center sm:text-left">
-        Select Your Stay Dates
-      </h3>
+  const hasDates = dateRange.startDate || dateRange.endDate;
 
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-center sm:justify-start">
-        {/* Start Date */}
-        <div className="flex-1 w-full sm:w-auto">
-          <label className="block text-sm font-medium text-primary-300 mb-2">
-            Check-in Date
+  return (
+    <div className="relative bg-primary-900/60 backdrop-blur-md border border-white/5 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xl overflow-hidden">
+      {/* Decorative glow */}
+      <div className="absolute top-0 right-0 w-40 h-40 bg-accent-500/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-accent-500/10 flex items-center justify-center">
+            <CalendarDays className="h-5 w-5 text-accent-400" />
+          </div>
+          <div>
+            <h3 className="text-lg sm:text-xl font-bold text-white">
+              Select Your Stay Dates
+            </h3>
+            <p className="text-primary-400 text-xs font-medium">
+              Filter available retreats by your travel dates
+            </p>
+          </div>
+        </div>
+
+        {hasDates && (
+          <button
+            onClick={clearDates}
+            className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/20 rounded-xl text-primary-300 hover:text-red-400 text-sm font-bold transition-all duration-300"
+          >
+            <X className="h-4 w-4" />
+            <span className="hidden sm:inline">Clear</span>
+          </button>
+        )}
+      </div>
+
+      {/* Date Inputs */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label className="block text-xs font-bold text-primary-400 uppercase tracking-wider">
+            Check-in
           </label>
           <input
             type="date"
@@ -130,14 +141,13 @@ export default function DateRangeSelector() {
             value={dateRange.startDate}
             onChange={handleDateChange}
             min={todayIST}
-            className="w-full p-3 border border-primary-700 bg-primary-800 rounded-lg text-primary-100 focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
+            className="w-full p-3.5 border border-white/10 bg-primary-800/40 rounded-xl text-primary-100 font-medium focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all duration-300 hover:border-white/20"
           />
         </div>
 
-        {/* End Date */}
-        <div className="flex-1 w-full sm:w-auto">
-          <label className="block text-sm font-medium text-primary-300 mb-2">
-            Check-out Date
+        <div className="space-y-2">
+          <label className="block text-xs font-bold text-primary-400 uppercase tracking-wider">
+            Check-out
           </label>
           <input
             type="date"
@@ -145,41 +155,39 @@ export default function DateRangeSelector() {
             value={dateRange.endDate}
             onChange={handleDateChange}
             min={minEndDate}
-            className="w-full p-3 border border-primary-700 bg-primary-800 rounded-lg text-primary-100 focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
+            className="w-full p-3.5 border border-white/10 bg-primary-800/40 rounded-xl text-primary-100 font-medium focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all duration-300 hover:border-white/20"
           />
         </div>
-
-        {/* Clear Button */}
-        {(dateRange.startDate || dateRange.endDate) && (
-          <div className="flex items-end">
-            <button
-              onClick={clearDates}
-              className="px-4 py-3 bg-accent-500 hover:bg-accent-600 text-primary-800 font-semibold rounded-lg transition-colors"
-            >
-              Clear
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Selected Dates Summary */}
-      {(range?.from || range?.to) && (
-        <div className="mt-4 p-3 bg-primary-800 rounded-lg">
+      {hasDates && (
+        <div className="mt-5 p-4 bg-accent-500/5 border border-accent-500/10 rounded-xl animate-in fade-in slide-in-from-bottom-2 duration-300">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             {range?.from && (
-              <div>
-                <span className="text-primary-300">Check-in:</span>
-                <p className="text-primary-100 font-medium">
-                  {formatDate(range?.from)}
-                </p>
+              <div className="flex items-center gap-3">
+                <div className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]" />
+                <div>
+                  <span className="text-primary-400 text-xs font-bold uppercase tracking-wider">
+                    Check-in
+                  </span>
+                  <p className="text-white font-bold">
+                    {formatDate(range?.from)}
+                  </p>
+                </div>
               </div>
             )}
             {range?.to && (
-              <div>
-                <span className="text-primary-300">Check-out:</span>
-                <p className="text-primary-100 font-medium">
-                  {formatDate(range?.to)}
-                </p>
+              <div className="flex items-center gap-3">
+                <div className="h-2 w-2 rounded-full bg-red-400 shadow-[0_0_6px_rgba(248,113,113,0.5)]" />
+                <div>
+                  <span className="text-primary-400 text-xs font-bold uppercase tracking-wider">
+                    Check-out
+                  </span>
+                  <p className="text-white font-bold">
+                    {formatDate(range?.to)}
+                  </p>
+                </div>
               </div>
             )}
           </div>

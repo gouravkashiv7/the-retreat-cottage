@@ -92,11 +92,15 @@ function RetreatSection({
 
   return (
     <div className={className}>
-      <h2 className="text-2xl sm:text-3xl mb-6 sm:mb-8 text-accent-400 font-medium text-center sm:text-left">
-        {title}
-      </h2>
+      <div className="flex items-center gap-4 mb-8 sm:mb-10">
+        <div className="h-px flex-1 bg-linear-to-r from-transparent via-accent-500/20 to-transparent" />
+        <h2 className="text-2xl sm:text-3xl text-accent-400 font-black tracking-tight text-center shrink-0">
+          {title}
+        </h2>
+        <div className="h-px flex-1 bg-linear-to-r from-transparent via-accent-500/20 to-transparent" />
+      </div>
       {filteredRetreats.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12 xl:gap-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
           {filteredRetreats.map((retreat) => (
             <ItemCard
               key={retreat.id}
@@ -106,8 +110,8 @@ function RetreatSection({
           ))}
         </div>
       ) : (
-        <div className="text-center py-8 px-4">
-          <p className="text-primary-300 text-base sm:text-lg">
+        <div className="text-center py-12 px-6 bg-primary-900/40 border border-white/5 rounded-2xl backdrop-blur-sm">
+          <p className="text-primary-300 text-base sm:text-lg font-medium">
             {emptyMessage}
           </p>
         </div>

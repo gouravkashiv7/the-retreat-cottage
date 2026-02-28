@@ -3,6 +3,7 @@ import { UsersIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { ArrowRight } from "lucide-react";
 
 function ItemCard({
   item,
@@ -23,120 +24,124 @@ function ItemCard({
   } = item;
 
   const discount = Math.round((regularPrice * discountPercentage) / 100);
-
-  // Calculate base price after discount
   const basePrice = regularPrice - discount;
-
-  // Add extra guest price if it's a cabin and isFull is true
   const finalPrice =
     type === "cabin" && isFull ? basePrice + extraGuestPrice : basePrice;
 
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden w-full">
+    <div className="group relative bg-primary-900/60 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-white/5 overflow-hidden shadow-xl hover:shadow-accent-500/5 transition-all duration-500 hover:border-accent-500/20 hover:-translate-y-1">
+      {/* Image Section */}
       {image && (
-        <div className="w-full h-48 sm:h-56 md:h-64 lg:h-72 relative">
+        <div className="w-full aspect-16/10 relative overflow-hidden">
           <Image
             src={image}
             alt={`${type.charAt(0).toUpperCase() + type.slice(1)} ${name}`}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="w-full h-full object-cover"
+            className="object-cover transition-transform duration-700 group-hover:scale-110"
             priority={false}
           />
-        </div>
-      )}
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-linear-to-t from-primary-950/80 via-primary-950/20 to-transparent" />
 
-      <div className="p-4 sm:p-6">
-        <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">
-          {type.charAt(0).toUpperCase() + type.slice(1)} {name}
-          {type === "cabin" && isFull && (
-            <span className="ml-2 text-sm bg-accent-500 text-primary-800 px-2 py-1 rounded-full font-medium">
-              Full Capacity
+          {/* Type Badge */}
+          <div className="absolute top-4 left-4">
+            <span className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-md border border-white/10 bg-primary-950/60 text-white shadow-lg">
+              {type === "cabin" ? "🏡 Cabin" : "🛏️ Room"}
             </span>
-          )}
-          {type === "cabin" && !isFull && isCombo && (
-            <span className="ml-2 text-sm bg-green-500 text-white px-2 py-1 rounded-full font-medium">
-              Reduced Capacity
-            </span>
-          )}
-        </h3>
-
-        {description && (
-          <p className="text-gray-600 text-base sm:text-lg mb-4 line-clamp-2">
-            {description}
-          </p>
-        )}
-
-        <div className="flex gap-3 items-center mb-4">
-          <UsersIcon className="h-5 w-5 text-primary-600" />
-          <p className="text-base sm:text-lg text-gray-600">
-            For up to <span className="font-bold">{maxCapacity}</span> guests
-            {type === "cabin" && isCombo && (
-              <span className="ml-2 text-sm text-accent-600 font-medium">
-                ({isFull ? "3 guests" : "2 guests"})
-              </span>
-            )}
-          </p>
-        </div>
-
-        <div
-          className={`flex ${
-            isCombo
-              ? "justify-between items-center"
-              : "flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0"
-          }`}
-        >
-          <div className="flex gap-3 items-baseline sm:justify-start">
-            {type === "cabin" ? (
-              <span className="text-primary-600 font-medium">Starts at</span>
-            ) : (
-              ""
-            )}{" "}
-            {discount > 0 || (type === "cabin" && isFull) ? (
-              <>
-                <span className="text-lg sm:text-xl font-bold text-accent-600">
-                  ₹{finalPrice}
-                </span>
-                {discount > 0 && (
-                  <span className="text-sm text-gray-500 line-through">
-                    ₹{regularPrice}
-                  </span>
-                )}
-              </>
-            ) : (
-              <span className="text-lg sm:text-xl font-bold text-accent-600">
-                ₹{finalPrice}
-              </span>
-            )}
-            <span className="text-gray-500 text-sm sm:text-base">/ night</span>
           </div>
 
-          {/* Extra guest price info for full capacity cabins */}
+          {/* Capacity Badges */}
           {type === "cabin" && isFull && (
-            <div className="text-xs text-accent-600 font-medium mt-1">
-              +₹{extraGuestPrice} for extra guest
+            <div className="absolute top-4 right-4">
+              <span className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-accent-500/90 text-primary-900 backdrop-blur-md shadow-lg">
+                Full Capacity
+              </span>
+            </div>
+          )}
+          {type === "cabin" && !isFull && isCombo && (
+            <div className="absolute top-4 right-4">
+              <span className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/80 text-white backdrop-blur-md shadow-lg">
+                Reduced Capacity
+              </span>
             </div>
           )}
 
-          {!isCombo && (
-            <Link
-              href={`/retreats/${type}/${id}`}
-              className={`bg-accent-500 hover:bg-accent-600 text-primary-800 py-1.5 px-3 sm:py-2 md:py-3 sm:px-4 md:px-6 rounded-lg font-semibold transition-all text-xs sm:text-sm md:text-base text-center flex items-center justify-center gap-2 ${
-                isLoading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              onClick={() => setIsLoading(true)}
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-primary-800 border-t-transparent rounded-full animate-spin" />
-                  Loading...
-                </>
-              ) : (
-                "Details & reservation →"
+          {/* Price overlay on image */}
+          <div className="absolute bottom-4 right-4 text-right">
+            <div className="bg-primary-950/70 backdrop-blur-md rounded-xl px-4 py-2 border border-white/10">
+              {discount > 0 && (
+                <span className="text-xs text-primary-400 line-through block">
+                  ₹{regularPrice}
+                </span>
               )}
-            </Link>
+              <span className="text-xl sm:text-2xl font-black text-accent-400">
+                ₹{finalPrice}
+              </span>
+              <span className="text-primary-400 text-xs font-medium">
+                /night
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Content Section */}
+      <div className="p-5 sm:p-6 space-y-4">
+        <div>
+          <h3 className="text-xl sm:text-2xl font-bold text-white mb-1 tracking-tight group-hover:text-accent-300 transition-colors duration-300">
+            {type.charAt(0).toUpperCase() + type.slice(1)} {name}
+          </h3>
+          {description && (
+            <p className="text-primary-300 text-sm sm:text-base leading-relaxed line-clamp-2">
+              {description}
+            </p>
           )}
         </div>
+
+        <div className="flex items-center justify-between pt-2 border-t border-white/5">
+          <div className="flex items-center gap-2 text-primary-400">
+            <UsersIcon className="h-4 w-4 text-accent-500/60" />
+            <span className="text-sm font-medium">
+              Up to <span className="text-white font-bold">{maxCapacity}</span>{" "}
+              guests
+              {type === "cabin" && isCombo && (
+                <span className="ml-1 text-accent-400 text-xs font-bold">
+                  ({isFull ? "3" : "2"} guests)
+                </span>
+              )}
+            </span>
+          </div>
+
+          {/* Extra guest price info */}
+          {type === "cabin" && isFull && (
+            <span className="text-[10px] text-accent-500 font-bold uppercase tracking-wider">
+              +₹{extraGuestPrice} extra guest
+            </span>
+          )}
+        </div>
+
+        {!isCombo && (
+          <Link
+            href={`/retreats/${type}/${id}`}
+            className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 bg-accent-500 hover:bg-accent-400 text-primary-950 font-black rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-accent-500/20 group/btn text-sm sm:text-base ${
+              isLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={() => setIsLoading(true)}
+          >
+            {isLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-primary-800 border-t-transparent rounded-full animate-spin" />
+                Loading...
+              </>
+            ) : (
+              <>
+                Details & Reservation
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
+              </>
+            )}
+          </Link>
+        )}
       </div>
     </div>
   );

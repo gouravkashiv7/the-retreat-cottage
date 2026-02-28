@@ -121,9 +121,13 @@ function FloorPackagesView({ rooms, bookedDates, cabins, guestId }) {
 
   return (
     <div>
-      <h2 className="text-2xl sm:text-3xl mb-6 sm:mb-8 text-accent-400 font-medium text-center sm:text-left">
-        Floor Packages (6 guests)
-      </h2>
+      <div className="flex items-center gap-4 mb-8 sm:mb-10">
+        <div className="h-px flex-1 bg-linear-to-r from-transparent via-accent-500/20 to-transparent" />
+        <h2 className="text-2xl sm:text-3xl text-accent-400 font-black tracking-tight text-center shrink-0">
+          Floor Packages (6 guests)
+        </h2>
+        <div className="h-px flex-1 bg-linear-to-r from-transparent via-accent-500/20 to-transparent" />
+      </div>
 
       {availablePackages.length > 0 ? (
         <div className="space-y-8">
@@ -137,8 +141,8 @@ function FloorPackagesView({ rooms, bookedDates, cabins, guestId }) {
           ))}
         </div>
       ) : (
-        <div className="text-center py-8 px-4">
-          <p className="text-primary-300 text-base sm:text-lg">
+        <div className="text-center py-12 px-6 bg-primary-900/40 border border-white/5 rounded-2xl backdrop-blur-sm">
+          <p className="text-primary-300 text-base sm:text-lg font-medium">
             {range?.from && range?.to
               ? "No floor packages available for the selected dates."
               : "No floor packages available."}
