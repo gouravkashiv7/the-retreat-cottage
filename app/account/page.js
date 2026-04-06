@@ -67,7 +67,7 @@ export default async function Page() {
       </div>
 
       {/* Quick Actions Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-150">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-150">
         {cards.map((card) => (
           <Link
             key={card.href}
