@@ -2,13 +2,21 @@
 import { useState, useEffect } from "react";
 import SideNavigation from "../_components/SideNavigation";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
+import { checkBookingStatus } from "../_lib/actions";
 
 function Layout({ children }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
+  const [hasCheckedInBooking, setHasCheckedInBooking] = useState(false);
+
   // Wait for component to mount to avoid hydration mismatch
   useEffect(() => {
+    async function getStatus() {
+      const status = await checkBookingStatus();
+      setHasCheckedInBooking(status);
+    }
+    getStatus();
     setIsMounted(true);
   }, []);
 
@@ -58,7 +66,10 @@ function Layout({ children }) {
           } md:translate-y-0
         `}
         >
-          <SideNavigation onLinkClick={() => setIsMobileMenuOpen(false)} />
+          <SideNavigation
+            onLinkClick={() => setIsMobileMenuOpen(false)}
+            hasCheckedInBooking={hasCheckedInBooking}
+          />
         </div>
 
         {/* Main Content - Desktop styles remain unchanged */}

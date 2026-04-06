@@ -231,7 +231,7 @@ function MenuClient({ menuItems, checkedInBooking, recentOrders }) {
   };
 
   const statusConfig = {
-    unconfirmed: {
+    ordered: {
       label: "Received",
       color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
     },

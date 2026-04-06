@@ -1,19 +1,21 @@
 import { getBooking, getSettings } from "@/app/_lib/data-service";
 import EditReservationForm from "./EditReservationForm";
+import { auth } from "@/app/_lib/auth";
 
 export default async function Page({ params }) {
   const { bookingId } = await params;
+  const session = await auth();
 
   try {
     const booking = await getBooking(bookingId);
     const { breakfastPrice } = await getSettings();
 
-    if (!booking) {
+    if (!booking || booking.guestId !== session.user.guestId) {
       return (
         <div className="text-center py-8">
           <h2 className="text-2xl text-accent-400 mb-4">Booking Not Found</h2>
           <p className="text-primary-300">
-            The reservation could not be loaded.
+            The reservation could not be loaded or you do not have permission to view it.
           </p>
         </div>
       );

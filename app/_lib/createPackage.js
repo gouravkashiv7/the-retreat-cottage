@@ -4,7 +4,7 @@ import { auth } from "./auth";
 import { getCabinPrice, getRoomPrice, getSettings } from "./data-service";
 import { hasDateConflict, sanitizeObservations } from "./booking-helpers";
 import { getBookedDatesById } from "./dates";
-import supabase from "./supabase";
+import { supabase, supabaseAdmin } from "./supabase";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -36,7 +36,7 @@ export async function createPackageBooking(formData) {
     // Check if phone is provided in formData (from a new input field)
     const phone = formData.get("phone");
     if (phone) {
-      const { error: guestError } = await supabase
+      const { error: guestError } = await supabaseAdmin
         .from("guests")
         .update({ phone })
         .eq("id", guestId);
@@ -60,7 +60,7 @@ export async function createPackageBooking(formData) {
       hasBreakfast: false,
       isPaid: false,
     };
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("bookings")
       .insert([newBooking])
       .select()
@@ -81,6 +81,7 @@ export async function createPackageBooking(formData) {
       totalPrice,
       numNights,
       numGuests,
+      guestId,
     });
 
     if (packageName === "First Floor") {
@@ -94,9 +95,8 @@ export async function createPackageBooking(formData) {
     }
   } catch (error) {
     console.error("❌ Error creating package booking:", error);
-  } finally {
-    redirect("/retreats/thankyou");
   }
+  return { success: true, redirect: "/retreats/thankyou" };
 }
 
 async function processRetreats(
@@ -118,7 +118,7 @@ async function processRetreats(
   } catch (error) {
     console.error("❌ Error processing retreats:", error);
     // Clean up booking if any retreat fails
-    await supabase.from("bookings").delete().eq("id", bookingId);
+    await supabaseAdmin.from("bookings").delete().eq("id", bookingId);
     throw error;
   }
 }
@@ -174,7 +174,7 @@ async function processCabins(cabinIds, bookingId, numGuests, extraGuestPrice) {
 
   // Insert cabin data
   if (cabinsData.length > 0) {
-    const { error } = await supabase.from("booking_cabins").insert(cabinsData);
+    const { error } = await supabaseAdmin.from("booking_cabins").insert(cabinsData);
     if (error) throw new Error(`Failed to book cabins: ${error.message}`);
   }
 }
@@ -196,7 +196,7 @@ async function processRooms(roomIds, bookingId) {
     }),
   );
 
-  const { error } = await supabase.from("booking_rooms").insert(roomsData);
+  const { error } = await supabaseAdmin.from("booking_rooms").insert(roomsData);
   if (error) throw new Error(`Failed to book rooms: ${error.message}`);
 }
 

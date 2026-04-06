@@ -36,12 +36,22 @@ const navLinks = [
   },
 ];
 
-function SideNavigation({ onLinkClick }) {
+function SideNavigation({ onLinkClick, hasCheckedInBooking }) {
   const pathName = usePathname();
+
+  const links = [...navLinks];
+  if (hasCheckedInBooking) {
+    links.push({
+      name: "Order Food",
+      href: "/account/menu",
+      icon: <UtensilsCrossed className="h-5 w-5 text-primary-600" />,
+    });
+  }
+
   return (
     <nav className="border-r border-primary-900 md:h-full">
       <ul className="flex flex-col gap-2 md:h-full text-lg">
-        {navLinks.map((link) => (
+        {links.map((link) => (
           <li key={link.name}>
             <Link
               className={`py-3 px-5 hover:bg-primary-900 hover:text-primary-100 transition-colors flex items-center gap-4 font-semibold text-primary-200 ${

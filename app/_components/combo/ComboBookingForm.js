@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { createCombo } from "@/app/_lib/createCombo";
 import SubmitButton from "./SubmitButton";
 
@@ -17,9 +18,14 @@ export default function BookingForm({
   canConfirmBooking,
   resetRange,
 }) {
+  const router = useRouter();
+
   const handleFormAction = async (formData) => {
-    resetRange?.();
-    await createCombo(formData);
+    const result = await createCombo(formData);
+    if (result?.redirect) {
+      resetRange?.();
+      router.push(result.redirect);
+    }
   };
 
   return (

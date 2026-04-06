@@ -8,9 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { bookingSchema } from "@/lib/validations/booking";
 import { m, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 function ReservationForm({ retreat, user }) {
+  const router = useRouter();
   const {
     id: retreatId,
     maxCapacity,
@@ -58,16 +59,19 @@ function ReservationForm({ retreat, user }) {
       });
       formData.append("accommodationPrice", accommodationPrice);
 
-      await createBooking(
+      const result = await createBooking(
         { startDate: data.startDate, endDate: data.endDate, numNights },
         formData,
       );
 
-      toast.success(
-        "Reservation successful! We've sent you a confirmation email.",
-      );
-      resetRange();
-      reset();
+      if (result?.redirect) {
+        toast.success(
+          "Reservation successful! We've sent you a confirmation email.",
+        );
+        resetRange();
+        reset();
+        router.push(result.redirect);
+      }
     } catch (error) {
       toast.error(
         error.message || "Failed to create reservation. Please try again.",
@@ -192,19 +196,19 @@ function ReservationForm({ retreat, user }) {
               <div className="space-y-1">
                 <p className="text-primary-300 text-sm">Total Estimate</p>
                 <p className="text-3xl font-bold text-accent-400">
-                  ${accommodationPrice.toLocaleString()}
+                  ₹{accommodationPrice.toLocaleString()}
                 </p>
               </div>
             )}
           </div>
 
-          <Button
+          <button
             type="submit"
             className="w-full sm:w-auto h-14 px-10 text-lg font-bold bg-accent-500 hover:bg-accent-600 text-primary-950 rounded-xl transition-all disabled:opacity-50 shadow-xl shadow-accent-500/10"
             disabled={!startDate || !endDate || isSubmitting}
           >
             {isSubmitting ? "Processing..." : "Reserve Your Stay"}
-          </Button>
+          </button>
         </div>
       </form>
     </m.div>

@@ -12,19 +12,14 @@ export function useLiveAvailability(roomId, cabinId) {
       setIsLoadingLiveAvail(true);
       try {
         const queryParam = roomId ? `roomId=${roomId}` : `cabinId=${cabinId}`;
-        const res = await fetch(
-          `https://kckngulhvwryekywvutn.supabase.co/functions/v1/get-live-availability?${queryParam}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              // Note: Using the anon key for client-side edge function calls
-              apikey:
-                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtja25ndWxodndyeWVreXd2dXRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxOTI0MjQsImV4cCI6MjA3NTc2ODQyNH0.OFHoYsWTix05-0nNil2FfQi5KhB0f1mqBXz0hobyP8o",
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtja25ndWxodndyeWVreXd2dXRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxOTI0MjQsImV4cCI6MjA3NTc2ODQyNH0.OFHoYsWTix05-0nNil2FfQi5KhB0f1mqBXz0hobyP8o"}`,
-            },
+        const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/get-live-availability?${queryParam}`;
+        const res = await fetch(url, {
+          headers: {
+            "Content-Type": "application/json",
+            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
           },
-        );
+        });
         const data = await res.json();
 
         if (data.blocked_dates) {

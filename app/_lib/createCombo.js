@@ -2,9 +2,10 @@
 import { auth } from "./auth";
 import { hasDateConflict, sanitizeObservations } from "./booking-helpers";
 import { getBookedDatesById } from "./dates";
-import supabase from "./supabase";
+import { supabase, supabaseAdmin } from "./supabase";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { sendBookingEmail } from "./email";
 
 export async function createCombo(formData) {
   try {
@@ -36,7 +37,7 @@ export async function createCombo(formData) {
       isPaid: false,
     };
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("bookings")
       .insert([newBooking])
       .select()
@@ -47,12 +48,24 @@ export async function createCombo(formData) {
     }
     await processRetreats(data.id, bookedRetreats, extraGuestPrice);
     revalidatePath(`/combo/${comboId}`);
+
+    // Send the booking email
+    await sendBookingEmail({
+      guestName: session.user.name,
+      guestEmail: session.user.email,
+      packageName: `Combo: ${comboId}`,
+      startDate,
+      endDate,
+      totalPrice,
+      numNights,
+      numGuests,
+      guestId,
+    });
   } catch (error) {
     console.error("Error creating combo booking:", error);
     throw error;
-  } finally {
-    redirect("/retreats/thankyou");
   }
+  return { success: true, redirect: "/retreats/thankyou" };
 }
 
 async function processRetreats(bookingId, bookedRetreats, extraGuestPrice) {
@@ -66,7 +79,7 @@ async function processRetreats(bookingId, bookedRetreats, extraGuestPrice) {
   } catch (error) {
     console.error("❌ Error processing retreats:", error);
     // Clean up booking if any retreat fails
-    await supabase.from("bookings").delete().eq("id", bookingId);
+    await supabaseAdmin.from("bookings").delete().eq("id", bookingId);
     throw error;
   }
 }
@@ -90,7 +103,7 @@ async function processCabins(cabins, bookingId, extraGuestPrice) {
     };
   });
 
-  const { error } = await supabase.from("booking_cabins").insert(cabinsData);
+  const { error } = await supabaseAdmin.from("booking_cabins").insert(cabinsData);
   if (error) throw new Error(`Failed to book cabins: ${error.message}`);
 }
 
@@ -103,7 +116,7 @@ async function processRooms(rooms, bookingId) {
     bookingRoomPrice: room.bookingPrice,
   }));
 
-  const { error } = await supabase.from("booking_rooms").insert(roomsData);
+  const { error } = await supabaseAdmin.from("booking_rooms").insert(roomsData);
   if (error) throw new Error(`Failed to book rooms: ${error.message}`);
 }
 

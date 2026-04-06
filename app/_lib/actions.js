@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { auth, signIn, signOut } from "./auth";
 import { supabase, supabaseAdmin } from "./supabase";
 import { revalidatePath } from "next/cache";
-import { getBookings, getSettings } from "./data-service";
+import { getBookings, getSettings, getCheckedInBooking } from "./data-service";
 import { getBookedDatesById } from "./dates";
 
 import {
@@ -13,6 +13,7 @@ import {
   hasDateConflict,
   sanitizeObservations,
 } from "./booking-helpers";
+import { sendBookingEmail } from "./email";
 
 export async function createBooking(bookingData, formData) {
   const session = await auth();
@@ -47,7 +48,7 @@ export async function createBooking(bookingData, formData) {
       isPaid: false,
     };
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("bookings")
       .insert([newBooking])
       .select()
@@ -66,10 +67,24 @@ export async function createBooking(bookingData, formData) {
     );
 
     if (retreatId) {
-      const type = [1, 2].includes(retreatId) ? "cabin" : "room";
+      const type = [1, 2].includes(Number(retreatId)) ? "cabin" : "room";
       revalidatePath(`/retreats/${type}/${retreatId}`);
     }
-    redirect("/retreats/thankyou");
+
+    // Send the booking email
+    await sendBookingEmail({
+      guestName: session.user.name,
+      guestEmail: session.user.email,
+      packageName: retreatId <= 2 ? `Cabin ${retreatId}` : `Room ${retreatId}`,
+      startDate: startDateIST,
+      endDate: endDateIST,
+      totalPrice: accommodationPrice,
+      numNights,
+      numGuests,
+      guestId: session.user.guestId,
+    });
+
+    return { success: true, redirect: "/retreats/thankyou" };
   } catch (error) {
     throw error;
   }
@@ -101,14 +116,14 @@ async function processRetreats(
         ...(type === "cabin" && { isFull: numGuests >= 3 }),
       };
 
-      const { error } = await supabase.from(tableName).insert(insertData);
+      const { error } = await supabaseAdmin.from(tableName).insert(insertData);
 
       if (error) {
         throw new Error(`Failed to book ${type}: ${error.message}`);
       }
     }
   } catch (error) {
-    await supabase.from("bookings").delete().eq("id", bookingId);
+    await supabaseAdmin.from("bookings").delete().eq("id", bookingId);
     throw error;
   }
 }
@@ -163,7 +178,7 @@ export async function updateBooking(formData) {
 
   revalidatePath(`/account/reservations/edit/${bookingId}`);
   revalidatePath("/account/reservations");
-  redirect("/account/reservations");
+  return { success: true, redirect: "/account/reservations" };
 }
 
 export async function deleteReservation(bookingId) {
@@ -422,7 +437,7 @@ export async function placeOrderAction(bookingId, items) {
         bookingId,
         guestId,
         totalPrice,
-        status: "unconfirmed",
+        status: "ordered",
         isPaid: false,
         orderTime: new Date().toISOString(),
       },
@@ -466,4 +481,11 @@ export async function placeOrderAction(bookingId, items) {
     message: "Order placed successfully!",
     orderId: order.id,
   };
+}
+export async function checkBookingStatus() {
+  const session = await auth();
+  if (!session) return false;
+
+  const booking = await getCheckedInBooking(session.user.guestId);
+  return !!booking;
 }

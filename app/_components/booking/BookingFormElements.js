@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useReservation } from "../contexts/ReservationContext";
 import { createPackageBooking } from "@/app/_lib/createPackage";
 import { useFormStatus } from "react-dom";
@@ -70,7 +71,10 @@ export default function BookingFormElements({
   retreats = [],
   dynamicPricing,
   resetRange,
+  bookingValidation,
+  guest,
 }) {
+  const router = useRouter();
   const { range } = useReservation();
   // Calculate number of nights
   const calculateNights = () => {
@@ -261,8 +265,11 @@ export default function BookingFormElements({
       {/* Booking Form with Form Action */}
       <form
         action={async (formData) => {
-          resetRange();
-          await createPackageBooking(formData);
+          const result = await createPackageBooking(formData);
+          if (result?.redirect) {
+            resetRange();
+            router.push(result.redirect);
+          }
         }}
         className="mt-8 pt-6 border-t border-accent-400/10"
       >

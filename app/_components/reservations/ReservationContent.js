@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { UtensilsCrossed } from "lucide-react";
 
 function ReservationContent({
   booking,
@@ -80,10 +82,18 @@ function ReservationContent({
     const todayVsStart = compareDates(today, start);
     const todayVsEnd = compareDates(today, end);
 
-    if (status === "checked-in" || (todayVsStart >= 0 && todayVsEnd <= 0)) {
+    if (status === "checked-in") {
       return (
         <span className="bg-blue-800 text-blue-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
-          ongoing
+          Checked In
+        </span>
+      );
+    }
+
+    if (todayVsStart >= 0 && todayVsEnd <= 0) {
+      return (
+        <span className="bg-amber-800 text-amber-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
+          Not Checked In
         </span>
       );
     }
@@ -106,7 +116,7 @@ function ReservationContent({
   // Don't render ANY date content until mounted
   if (!isMounted) {
     return (
-      <div className="flex-grow px-4 md:px-6 py-3 flex flex-col">
+      <div className="grow px-4 md:px-6 py-3 flex flex-col">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h3 className="text-lg md:text-xl font-semibold">
@@ -157,7 +167,7 @@ function ReservationContent({
   }
 
   return (
-    <div className="flex-grow px-4 md:px-6 py-3 flex flex-col">
+    <div className="grow px-4 md:px-6 py-3 flex flex-col">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h3 className="text-lg md:text-xl font-semibold">
@@ -185,6 +195,16 @@ function ReservationContent({
         {formattedDates.isToday ? "Today" : formattedDates.timeDistance})
         &mdash; {formattedDates.endDate}
       </p>
+
+      {status === "checked-in" && (
+        <Link
+          href="/account/menu"
+          className="flex items-center gap-2 text-accent-400 hover:text-accent-500 transition-colors mt-2 font-semibold w-fit"
+        >
+          <UtensilsCrossed className="h-4 w-4" />
+          <span>Order Food</span>
+        </Link>
+      )}
 
       {hasMultipleAccommodations && (
         <div className="mt-2">

@@ -137,7 +137,7 @@ export async function getAdminUser(email = "admin@retreatcottage.in") {
 
 export async function getBooking(id) {
   if (!id) throw new Error("Invalid Id!");
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("bookings")
     .select("*")
     .eq("id", id)
@@ -149,7 +149,7 @@ export async function getBooking(id) {
 }
 
 export async function getBookings(guestId) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("bookings")
     .select(
       `
