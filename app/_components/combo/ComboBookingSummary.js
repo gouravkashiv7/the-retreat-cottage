@@ -14,6 +14,7 @@ export default function ComboBookingSummary({
   retreats,
   showSpecialRequirements = true,
   extraGuestPrice,
+  guest,
 }) {
   const {
     specialRequirements,
@@ -27,11 +28,14 @@ export default function ComboBookingSummary({
     pricing: enhancedPricing,
   } = useComboBooking(retreats, pricing, comboId, extraGuestPrice);
 
-  return (
-    <div className="bg-white rounded-xl shadow-lg p-6 sticky top-8">
-      <h3 className="text-xl font-semibold text-gray-800 mb-4">
-        Booking Summary
-      </h3>
+   return (
+    <div className="bg-primary-900/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl p-6 sm:p-8 sticky top-8 transition-all hover:shadow-accent-500/5">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-1.5 h-6 bg-accent-500 rounded-full" />
+        <h3 className="text-xl font-bold text-white uppercase tracking-tight">
+          Booking Summary
+        </h3>
+      </div>
 
       <ComboBookingInfo
         formattedCheckIn={formattedCheckIn}
@@ -60,6 +64,8 @@ export default function ComboBookingSummary({
         extraGuestPrice={extraGuestPrice}
         canConfirmBooking={canConfirmBooking}
         resetRange={resetRange}
+        guest={guest}
+        retreats={retreats}
       />
 
       <div className="mt-4 text-center">

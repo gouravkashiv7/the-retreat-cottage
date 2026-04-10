@@ -138,8 +138,19 @@ export default function Home() {
     ]
   };
 
+  const siteNameJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "The Retreat Cottage",
+    url: "https://retreatcottage.in",
+  };
+
   return (
     <main className="relative min-h-svh bg-primary-950 selection:bg-accent-500 selection:text-primary-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(siteNameJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

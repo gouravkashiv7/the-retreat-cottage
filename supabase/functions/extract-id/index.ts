@@ -28,11 +28,10 @@ Deno.serve(async (req: Request) => {
     const prompt = `Extract info from these ID image(s). Return ONLY JSON:
     {
       "fullName": "string",
-      "idType": "Passport" | "National ID" | "Driver License" | "Other",
-      "nationalId": "string",
-      "address": "string",
-      "country": "string"
+      "idNumber": "string",
+      "address": "string"
     }
+    Include only the full name, the specific ID/Passport number, and the permanent address. 
     If information is spread across images (e.g. name on front, address on back), combine them into one response.
     If unknown, use null. No backticks.`;
 

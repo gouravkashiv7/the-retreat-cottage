@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getRooms, getCabins, getSettings } from "@/app/_lib/data-service";
+import { getRooms, getCabins, getSettings, getGuest } from "@/app/_lib/data-service";
 import ComboDetailsHeader from "@/app/_components/combo/ComboDetailsHeader";
 import ComboRetreatsList from "@/app/_components/combo/ComboRetreatsList";
 import ComboBookingSummary from "@/app/_components/combo/ComboBookingSummary";
@@ -13,6 +13,7 @@ import { auth } from "@/app/_lib/auth";
 
 export default async function ComboDetailsPage({ params }) {
   const session = await auth();
+  const guest = await getGuest(session?.user?.email);
   const guestId = session?.user?.guestId;
   const bookedDates = await getAllBookedDates();
   const { comboId } = await params;
@@ -79,6 +80,7 @@ export default async function ComboDetailsPage({ params }) {
                 pricing={pricing}
                 comboId={comboId}
                 extraGuestPrice={extraGuestPrice}
+                guest={guest}
               />
             </div>
           </div>

@@ -20,8 +20,8 @@ function DatePicker({
     disabled: isDateDisabled,
     captionLayout: "dropdown",
     style: {
-      "--rdp-day-height": "42px",
-      "--rdp-day-width": "38px",
+      "--rdp-day-height": "34px",
+      "--rdp-day-width": "32px",
       "--rdp-accent-color": "rgb(236 201 140)",
     },
     modifiersClassNames: {
@@ -32,20 +32,20 @@ function DatePicker({
       range_middle: "bg-accent-400/30",
     },
   };
-
+ 
   return (
     <>
       {/* Desktop: 2 months */}
       <DayPicker
         {...dayPickerProps}
-        className="pt-6 md:pt-12 place-self-center hidden md:block"
+        className="place-self-center hidden md:block"
         numberOfMonths={2}
       />
-
+ 
       {/* Mobile: 1 month */}
       <DayPicker
         {...dayPickerProps}
-        className="pt-6 md:pt-12 place-self-center md:hidden"
+        className="place-self-center md:hidden"
         numberOfMonths={1}
       />
     </>

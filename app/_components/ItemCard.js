@@ -29,10 +29,10 @@ function ItemCard({
     type === "cabin" && isFull ? basePrice + extraGuestPrice : basePrice;
 
   return (
-    <div className="group relative bg-primary-900/60 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-white/5 overflow-hidden shadow-xl hover:shadow-accent-500/5 transition-all duration-500 hover:border-accent-500/20 hover:-translate-y-1">
+    <div className="group relative bg-primary-900/40 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-white/10 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.4)] transition-all duration-500 hover:shadow-[0_8px_40px_rgba(198,153,99,0.15)] hover:border-accent-500/30 hover:-translate-y-1.5 focus-within:ring-2 focus-within:ring-accent-500">
       {/* Image Section */}
       {image && (
-        <div className="w-full aspect-16/10 relative overflow-hidden">
+        <div className="w-full aspect-[16/10] relative overflow-hidden">
           <Image
             src={image}
             alt={`${type.charAt(0).toUpperCase() + type.slice(1)} ${name}`}
@@ -45,41 +45,41 @@ function ItemCard({
           <div className="absolute inset-0 bg-linear-to-t from-primary-950/80 via-primary-950/20 to-transparent" />
 
           {/* Type Badge */}
-          <div className="absolute top-4 left-4">
-            <span className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-md border border-white/10 bg-primary-950/60 text-white shadow-lg">
+          <div className="absolute top-4 left-4 z-10">
+            <span className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-xl border border-white/20 bg-black/40 text-white shadow-lg">
               {type === "cabin" ? "🏡 Cabin" : "🛏️ Room"}
             </span>
           </div>
 
           {/* Capacity Badges */}
           {type === "cabin" && isFull && (
-            <div className="absolute top-4 right-4">
-              <span className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-accent-500/90 text-primary-900 backdrop-blur-md shadow-lg">
+            <div className="absolute top-4 right-4 z-10">
+              <span className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-accent-500/80 border border-accent-500/30 text-white backdrop-blur-xl shadow-lg">
                 Full Capacity
               </span>
             </div>
           )}
           {type === "cabin" && !isFull && isCombo && (
-            <div className="absolute top-4 right-4">
-              <span className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/80 text-white backdrop-blur-md shadow-lg">
+            <div className="absolute top-4 right-4 z-10">
+              <span className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/70 border border-emerald-500/30 text-white backdrop-blur-xl shadow-lg">
                 Reduced Capacity
               </span>
             </div>
           )}
 
           {/* Price overlay on image */}
-          <div className="absolute bottom-4 right-4 text-right">
-            <div className="bg-primary-950/70 backdrop-blur-md rounded-xl px-4 py-2 border border-white/10">
+          <div className="absolute bottom-4 right-4 text-right z-10">
+            <div className="bg-black/50 backdrop-blur-xl rounded-xl px-4 py-2 border border-white/20 shadow-xl transition-transform duration-500 group-hover:scale-105">
               {discount > 0 && (
-                <span className="text-xs text-primary-400 line-through block">
+                <span className="text-xs text-primary-300 line-through block mb-0.5">
                   ₹{regularPrice}
                 </span>
               )}
               <span className="text-xl sm:text-2xl font-black text-accent-400">
                 ₹{finalPrice}
               </span>
-              <span className="text-primary-400 text-xs font-medium">
-                /night
+              <span className="text-primary-300 text-xs font-medium ml-1">
+                / night
               </span>
             </div>
           </div>
@@ -87,13 +87,13 @@ function ItemCard({
       )}
 
       {/* Content Section */}
-      <div className="p-5 sm:p-6 space-y-4">
+      <div className="p-5 sm:p-6 space-y-4 relative z-20">
         <div>
-          <h3 className="text-xl sm:text-2xl font-bold text-white mb-1 tracking-tight group-hover:text-accent-300 transition-colors duration-300">
+          <h3 className="text-xl sm:text-2xl font-bold mb-1 tracking-tight text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-accent-300 group-hover:to-accent-500 transition-all duration-500">
             {type.charAt(0).toUpperCase() + type.slice(1)} {name}
           </h3>
           {description && (
-            <p className="text-primary-300 text-sm sm:text-base leading-relaxed line-clamp-2">
+            <p className="text-primary-300/90 text-sm sm:text-base leading-relaxed line-clamp-2">
               {description}
             </p>
           )}
@@ -124,20 +124,23 @@ function ItemCard({
         {!isCombo && (
           <Link
             href={`/retreats/${type}/${id}`}
-            className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 bg-accent-500 hover:bg-accent-400 text-primary-950 font-black rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-accent-500/20 group/btn text-sm sm:text-base ${
+            className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 bg-linear-to-r from-accent-600 to-accent-500 hover:from-accent-500 hover:to-accent-400 text-primary-950 font-black rounded-xl transition-all duration-300 hover:scale-[1.02] shadow-[0_4px_15px_rgba(198,153,99,0.2)] hover:shadow-[0_8px_25px_rgba(198,153,99,0.4)] relative overflow-hidden group/btn text-sm sm:text-base ${
               isLoading ? "opacity-50 cursor-not-allowed" : ""
             }`}
             onClick={() => setIsLoading(true)}
           >
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-[150%] skew-x-[15deg] group-hover/btn:translate-x-[150%] transition-transform duration-1000 ease-out z-0" />
+            
             {isLoading ? (
               <>
-                <div className="w-4 h-4 border-2 border-primary-800 border-t-transparent rounded-full animate-spin" />
-                Loading...
+                <div className="w-4 h-4 border-2 border-primary-900 border-t-transparent rounded-full animate-spin relative z-10" />
+                <span className="relative z-10">Loading...</span>
               </>
             ) : (
               <>
-                Details & Reservation
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
+                <span className="relative z-10">Details & Reservation</span>
+                <ArrowRight className="h-4 w-4 relative z-10 transition-transform duration-300 group-hover/btn:translate-x-2" />
               </>
             )}
           </Link>

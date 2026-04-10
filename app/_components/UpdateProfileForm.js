@@ -85,25 +85,18 @@ function UpdateProfileForm({ guest, children }) {
     }
   };
 
+  // 1. Nationality Locking Logic
   useEffect(() => {
-    const idTypeSelect = formRef.current?.querySelector(
-      'select[name="idType"]',
-    );
-    const idNumberInput = formRef.current?.querySelector(
-      'input[name="idNumber"]',
-    );
-
-    if (defaultIdType) return;
-    if (!idTypeSelect || !idNumberInput) return;
-
-    idTypeSelect.value = "";
-    idNumberInput.disabled = true;
-    idNumberInput.value = "";
-
+    // If not indian, lock to passport
     if (selectedCountry !== "India") {
-      idTypeSelect.value = "passport";
       setSelectedIdType("passport");
-      idNumberInput.disabled = false;
+    } else {
+      // If it is India, keep whatever was there, or keep empty if it was changed from Foreign back to India
+      if (selectedIdType === "passport" && !defaultIdType) {
+        // Only reset if we transition from foreign to India and weren't originally a passport user
+        // setSelectedIdType(""); 
+        // Actually, we don't necessarily need to reset it, user can change it.
+      }
     }
   }, [selectedCountry, defaultIdType]);
 
@@ -140,13 +133,24 @@ function UpdateProfileForm({ guest, children }) {
 
       if (data.error) throw new Error(data.error);
 
-      // Autofill form
+      // --- Autofill Form (STRICLY LIMITED SCOPE) ---
+      
+      // 1. Full Name
+      if (data.fullName) {
+        const nameInput = formRef.current?.querySelector(
+          'input[name="fullName"]',
+        );
+        if (nameInput) nameInput.value = data.fullName;
+      }
+
+      // 2. ID Number (National ID or Passport)
       const detectedIdNumber =
         data.idNumber ||
         data.nationalId ||
         data.passport ||
         data.passportNumber ||
         data.id_number;
+        
       if (detectedIdNumber) {
         const idInput = formRef.current?.querySelector(
           'input[name="idNumber"]',
@@ -157,13 +161,7 @@ function UpdateProfileForm({ guest, children }) {
         }
       }
 
-      if (data.fullName) {
-        const nameInput = formRef.current?.querySelector(
-          'input[name="fullName"]',
-        );
-        if (nameInput) nameInput.value = data.fullName;
-      }
-
+      // 3. Address
       if (data.address) {
         const addressInput = formRef.current?.querySelector(
           'textarea[name="address"]',
@@ -311,7 +309,8 @@ function UpdateProfileForm({ guest, children }) {
             </label>
             <select
               name="idType"
-              defaultValue={defaultIdType || ""}
+              value={selectedIdType}
+              disabled={selectedCountry !== "India"}
               onChange={(e) => {
                 const val = e.target.value;
                 setSelectedIdType(val);
@@ -323,7 +322,7 @@ function UpdateProfileForm({ guest, children }) {
                   if (!val) idNumberInput.value = "";
                 }
               }}
-              className="w-full p-4 border border-white/10 bg-primary-800/40 rounded-xl text-primary-100 font-medium focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all hover:border-white/20 [&>option]:bg-primary-900 [&>option]:text-white"
+              className="w-full p-4 border border-white/10 bg-primary-800/40 rounded-xl text-primary-100 font-medium focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all hover:border-white/20 disabled:cursor-not-allowed disabled:bg-primary-800/20 disabled:text-primary-400 [&>option]:bg-primary-900 [&>option]:text-white"
             >
               <option value="">Select ID Type</option>
               {selectedCountry === "India" ? (
@@ -411,7 +410,17 @@ function UpdateProfileForm({ guest, children }) {
               </div>
             )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {!selectedIdType && (
+              <div className="bg-primary-900/40 border border-accent-500/10 rounded-xl p-8 flex flex-col items-center justify-center text-center">
+                <ShieldCheck className="w-10 h-10 text-primary-700 mb-3" />
+                <h5 className="text-primary-300 font-bold mb-1">Upload Locked</h5>
+                <p className="text-primary-500 text-xs">
+                  Please select an ID type in Step 1 to enable image upload and Smart Fill.
+                </p>
+              </div>
+            )}
+
+            <div className={`grid grid-cols-1 sm:grid-cols-2 gap-6 ${!selectedIdType ? 'opacity-20 pointer-events-none' : ''}`}>
               <div className="space-y-3">
                 <label className="block text-xs font-bold text-primary-400 uppercase tracking-wider">
                   Front Side

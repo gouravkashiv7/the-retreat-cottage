@@ -60,6 +60,7 @@ export async function createCombo(formData) {
       numNights,
       numGuests,
       guestId,
+      bookedItems: bookedRetreats,
     });
   } catch (error) {
     console.error("Error creating combo booking:", error);

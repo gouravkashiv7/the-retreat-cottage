@@ -42,7 +42,12 @@ export async function sendBookingEmail(bookingDetails) {
     numGuests,
     guestPhone,
     guestId,
+    bookedItems = [], // Array of { name, type } or just strings
   } = bookingDetails;
+
+  const itemsList = bookedItems.length > 0 
+    ? bookedItems.map(item => typeof item === 'string' ? item : `${item.type === 'cabin' ? 'Cabin' : 'Room'} #${item.id}`).join(", ")
+    : packageName;
 
   // If phone is not provided, try to fetch it from the database
   let phone = guestPhone;
@@ -100,6 +105,10 @@ export async function sendBookingEmail(bookingDetails) {
               <td style="padding: 8px 0; color: #666;">Guests:</td>
               <td style="padding: 8px 0; font-weight: bold; text-align: right;">${numGuests} People</td>
             </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #666;">Units:</td>
+              <td style="padding: 8px 0; font-weight: bold; text-align: right;">${itemsList}</td>
+            </tr>
             <tr style="border-top: 2px solid #c9a050;">
               <td style="padding: 15px 0; color: #333; font-weight: bold; font-size: 18px;">Total Amount:</td>
               <td style="padding: 15px 0; font-weight: bold; text-align: right; color: #c9a050; font-size: 22px;">₹${totalPrice}</td>
@@ -140,7 +149,8 @@ export async function sendBookingEmail(bookingDetails) {
         <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
         
         <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 5px;">Booking Overview</h3>
-        <p><strong>Items:</strong> ${packageName}</p>
+        <p><strong>Package:</strong> ${packageName}</p>
+        <p><strong>Booked Units:</strong> ${itemsList}</p>
         <p><strong>Dates:</strong> ${new Date(startDate).toLocaleDateString()} to ${new Date(endDate).toLocaleDateString()}</p>
         <p><strong>Guests:</strong> ${numGuests}</p>
         <p><strong>Total Price:</strong> ₹${totalPrice}</p>

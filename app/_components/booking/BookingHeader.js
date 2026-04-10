@@ -42,21 +42,21 @@ export default function BookingHeader({
           <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-gold-500/30 rounded-br-2xl"></div>
 
           {/* Title Section */}
-          <div className="text-center mb-6">
-            <h3 className="text-2xl sm:text-3xl font-black text-gold-300 mb-2 bg-linear-to-r from-gold-400 via-yellow-200 to-gold-400 bg-clip-text text-transparent tracking-tight">
+          <div className="text-center mb-4">
+            <h3 className="text-xl sm:text-2xl font-black text-gold-300 mb-1 bg-linear-to-r from-gold-400 via-yellow-200 to-gold-400 bg-clip-text text-transparent tracking-tight">
               Select Your Dates
             </h3>
             <div className="flex items-center justify-center gap-2">
-              <span className="h-px w-8 bg-gold-500/20"></span>
-              <p className="text-primary-300 text-sm sm:text-base font-medium">
-                Check-in after 2:00 PM • Check-out before 11:00 AM
+              <span className="h-px w-6 bg-gold-500/20"></span>
+              <p className="text-primary-300 text-[10px] sm:text-xs font-medium uppercase tracking-widest">
+                Check-in 2:00 PM • Check-out 11:00 AM
               </p>
-              <span className="h-px w-8 bg-gold-500/20"></span>
+              <span className="h-px w-6 bg-gold-500/20"></span>
             </div>
           </div>
 
           {/* DateSelector Container - Reduced padding for smaller look */}
-          <div className="bg-primary-950/40 rounded-2xl p-2 sm:p-4 border border-gold-300/10 shadow-inner inline-block mx-auto">
+          <div className="bg-primary-950/40 rounded-xl p-1 sm:p-2 border border-gold-300/10 shadow-inner inline-block mx-auto">
             <PackageDateSelector
               settings={settings}
               retreats={retreats}

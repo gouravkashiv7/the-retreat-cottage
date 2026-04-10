@@ -105,6 +105,7 @@ export async function createBooking(bookingData, formData) {
       numNights,
       numGuests,
       guestId: session.user.guestId,
+      bookedItems: [{ id: parseInt(retreatId), type: retreatId <= 2 ? 'cabin' : 'room' }],
     });
 
     return { success: true, redirect: "/retreats/thankyou" };

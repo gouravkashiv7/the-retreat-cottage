@@ -92,12 +92,16 @@ function RetreatSection({
 
   return (
     <div className={className}>
-      <div className="flex items-center gap-4 mb-8 sm:mb-10">
-        <div className="h-px flex-1 bg-linear-to-r from-transparent via-accent-500/20 to-transparent" />
-        <h2 className="text-2xl sm:text-3xl text-accent-400 font-black tracking-tight text-center shrink-0">
+      <div className="flex items-center gap-6 mb-10 sm:mb-14">
+        <div className="h-px flex-1 bg-linear-to-r from-transparent via-accent-500/40 to-transparent relative">
+          <div className="absolute inset-0 bg-accent-500/20 blur-sm" />
+        </div>
+        <h2 className="text-3xl sm:text-4xl text-transparent bg-clip-text bg-linear-to-r from-accent-300 via-accent-400 to-accent-600 font-black tracking-wider text-center shrink-0 drop-shadow-sm">
           {title}
         </h2>
-        <div className="h-px flex-1 bg-linear-to-r from-transparent via-accent-500/20 to-transparent" />
+        <div className="h-px flex-1 bg-linear-to-r from-transparent via-accent-500/40 to-transparent relative">
+          <div className="absolute inset-0 bg-accent-500/20 blur-sm" />
+        </div>
       </div>
       {filteredRetreats.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">

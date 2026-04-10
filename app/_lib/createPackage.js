@@ -71,6 +71,11 @@ export async function createPackageBooking(formData) {
     }
     await processRetreats(data.id, retreatIds, numGuests, extraGuestPrice);
 
+    const bookedItems = retreatIds.map(id => ({
+      id: parseInt(id),
+      type: parseInt(id) <= 2 ? 'cabin' : 'room'
+    }));
+
     // Send the booking email
     await sendBookingEmail({
       guestName,
@@ -82,6 +87,7 @@ export async function createPackageBooking(formData) {
       numNights,
       numGuests,
       guestId,
+      bookedItems,
     });
 
     if (packageName === "First Floor") {

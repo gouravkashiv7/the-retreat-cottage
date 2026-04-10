@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { UsersIcon, HomeModernIcon } from "@heroicons/react/24/solid";
+import { Users, Home, Sparkles } from "lucide-react";
 
 export default function ComboRetreatItem({ retreat, extraGuestPrice }) {
   const retreatDiscount = Math.round(
@@ -12,86 +12,64 @@ export default function ComboRetreatItem({ retreat, extraGuestPrice }) {
       : retreatBasePrice;
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-3 sm:p-4 border border-gray-200 rounded-lg">
+    <div className="group flex flex-col sm:flex-row gap-4 p-4 bg-primary-950/40 border border-white/5 rounded-2xl transition-all hover:bg-primary-900/60 hover:border-accent-500/20 shadow-lg">
       {retreat.image && (
-        <div className="w-full sm:w-24 h-32 sm:h-24 relative flex-shrink-0">
+        <div className="w-full sm:w-32 h-40 sm:h-32 relative flex-shrink-0 overflow-hidden rounded-xl">
           <Image
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             src={retreat.image}
             alt={retreat.name}
             fill
-            className="object-cover rounded-md"
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
           />
+          <div className="absolute inset-0 bg-linear-to-t from-primary-950/60 to-transparent" />
         </div>
       )}
 
-      <div className="flex-1 flex flex-col sm:flex-row gap-3 sm:gap-4">
-        {/* Content Section */}
-        <div className="flex-1">
-          <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2 mb-2">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-800">
-              {retreat.type.charAt(0).toUpperCase() + retreat.type.slice(1)}{" "}
+      <div className="flex-1 flex flex-col">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+          <div className="flex flex-col">
+            <h3 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
               {retreat.name}
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary-800 text-primary-400 font-bold uppercase tracking-widest border border-white/5">
+                {retreat.type}
+              </span>
             </h3>
-            {retreat.type === "cabin" && retreat.isFull && (
-              <span className="text-xs bg-accent-500 text-primary-800 px-2 py-1 rounded-full font-medium self-start">
-                Full Capacity
-              </span>
-            )}
-            {retreat.type === "cabin" && !retreat.isFull && (
-              <span className="text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium self-start">
-                Reduced Capacity
-              </span>
-            )}
-          </div>
-
-          <p className="text-gray-600 text-sm mb-2 line-clamp-2">
-            {retreat.description}
-          </p>
-
-          <div className="flex items-center gap-3 sm:gap-4 text-sm text-gray-500 mb-2">
-            <div className="flex items-center gap-1">
-              <UsersIcon className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">
-                {retreat.usedCapacity || retreat.maxCapacity} guest
-                {(retreat.usedCapacity || retreat.maxCapacity) > 1 ? "s" : ""}
-              </span>
-            </div>
-            <div className="flex items-center gap-1">
-              <HomeModernIcon className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">{retreat.type}</span>
+            <div className="flex items-center gap-3 mt-1">
+              <div className="flex items-center gap-1.5 text-primary-400">
+                 <Users className="w-3.5 h-3.5" />
+                 <span className="text-xs font-medium">{retreat.usedCapacity || retreat.maxCapacity} Guests</span>
+              </div>
+              <div className="w-1 h-1 bg-primary-700 rounded-full" />
+              <div className="flex items-center gap-1.5 text-primary-400">
+                 <Home className="w-3.5 h-3.5" />
+                 <span className="text-xs font-medium uppercase tracking-tighter">{retreat.type} Retreat</span>
+              </div>
             </div>
           </div>
 
-          {retreat.type === "cabin" && retreat.isFull && (
-            <p className="text-xs text-accent-600 font-medium">
-              +₹{extraGuestPrice} for extra guest
-            </p>
-          )}
+          <div className="flex flex-col items-end">
+            <p className="text-xl font-black text-accent-400">₹{retreatFinalPrice.toLocaleString()}</p>
+            <p className="text-[10px] text-primary-500 uppercase font-bold tracking-tighter">per night</p>
+          </div>
         </div>
 
-        <div className="flex justify-between sm:flex-col sm:justify-start sm:items-end gap-2 sm:gap-1">
-          <div className="text-right sm:text-center">
-            {retreat.discount > 0 ||
-            (retreat.type === "cabin" && retreat.isFull) ? (
-              <div className="flex flex-col items-end sm:items-start">
-                <p className="text-base sm:text-lg font-bold text-accent-600">
-                  ₹{retreatFinalPrice}
-                </p>
-                <p className="text-xs sm:text-sm text-gray-500 line-through">
-                  ₹
-                  {retreat.type === "cabin" && retreat.isFull
-                    ? retreat.regularPrice + extraGuestPrice
-                    : retreat.regularPrice}
-                </p>
+        <p className="text-primary-300/70 text-sm leading-relaxed line-clamp-2 italic font-light">
+          {retreat.description}
+        </p>
+        
+        <div className="mt-4 flex flex-wrap gap-2">
+           {retreat.type === "cabin" && retreat.isFull && (
+             <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-accent-500/10 border border-accent-500/20 text-accent-400 text-[10px] font-bold uppercase tracking-wider">
+                <Sparkles className="w-3 h-3" />
+                Full Capacity Added (+₹{extraGuestPrice})
+             </div>
+           )}
+           {retreat.discount > 0 && (
+              <div className="px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
+                Special Package Offer Applied
               </div>
-            ) : (
-              <p className="text-base sm:text-lg font-bold text-accent-600">
-                ₹{retreatFinalPrice}
-              </p>
-            )}
-            <p className="text-xs text-gray-500 mt-1">per night</p>
-          </div>
+           )}
         </div>
       </div>
     </div>

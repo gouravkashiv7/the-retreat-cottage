@@ -19,56 +19,51 @@ export default function ComboBookingInfo({
   } = pricing;
 
   return (
-    <div className="space-y-4 mb-6">
-      {/* Read-only Date Inputs */}
+    <div className="space-y-6 mb-8">
+      {/* Dates Row */}
       {formattedCheckIn && formattedCheckOut && (
-        <>
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Check-in Date
+            <label className="block text-[10px] font-bold text-primary-500 uppercase tracking-widest mb-1.5 px-1">
+              Check-in
             </label>
-            <input
-              type="date"
-              value={formattedCheckIn}
-              disabled={true}
-              className="w-full p-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed text-sm"
-            />
+            <div className="w-full p-3 bg-primary-950/60 border border-white/5 rounded-xl text-primary-200 font-bold text-sm text-center">
+               {formattedCheckIn}
+            </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Check-out Date
+            <label className="block text-[10px] font-bold text-primary-500 uppercase tracking-widest mb-1.5 px-1">
+              Check-out
             </label>
-            <input
-              type="date"
-              value={formattedCheckOut}
-              disabled={true}
-              className="w-full p-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed text-sm"
-            />
+            <div className="w-full p-3 bg-primary-950/60 border border-white/5 rounded-xl text-primary-200 font-bold text-sm text-center">
+               {formattedCheckOut}
+            </div>
           </div>
-        </>
+        </div>
       )}
 
-      <div className="flex justify-between items-center">
-        <span className="text-gray-600">Total Guests</span>
-        <span className="font-semibold text-gray-500">{guestCount} guests</span>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-3 gap-2">
+        <div className="bg-primary-950/40 p-3 rounded-xl border border-white/5 flex flex-col items-center">
+           <span className="text-[9px] font-bold text-primary-500 uppercase tracking-tight">Guests</span>
+           <span className="text-white font-black">{guestCount}</span>
+        </div>
+        <div className="bg-primary-950/40 p-3 rounded-xl border border-white/5 flex flex-col items-center">
+           <span className="text-[9px] font-bold text-primary-500 uppercase tracking-tight">Units</span>
+           <span className="text-white font-black">{retreatCount}</span>
+        </div>
+        <div className="bg-primary-950/40 p-3 rounded-xl border border-white/5 flex flex-col items-center">
+           <span className="text-[9px] font-bold text-primary-500 uppercase tracking-tight">Max</span>
+           <span className="text-white font-black">{totalCapacity}</span>
+        </div>
       </div>
-      <div className="flex justify-between items-center">
-        <span className="text-gray-600">Number of Retreats</span>
-        <span className="font-semibold text-gray-500">{retreatCount}</span>
-      </div>
-      <div className="flex justify-between items-center">
-        <span className="text-gray-600">Total Capacity</span>
-        <span className="font-semibold text-gray-500">
-          {totalCapacity} guests
-        </span>
-      </div>
+
       {fullCapacityCabins > 0 && (
-        <div className="flex justify-between items-center text-sm">
-          <span className="text-gray-600">
-            Extra guest premium ({fullCapacityCabins} cabin
-            {fullCapacityCabins > 1 ? "s" : ""})
+        <div className="p-3 rounded-xl bg-accent-500/5 border border-accent-500/10 flex items-center justify-between">
+          <span className="text-[10px] font-bold text-accent-400 uppercase tracking-wider">
+            Premium Capacity ({fullCapacityCabins})
           </span>
-          <span className="font-semibold text-accent-600">
+          <span className="font-black text-accent-300">
             +₹{extraGuestPrice}
           </span>
         </div>
@@ -77,15 +72,15 @@ export default function ComboBookingInfo({
       {/* Special Requirements */}
       {showSpecialRequirements && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-[10px] font-bold text-primary-500 uppercase tracking-widest mb-2 px-1">
             Special Requirements
           </label>
           <textarea
             rows="3"
             value={specialRequirements}
             onChange={(e) => setSpecialRequirements(e.target.value)}
-            placeholder="Any special arrangements or requirements for your group..."
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 resize-none text-gray-700 text-sm"
+            placeholder="Any special arrangements for your group..."
+            className="w-full p-4 bg-primary-950/40 border border-white/5 rounded-2xl text-primary-100 text-sm placeholder:text-primary-700 focus:ring-2 focus:ring-accent-500/50 outline-none transition-all resize-none italic font-light"
           />
         </div>
       )}
@@ -109,28 +104,25 @@ function PriceSummary({
   numNights,
 }) {
   return (
-    <div className="border-t pt-4">
-      <div className="flex justify-between items-center text-lg">
-        <span className="text-gray-800 font-semibold">Total Price</span>
+    <div className="pt-6 border-t border-white/10">
+      <div className="flex justify-between items-end">
+        <div>
+           <p className="text-[10px] font-bold text-primary-500 uppercase tracking-[0.2em] mb-1">Total Stay Value</p>
+           {hasDiscount && (
+             <p className="text-xs text-primary-600 line-through mb-1">
+               ₹{totalOriginalPriceForStay.toLocaleString()}
+             </p>
+           )}
+           <div className="flex items-baseline gap-2">
+             <span className="text-3xl font-black text-accent-400">₹{totalPriceForStay.toLocaleString()}</span>
+             <span className="text-[10px] text-primary-500 uppercase font-bold">INR</span>
+           </div>
+        </div>
         <div className="text-right">
-          {hasDiscount ? (
-            <>
-              <p className="text-xl font-bold text-accent-600">
-                ₹{totalPriceForStay}
-              </p>
-              <p className="text-sm text-gray-500 line-through">
-                ₹{totalOriginalPriceForStay}
-              </p>
-            </>
-          ) : (
-            <p className="text-xl font-bold text-accent-600">
-              ₹{totalPriceForStay}
-            </p>
-          )}
-          <p className="text-xs text-gray-500">
-            {numNights} night{numNights !== 1 ? "s" : ""} total
-          </p>
-          <p className="text-xs text-gray-500">(₹{totalPrice} per night)</p>
+           <p className="text-accent-400/80 text-[10px] font-bold uppercase tracking-tighter">
+             {numNights} Night{numNights !== 1 ? 's' : ''} Stay
+           </p>
+           <p className="text-primary-500 text-[10px] font-medium italic mt-0.5">₹{totalPrice.toLocaleString()} / night</p>
         </div>
       </div>
     </div>
