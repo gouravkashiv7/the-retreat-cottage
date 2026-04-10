@@ -15,28 +15,34 @@ const josefin = Josefin_Sans({
 
 export const metadata = {
   metadataBase: new URL("https://retreatcottage.in"),
+  alternates: {
+    canonical: "/",
+  },
   title: {
     template: "%s | The Retreat Cottage",
-    default: "Welcome | The Retreat Cottage",
+    default: "Pure Veg Luxury Homestay Kasauli | The Retreat Cottage",
   },
   description:
-    "Explore The Retreat Cottage, a luxury homestay near Kasauli. Experience bespoke stays in our 5 exclusive accommodations: 3 elegant rooms & 2 charming wooden cabins. Your perfect mountain retreat awaits.",
+    "Pure Veg luxury homestay near Kasauli. Private 5-bedroom villa for up to 12 adults, with a maximum capacity of 15 guests. Perfect for parties with Music, Karaoke, and Bonfire.",
   keywords: [
-    "Dharampur Homestay",
-    "Luxury Villa Dharampur",
-    "Mountain Retreat",
-    "Boutique Homestay Himachal",
+    "Pure Veg Homestay Kasauli",
+    "Music allowed Homestay Himachal",
+    "Luxury Villa for 12 adults Kasauli",
+    "Pet friendly villa Himachal Pradesh",
+    "Homestay with Karaoke and Bonfire Kasauli",
+    "Dharampur Homestay for 15 guests",
     "Wooden Cabins Dharampur",
+    "Boutique Homestay Himachal",
   ],
   openGraph: {
-    title: "The Retreat Cottage | Luxury Mountain Homestay",
+    title: "The Retreat Cottage | Music & Pure Veg Luxury Homestay",
     description:
-      "Escape into the wild. Experience bespoke stays in our charming wooden cabins & elegant rooms near Kasauli.",
+      "Private 5-bedroom villa for up to 15 guests total. Enjoy Music, Karaoke, Bonfire, and Pet-Friendly stays near Kasauli.",
     url: "https://retreatcottage.in",
     siteName: "The Retreat Cottage",
     images: [
       {
-        url: "/opengraph-image.jpg", // Needs to be generated/placed in public
+        url: "/opengraph-image.jpg",
         width: 1200,
         height: 630,
         alt: "The Retreat Cottage Cinematic View",
@@ -47,8 +53,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Retreat Cottage",
-    description: "Luxury mountain homestay near Kasauli.",
+    title: "The Retreat Cottage | Party Villa with Music",
+    description: "Private villa for up to 15 guests near Kasauli. Music, Karaoke & Pure Veg.",
     images: ["/opengraph-image.jpg"],
   },
 };

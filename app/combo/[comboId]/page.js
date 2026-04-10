@@ -48,6 +48,14 @@ export default async function ComboDetailsPage({ params }) {
             bookedDates={bookedDates}
             guestId={guestId}
           />
+
+          {/* Group-specific USP */}
+          <div className="mt-8 p-6 bg-accent-500/5 border border-accent-500/10 rounded-[2rem] backdrop-blur-md">
+            <p className="text-accent-300 text-sm md:text-base font-light italic text-center leading-relaxed">
+              &quot;Your private mountain sanctuary—no shared lobbies, and we allow music & Karaoke for our guests until 10 PM. 
+              Ideal for groups of up to 15 guests.&quot;
+            </p>
+          </div>
         </div>
 
         {/* Main Content Grid */}
@@ -82,7 +90,7 @@ export default async function ComboDetailsPage({ params }) {
 
 // Generate static params for common combinations
 export async function generateStaticParams() {
-  const commonGuestCounts = [4, 5, 6, 7, 8, 9, 10, 11, 12];
+  const commonGuestCounts = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
   const params = [];
 
   for (const guestCount of commonGuestCounts) {
@@ -111,6 +119,9 @@ export async function generateMetadata({ params }) {
 
   return {
     title: `Retreat Combination for ${guestCount} Guests | Option ${optionNumber}`,
-    description: `Book this retreat combination including multiple accommodations for ${guestCount} guests at the best price.`,
+    description: `Book this private retreat combination for ${guestCount} guests (Max 15 total). Perfect for family reunions. Experience Pure Veg luxury with music & Karaoke near Kasauli.`,
+    alternates: {
+      canonical: `/combo/${comboId}`,
+    },
   };
 }

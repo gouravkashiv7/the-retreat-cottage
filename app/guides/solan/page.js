@@ -17,6 +17,9 @@ export const metadata = {
   title: "Best Places to Visit in Solan | Sightseeing & Hidden Gems Guide",
   description:
     "Explore Solan's top attractions: Jatoli Temple (Asia's highest), Mohan Heritage Park, Menri Monastery, and Karol Tibba. Your local guide to the City of Red Gold.",
+  alternates: {
+    canonical: "/guides/solan",
+  },
   keywords: [
     "best places to visit in solan",
     "solan sightseeing",
@@ -41,7 +44,7 @@ export const metadata = {
         url: "/solan/park1.webp",
         width: 1200,
         height: 630,
-        alt: "Mohan Shakti Heritage Park Solan",
+        alt: "Mohan Shakti Heritage Park Solan - Asia's magnificent heritage park",
       },
     ],
     locale: "en_IN",
@@ -200,7 +203,7 @@ export default async function SolanGuide() {
                   <div className="relative aspect-4/3 overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
                     <Image
                       src={loc.images[0]}
-                      alt={loc.name}
+                      alt={`${loc.name} tourist attraction in Solan Himachal`}
                       fill
                       sizes="(max-width: 768px) 100vw, 500px"
                       className="object-cover transition-transform duration-1000 group-hover:scale-110"
@@ -212,7 +215,7 @@ export default async function SolanGuide() {
                     <div className="relative aspect-3/4 overflow-hidden rounded-3xl border border-white/10 shadow-2xl transform transition-transform duration-700 group-hover:-translate-y-2 group-hover:-rotate-1">
                       <Image
                         src={loc.images[0]}
-                        alt={`${loc.name} view 1`}
+                        alt={`${loc.name} view 1 in Solan`}
                         fill
                         sizes="(max-width: 768px) 50vw, 400px"
                         className="object-cover transition-transform duration-1000 group-hover:scale-110"
@@ -221,7 +224,7 @@ export default async function SolanGuide() {
                     <div className="relative aspect-3/4 overflow-hidden rounded-3xl border border-white/10 shadow-2xl mt-8 transform transition-transform duration-700 group-hover:translate-y-2 group-hover:rotate-1">
                       <Image
                         src={loc.images[1]}
-                        alt={`${loc.name} view 2`}
+                        alt={`${loc.name} view 2 in Solan`}
                         fill
                         sizes="(max-width: 768px) 50vw, 400px"
                         className="object-cover transition-transform duration-1000 group-hover:scale-110"
@@ -239,7 +242,7 @@ export default async function SolanGuide() {
                       >
                         <Image
                           src={img}
-                          alt={`${loc.name} view ${i + 1}`}
+                          alt={`${loc.name} detailed view ${i + 1} Solan`}
                           fill
                           sizes="(max-width: 768px) 45vw, 300px"
                           className="object-cover transition-transform duration-1000 group-hover:scale-110"

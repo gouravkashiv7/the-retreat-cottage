@@ -3,22 +3,22 @@ import { getCabins, getRooms } from "@/app/_lib/data-service";
 export default async function sitemap() {
   const baseUrl = "https://retreatcottage.in";
 
-  // Static routes
+  // Static routes (Removed /login to resolve robots.txt conflict)
   const staticRoutes = [
     "",
     "/about",
     "/retreats",
+    "/guides",
     "/terms",
     "/privacy",
-    "/login",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
-    changeFrequency: "monthly",
+    changeFrequency: route === "/guides" ? "weekly" : "monthly",
     priority: route === "" ? 1 : 0.8,
   }));
 
-  // Dynamic routes for retreats
+  // Dynamic routes for retreats and guides
   try {
     const [cabins, rooms] = await Promise.all([getCabins(), getRooms()]);
 
@@ -36,7 +36,18 @@ export default async function sitemap() {
       priority: 0.6,
     }));
 
-    // Common combos
+    // Specific Guides
+    const guideRoutes = [
+      "/guides/kasauli",
+      "/guides/solan",
+    ].map((route) => ({
+      url: `${baseUrl}${route}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    }));
+
+    // Common combos (Max 12 adults as per user feedback)
     const commonGuestCounts = [4, 5, 6, 7, 8, 9, 10, 11, 12];
     const comboRoutes = [];
     for (const guestCount of commonGuestCounts) {
@@ -50,7 +61,13 @@ export default async function sitemap() {
       }
     }
 
-    return [...staticRoutes, ...cabinRoutes, ...roomRoutes, ...comboRoutes];
+    return [
+      ...staticRoutes,
+      ...cabinRoutes,
+      ...roomRoutes,
+      ...guideRoutes,
+      ...comboRoutes,
+    ];
   } catch (error) {
     console.error("Sitemap generation error:", error);
     return staticRoutes;

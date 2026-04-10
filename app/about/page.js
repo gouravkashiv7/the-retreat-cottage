@@ -1,5 +1,8 @@
-import image1 from "@/public/about-1.jpg";
-import image2 from "@/public/about-2.jpg";
+import imageToyTrain from "@/public/toy-train.png";
+import imageBalcony from "@/public/balcony-view.png";
+import imageTrack from "@/public/track.png";
+import imageVilla from "@/public/about-1.jpg";
+import imageForest from "@/public/about-2.jpg";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -12,6 +15,8 @@ import {
   Phone,
   Mail,
   ExternalLink,
+  Compass,
+  Wind,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -25,9 +30,12 @@ import {
 
 export const revalidate = 1727800;
 export const metadata = {
-  title: "About",
+  title: "About Our 5-Bedroom Luxury Villa Kasauli",
   description:
     "Discover The Retreat Cottage — a luxury 5-bedroom mountain villa near Kasauli, Himachal Pradesh. Nestled in a breathtaking pine valley with panoramic Himalayan views.",
+  alternates: {
+    canonical: "/about",
+  },
 };
 
 const googleReviews = [
@@ -106,349 +114,443 @@ const features = [
 
 export default function Page() {
   return (
-    <div className="space-y-28 md:space-y-36 pb-20">
+    <div className="space-y-32 md:space-y-48 pb-20">
       {/* ─── Hero Heading ─── */}
-      <div className="text-center relative">
-        <FadeUp>
-          <Badge
-            variant="outline"
-            className="mb-6 border-accent-400/40 text-accent-400 bg-accent-400/5 text-xs tracking-widest uppercase px-4 py-1.5"
-          >
-            ✦ Dharampur, Himachal Pradesh
-          </Badge>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl mb-6 text-accent-400 font-medium tracking-tight leading-tight">
-            About The <br className="hidden sm:block" />
-            <span className="italic text-accent-300">Retreat Cottage</span>
-          </h1>
-          <p className="text-lg sm:text-xl text-primary-300 max-w-2xl mx-auto leading-relaxed">
-            Discover Your Perfect Mountain Sanctuary Where Luxury Meets Serenity
-          </p>
-        </FadeUp>
-      </div>
+      <section className="relative pt-10 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full -z-10">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent-400/10 blur-[120px] rounded-full" />
+          <div className="absolute bottom-[20%] right-[-5%] w-[30%] h-[30%] bg-primary-400/10 blur-[100px] rounded-full" />
+        </div>
 
-      {/* ─── Story Section ─── */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-center">
-        <FadeUp className="col-span-1 md:col-span-7 order-2 md:order-1 space-y-6">
-          <Badge
-            variant="outline"
-            className="border-accent-400/30 text-accent-400 text-xs tracking-widest uppercase bg-transparent"
-          >
-            Our Story
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl text-white font-medium leading-tight">
-            Your Exclusive Mountain{" "}
-            <span className="text-accent-400">Escape Awaits</span>
-          </h2>
-          <div className="space-y-4 text-primary-300 leading-relaxed">
-            <p>
-              Nestled in the heart of a breathtaking pine valley,{" "}
-              <strong className="text-primary-100">The Retreat Cottage</strong>{" "}
-              offers a charming 5-bedroom independent villa surrounded by
-              majestic Himalayan peaks. Experience stunning panoramic views and
-              serene ambiance—your perfect sanctuary away from city life's
-              hustle and bustle.
-            </p>
-            <p>
-              Strategically positioned between the charming hill stations of
-              Kasauli and Solan, our villa provides the ideal base for exploring
-              both towns' unique character. Adventure enthusiasts will love our
-              proximity to the heritage toy train track, offering unforgettable
-              trekking experiences through nature's splendor.
-            </p>
-            <p>
-              Immerse yourself in fresh pine-scented air, peaceful surroundings,
-              and the perfect harmony of luxury and comfort. Whether you seek
-              relaxation, rejuvenation, or adventure, our villa promises
-              unforgettable memories with personalized attention to every
-              detail.
-            </p>
-          </div>
-          <div className="pt-2 flex flex-wrap gap-4">
-            <Link
-              href="/retreats"
-              className="inline-flex items-center gap-2 bg-accent-500 px-6 py-3 text-primary-900 font-semibold rounded-xl hover:bg-accent-600 transition-all duration-300 hover:scale-105"
-            >
-              <Sparkles className="h-4 w-4" />
-              Explore Retreats
-            </Link>
-            <a
-              href="tel:+919906039157"
-              className="inline-flex items-center gap-2 border border-accent-400/40 px-6 py-3 text-accent-400 font-semibold rounded-xl hover:bg-accent-400/10 transition-all duration-300"
-            >
-              <Phone className="h-4 w-4" />
-              Call Us
-            </a>
-          </div>
-        </FadeUp>
-
-        <ScaleIn className="col-span-1 md:col-span-5 order-1 md:order-2">
-          <div className="relative">
-            <div className="absolute inset-0 bg-accent-400/10 rounded-3xl blur-3xl -z-10 scale-105" />
-            <Image
-              src={image1}
-              quality={85}
-              placeholder="blur"
-              alt="Luxury villa room with mountain view at The Retreat Cottage"
-              className="w-full h-auto rounded-3xl shadow-2xl ring-1 ring-white/10"
-            />
-          </div>
-        </ScaleIn>
-      </div>
-
-      {/* ─── Location Section ─── */}
-      <div className="relative overflow-hidden rounded-3xl bg-primary-950/80 border border-white/5 p-8 md:p-12 backdrop-blur-sm">
-        <div className="absolute top-0 right-0 w-72 h-72 bg-accent-400/5 rounded-full blur-3xl -z-10" />
-
-        <FadeUp className="mb-10">
-          <Badge
-            variant="outline"
-            className="border-accent-400/30 text-accent-400 text-xs tracking-widest uppercase bg-transparent mb-4"
-          >
-            Location
-          </Badge>
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-accent-400/10 flex items-center justify-center shrink-0">
-              <MapPin className="h-5 w-5 text-accent-400" />
+        <div className="text-center px-4">
+          <FadeUp>
+            <div className="inline-flex items-center gap-2 mb-8 bg-accent-400/5 border border-accent-400/20 px-4 py-2 rounded-full backdrop-blur-md">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-500" />
+              </span>
+              <span className="text-xs font-medium tracking-[0.2em] uppercase text-accent-300">
+                Dharampur, Himachal Pradesh
+              </span>
             </div>
-            <h2 className="text-3xl sm:text-4xl text-white font-medium">
-              Prime Location in Nature's Lap
-            </h2>
-          </div>
-        </FadeUp>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <FadeUp className="space-y-5">
-            {[
-              {
-                icon: <Sparkles className="h-4 w-4 text-accent-400" />,
-                title: "Strategic Location",
-                desc: "Perfectly situated between Kasauli and Solan, offering the best of both iconic hill stations",
-              },
-              {
-                icon: <Mountain className="h-4 w-4 text-accent-400" />,
-                title: "Breathtaking Accessibility",
-                desc: "Easy reach from both towns, making sightseeing and local exploration effortlessly convenient",
-              },
-              {
-                icon: <Trees className="h-4 w-4 text-accent-400" />,
-                title: "Unique Heritage Experience",
-                desc: "Near the charming heritage toy train track, offering picturesque trekking routes filled with nostalgic charm",
-              },
-            ].map((item, i) => (
-              <FadeUp key={i} delay={i * 0.1}>
-                <div className="flex items-start gap-4 group">
-                  <div className="h-8 w-8 rounded-lg bg-accent-400/10 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-accent-400/20 transition-colors">
-                    {item.icon}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-white text-sm mb-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-primary-300 text-sm leading-relaxed">
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-              </FadeUp>
-            ))}
-
-            <div className="pt-2">
-              <a
-                href="https://maps.app.goo.gl/JYkod7Q2DVKKcBYw7"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-accent-500 px-6 py-3 text-primary-900 font-semibold rounded-xl hover:bg-accent-600 transition-all duration-300 hover:scale-105"
-              >
-                <MapPin className="h-4 w-4" />
-                View on Google Maps
-                <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-            </div>
+            <h1 className="text-5xl sm:text-7xl md:text-8xl mb-8 font-medium tracking-tighter leading-[0.9] text-white">
+              The Art of <br />
+              <span className="italic font-light bg-linear-to-r from-accent-200 via-accent-400 to-accent-300 bg-clip-text text-transparent">
+                Mountain Living
+              </span>
+            </h1>
+            <p className="text-lg sm:text-2xl text-primary-300 max-w-3xl mx-auto font-light leading-relaxed">
+              Step into a sanctuary where luxury is defined by the whisper of
+              pines and the grandeur of the Himalayas.
+            </p>
           </FadeUp>
+        </div>
 
+        <div className="mt-20 px-4 max-w-7xl mx-auto">
           <ScaleIn>
-            <div className="rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-2xl h-full min-h-70">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3423.3724941405317!2d77.0166679!3d30.904210700000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390f87109b9272f1%3A0x1cc88c9993d31c6d!2sThe%20Retreat%20Cottage!5e0!3m2!1sen!2sin!4v1761327870057!5m2!1sen!2sin"
-                width="100%"
-                height="100%"
-                style={{ border: 0, minHeight: "280px" }}
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="The Retreat Cottage Location"
+            <div className="group relative rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-white/10 aspect-16/10 md:aspect-21/9">
+              <Image
+                src={imageBalcony}
+                priority
+                alt="Panoramic valley and mountain view from The Retreat Cottage Balcony Dharampur"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
+              <div className="absolute inset-0 bg-linear-to-t from-primary-950/80 via-transparent to-transparent opacity-60" />
+              <div className="absolute bottom-8 left-8 md:bottom-12 md:left-12 max-w-md">
+                <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-4 md:p-6 rounded-2xl">
+                  <p className="text-white/90 text-sm md:text-base italic leading-relaxed">
+                    "Waking up to the view of the valley shrouded in morning
+                    mist is an experience words can barely describe."
+                  </p>
+                </div>
+              </div>
             </div>
           </ScaleIn>
         </div>
-      </div>
+      </section>
+
+      {/* ─── Story Section ─── */}
+      <section className="max-w-7xl mx-auto px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-center">
+          <div className="space-y-8 order-2 lg:order-1">
+            <FadeUp>
+              <div className="flex items-center gap-4 mb-4">
+                <div className="h-0.5 w-12 bg-accent-500" />
+                <span className="text-accent-400 text-xs font-bold tracking-[0.3em] uppercase">
+                  Our Narrative
+                </span>
+              </div>
+              <h2 className="text-4xl md:text-5xl text-white font-medium leading-[1.1]">
+                A Harmonious Blend of <br />
+                <span className="text-accent-400 italic">Nature & Luxury</span>
+              </h2>
+            </FadeUp>
+
+            <div className="space-y-6 text-primary-200 text-lg leading-relaxed font-light">
+              <p>
+                Founded on the dream of creating an intimate escape,{" "}
+                <strong className="text-accent-300 font-medium">
+                  The Retreat Cottage
+                </strong>{" "}
+                is more than just a villa. It is a curated experience designed
+                for those who seek the extraordinary.
+              </p>
+              <p>
+                Nestled within a lush pine valley, our 5-bedroom independent
+                haven serves as your private observatory to the Himalayan
+                theater. Every window is a frame, every breath of mountain air a
+                rejuvenation.
+              </p>
+              <p>
+                Perfectly poised between the nostalgia of Kasauli and the rustic
+                charm of Solan, we offer you the luxury of silence, punctuated
+                only by the rhythmic passage of the heritage toy train nearby.
+              </p>
+            </div>
+
+            <FadeUp delay={0.2}>
+              <div className="pt-6 flex flex-wrap gap-5">
+                <Link
+                  href="/retreats"
+                  className="group inline-flex items-center gap-3 bg-accent-500 px-8 py-4 text-primary-950 font-bold rounded-2xl hover:bg-accent-600 transition-all duration-300 shadow-xl shadow-accent-500/20"
+                >
+                  <Compass className="h-5 w-5 transition-transform group-hover:rotate-45" />
+                  Begin Your Journey
+                </Link>
+                <a
+                  href="tel:+919906039157"
+                  className="inline-flex items-center gap-3 border border-white/10 bg-white/5 backdrop-blur-sm px-8 py-4 text-white font-semibold rounded-2xl hover:bg-white/10 transition-all duration-300"
+                >
+                  <Phone className="h-5 w-5 text-accent-400" />
+                  Direct Inquiry
+                </a>
+              </div>
+            </FadeUp>
+          </div>
+
+          <div className="relative order-1 lg:order-2">
+            <ScaleIn>
+              <div className="relative z-10 rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl aspect-[4/5] lg:aspect-auto lg:h-[700px]">
+                <Image
+                  src={imageVilla}
+                  alt="Luxury wooden cabin interior at The Retreat Cottage Dharampur Kasauli"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              {/* Decorative Elements */}
+              <div className="absolute -top-10 -right-10 w-48 h-48 bg-accent-500/10 blur-[80px] rounded-full -z-10" />
+              <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-primary-500/10 blur-[100px] rounded-full -z-10" />
+            </ScaleIn>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Heritage & Tracks Section ─── */}
+      <section className="relative py-24 overflow-hidden bg-primary-950">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(196,153,99,0.15),transparent_50%)]" />
+
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
+          <div className="text-center mb-20">
+            <FadeUp>
+              <Badge
+                variant="outline"
+                className="mb-4 border-accent-400/30 text-accent-400 bg-accent-400/5 px-4 py-1"
+              >
+                The Local Vibe
+              </Badge>
+              <h2 className="text-4xl md:text-6xl text-white font-medium mb-6">
+                Whispers of the <span className="italic font-light">Heritage</span>
+              </h2>
+              <p className="text-primary-300 max-w-2xl mx-auto text-lg font-light">
+                Distance yourself from the mundane with walks along the timeless
+                heritage tracks that define our valley.
+              </p>
+            </FadeUp>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+            <FadeUp className="group">
+              <div className="relative rounded-[2rem] overflow-hidden aspect-video shadow-2xl ring-1 ring-white/10 mb-8">
+                <Image
+                  src={imageToyTrain}
+                  alt="Historic Kalka-Shimla Toy Train bridge near Dharampur Kasauli"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-primary-950 via-transparent to-transparent opacity-40" />
+              </div>
+              <h3 className="text-2xl text-white font-medium mb-4 flex items-center gap-3">
+                <span className="h-8 w-8 rounded-lg bg-accent-400/10 flex items-center justify-center">
+                  <Wind className="h-4 w-4 text-accent-400" />
+                </span>
+                The Nostalgic Express
+              </h3>
+              <p className="text-primary-300 font-light leading-relaxed">
+                Watch the iconic Kalka-Shimla Toy Train wind through the hills. A
+                UNESCO World Heritage site that passes just moments away,
+                  bringing a soulful rhythm to your stay.
+              </p>
+            </FadeUp>
+
+            <FadeUp delay={0.2} className="group">
+              <div className="relative rounded-[2rem] overflow-hidden aspect-video shadow-2xl ring-1 ring-white/10 mb-8">
+                <Image
+                  src={imageTrack}
+                  alt="Scenic walking tracks through pine forests in Dharampur Himachal"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-primary-950 via-transparent to-transparent opacity-40" />
+              </div>
+              <h3 className="text-2xl text-white font-medium mb-4 flex items-center gap-3">
+                <span className="h-8 w-8 rounded-lg bg-accent-400/10 flex items-center justify-center">
+                  <Compass className="h-4 w-4 text-accent-400" />
+                </span>
+                Trekking the Pines
+              </h3>
+              <p className="text-primary-300 font-light leading-relaxed">
+                Follow the sun dappled tracks through ancient pine forests. These
+                undiscovered trails offer the perfect meditative walk for soul
+                searchers and adventure lovers alike.
+              </p>
+            </FadeUp>
+          </div>
+        </div>
+      </section>
 
       {/* ─── Amenities Section ─── */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-center">
-        <ScaleIn className="col-span-1 md:col-span-5 order-1">
-          <div className="relative">
-            <div className="absolute inset-0 bg-accent-400/10 rounded-3xl blur-3xl -z-10 scale-105" />
-            <Image
-              src={image2}
-              quality={85}
-              placeholder="blur"
-              alt="Wooden cabin nestled in pine forests at The Retreat Cottage"
-              className="w-full h-auto rounded-3xl shadow-2xl ring-1 ring-white/10"
-            />
+      <section className="max-w-7xl mx-auto px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
+          <div className="lg:col-span-5 sticky lg:top-32">
+            <FadeUp>
+              <span className="text-accent-500 font-bold tracking-[0.3em] uppercase text-xs block mb-4">
+                Curated Comfort
+              </span>
+              <h2 className="text-4xl md:text-5xl text-white font-medium leading-[1.1] mb-8">
+                Every Detail, <br />
+                <span className="text-accent-400">Thoughtfully Refined</span>
+              </h2>
+              <p className="text-primary-300 text-lg font-light leading-relaxed mb-10">
+                We believe true luxury lies in the quality of your rest and the
+                seamlessness of your experience.
+              </p>
+              <div className="relative rounded-3xl overflow-hidden border border-white/10 aspect-square">
+                <Image
+                  src={imageForest}
+                  alt="Lush green pine forest surrounding The Retreat Cottage Dharampur"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </FadeUp>
           </div>
-        </ScaleIn>
 
-        <div className="col-span-1 md:col-span-7 order-2">
-          <FadeUp className="mb-8">
-            <Badge
-              variant="outline"
-              className="border-accent-400/30 text-accent-400 text-xs tracking-widest uppercase bg-transparent mb-4"
-            >
-              Amenities
-            </Badge>
-            <h2 className="text-3xl sm:text-4xl text-white font-medium leading-tight">
-              Unmatched Luxury &{" "}
-              <span className="text-accent-400">Personalized Experiences</span>
-            </h2>
-          </FadeUp>
-
-          <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {features.map((feature, i) => (
-              <FeatureCard key={i} {...feature} />
-            ))}
-          </StaggerGrid>
+          <div className="lg:col-span-7">
+            <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {features.map((feature, i) => (
+                <FeatureCard key={i} {...feature} />
+              ))}
+            </StaggerGrid>
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* ─── Location & Map Section ─── */}
+      <section className="max-w-7xl mx-auto px-4">
+        <div className="relative rounded-[3rem] overflow-hidden bg-primary-950/40 border border-white/5 p-8 md:p-16 backdrop-blur-xl">
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-accent-500/5 rounded-full blur-[120px] pointer-events-none" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-10">
+              <FadeUp>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-accent-500/10 border border-accent-500/20 text-accent-400 font-semibold mb-6">
+                  <MapPin className="h-4 w-4" />
+                  Privileged Location
+                </div>
+                <h2 className="text-4xl md:text-5xl text-white font-medium">
+                  Gateway to the <br />
+                  <span className="text-accent-400">Higher Hills</span>
+                </h2>
+              </FadeUp>
+
+              <div className="space-y-8">
+                {[
+                  {
+                    icon: <Sparkles className="h-5 w-5 text-accent-400" />,
+                    title: "Strategic Solitude",
+                    desc: "Perfectly balanced between the vibrant markets of Kasauli and the administrative convenience of Solan.",
+                  },
+                  {
+                    icon: <Mountain className="h-5 w-5 text-accent-400" />,
+                    title: "Panoramic Vistas",
+                    desc: "Unobstructed views of the valley that change with every hour, from golden dawns to star-studded nights.",
+                  },
+                ].map((item, i) => (
+                  <FadeUp key={i} delay={i * 0.1}>
+                    <div className="flex items-start gap-6 group">
+                      <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-accent-500 group-hover:text-primary-950 transition-all duration-300">
+                        {item.icon}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-white text-lg mb-2">
+                          {item.title}
+                        </h3>
+                        <p className="text-primary-300 font-light leading-relaxed">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+                  </FadeUp>
+                ))}
+              </div>
+
+              <FadeUp>
+                <a
+                  href="https://maps.app.goo.gl/JYkod7Q2DVKKcBYw7"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 bg-white text-primary-950 px-8 py-4 font-bold rounded-2xl hover:bg-accent-400 transition-all duration-300"
+                >
+                  <MapPin className="h-5 w-5" />
+                  Locate on Maps
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              </FadeUp>
+            </div>
+
+            <ScaleIn className="h-[500px] lg:h-[600px]">
+              <div className="rounded-[2.5rem] overflow-hidden ring-1 ring-white/10 shadow-2xl h-full relative group">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3423.3724941405317!2d77.0166679!3d30.904210700000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390f87109b9272f1%3A0x1cc88c9993d31c6d!2sThe%20Retreat%20Cottage!5e0!3m2!1sen!2sin!4v1761327870057!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, filter: "grayscale(0.3) contrast(1.1) invert(0)" }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="The Retreat Cottage Location Dharampur Himachal"
+                />
+                <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-white/20 rounded-[2.5rem]" />
+              </div>
+            </ScaleIn>
+          </div>
+        </div>
+      </section>
 
       {/* ─── Reviews Section ─── */}
-      <div className="relative overflow-hidden rounded-3xl bg-primary-950/80 border border-white/5 p-8 md:p-12 backdrop-blur-sm">
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent-400/5 rounded-full blur-3xl -z-10" />
-
-        <FadeUp className="text-center mb-12">
-          <Badge
-            variant="outline"
-            className="border-accent-400/30 text-accent-400 text-xs tracking-widest uppercase bg-transparent mb-4"
-          >
-            Guest Stories
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl text-white font-medium">
-            Hear From Our{" "}
-            <span className="text-accent-400">Delighted Guests</span>
+      <section className="max-w-7xl mx-auto px-4">
+        <FadeUp className="text-center mb-16">
+          <span className="text-accent-500 font-bold tracking-[0.3em] uppercase text-xs block mb-4">
+            Guest Testimonials
+          </span>
+          <h2 className="text-4xl md:text-5xl text-white font-medium mb-6">
+            Cherished <span className="italic">Memories</span>
           </h2>
-          <div className="flex items-center justify-center gap-2 mt-4">
-            <div className="flex gap-0.5">
+          <div className="flex items-center justify-center gap-3">
+            <div className="flex gap-1">
               {[...Array(5)].map((_, i) => (
-                <span key={i} className="text-yellow-400 text-lg">
-                  ★
-                </span>
+                <Star key={i} className="h-5 w-5 text-accent-400 fill-accent-400" />
               ))}
             </div>
-            <span className="text-primary-300 text-sm">5.0 on Google</span>
+            <span className="text-primary-300 font-light">
+              Truly Exceptional Experience (5.0 on Google)
+            </span>
           </div>
         </FadeUp>
 
-        <StaggerGrid className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <StaggerGrid className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {googleReviews.map((review) => (
             <ReviewCard key={review.id} review={review} />
           ))}
         </StaggerGrid>
-
-        <FadeUp className="text-center mt-10">
-          <a
-            href="https://maps.app.goo.gl/JYkod7Q2DVKKcBYw7"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 border border-accent-400/40 px-6 py-3 text-accent-400 font-semibold rounded-xl hover:bg-accent-400/10 transition-all duration-300"
-          >
-            <Star className="h-4 w-4 fill-current" />
-            Read More Reviews on Google
-            <ExternalLink className="h-3.5 w-3.5" />
-          </a>
-        </FadeUp>
-      </div>
-
-      {/* ─── Contact Strip ─── */}
-      <FadeUp>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[
-            {
-              icon: <Phone className="h-5 w-5 text-accent-400" />,
-              label: "Phone",
-              value: "+91 99060 39157",
-              href: "tel:+919906039157",
-            },
-            {
-              icon: <Mail className="h-5 w-5 text-accent-400" />,
-              label: "Email",
-              value: "info@retreatcottage.in",
-              href: "mailto:info@retreatcottage.in",
-            },
-            {
-              icon: <MapPin className="h-5 w-5 text-accent-400" />,
-              label: "Location",
-              value: "Dharampur, HP",
-              href: "https://maps.app.goo.gl/JYkod7Q2DVKKcBYw7",
-            },
-          ].map((item, i) => (
-            <a
-              key={i}
-              href={item.href}
-              target={item.href.startsWith("http") ? "_blank" : undefined}
-              rel={
-                item.href.startsWith("http") ? "noopener noreferrer" : undefined
-              }
-              className="flex items-center gap-4 bg-primary-950/60 border border-white/5 rounded-2xl p-5 hover:border-accent-400/30 hover:bg-primary-800/40 transition-all duration-300 group"
-            >
-              <div className="h-10 w-10 rounded-xl bg-accent-400/10 flex items-center justify-center shrink-0 group-hover:bg-accent-400/20 transition-colors">
-                {item.icon}
-              </div>
-              <div>
-                <p className="text-primary-400 text-xs uppercase tracking-wider">
-                  {item.label}
-                </p>
-                <p className="text-white font-medium text-sm">{item.value}</p>
-              </div>
-            </a>
-          ))}
-        </div>
-      </FadeUp>
+      </section>
 
       {/* ─── CTA Section ─── */}
-      <FadeUp>
-        <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-accent-600/20 via-accent-500/10 to-transparent border border-accent-400/20 p-10 md:p-16 text-center">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(196,153,99,0.08),transparent_70%)] pointer-events-none" />
-          <Badge
-            variant="outline"
-            className="border-accent-400/30 text-accent-400 text-xs tracking-widest uppercase bg-transparent mb-6"
-          >
-            Book Your Stay
-          </Badge>
-          <h2 className="text-3xl sm:text-5xl mb-6 text-white font-medium tracking-tight">
-            Ready for Your Dream{" "}
-            <span className="text-accent-400">Mountain Getaway?</span>
-          </h2>
-          <p className="text-lg text-primary-300 mb-10 max-w-xl mx-auto leading-relaxed">
-            Experience the perfect blend of luxury, comfort, and natural beauty.
-            Your unforgettable mountain escape is just a click away.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/retreats"
-              className="inline-flex items-center gap-2 bg-accent-500 px-8 py-4 text-primary-900 text-lg font-semibold hover:bg-accent-600 transition-all rounded-xl hover:scale-105 duration-300 shadow-2xl shadow-accent-500/20"
-            >
-              <Sparkles className="h-5 w-5" />
-              Explore Our Retreats
-            </Link>
-            <a
-              href="tel:+919906039157"
-              className="inline-flex items-center gap-2 border border-accent-400/40 px-8 py-4 text-accent-400 text-lg font-semibold rounded-xl hover:bg-accent-400/10 transition-all duration-300"
-            >
-              <Phone className="h-5 w-5" />
-              Call to Book
-            </a>
+      <section className="max-w-7xl mx-auto px-4">
+        <FadeUp>
+          <div className="relative overflow-hidden rounded-[3.5rem] bg-accent-500 px-8 py-20 md:py-32 text-center shadow-2xl">
+            {/* Elegant Background Patterns */}
+            <div className="absolute inset-0 opacity-10 mix-blend-overlay">
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20" />
+            </div>
+            <div className="absolute -top-1/2 -left-1/4 w-[100%] h-[100%] bg-white/20 blur-[120px] rounded-full rotate-45" />
+
+            <div className="relative z-10 max-w-4xl mx-auto">
+              <h2 className="text-4xl md:text-7xl font-medium tracking-tight text-primary-950 mb-10 leading-[1]">
+                Your Private Piece of <br />
+                <span className="italic underline underline-offset-8 decoration-primary-950/20">
+                  Himalayan Paradise
+                </span>
+              </h2>
+              <p className="text-primary-900/80 text-xl font-medium mb-12 max-w-2xl mx-auto">
+                Limited dates available for the upcoming season. Reserve your
+                haven of peace today and experience nature like never before.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <Link
+                  href="/retreats"
+                  className="group inline-flex items-center gap-3 bg-primary-950 text-white px-10 py-5 text-lg font-bold rounded-2xl hover:scale-105 transition-all duration-300 shadow-2xl"
+                >
+                  <Sparkles className="h-5 w-5 text-accent-400 transition-transform group-hover:animate-pulse" />
+                  Explore Our Retreats
+                </Link>
+                <a
+                  href="tel:+919906039157"
+                  className="inline-flex items-center gap-3 border-2 border-primary-950/30 text-primary-950 px-10 py-5 text-lg font-bold rounded-2xl hover:bg-primary-950/5 transition-all duration-300"
+                >
+                  <Phone className="h-5 w-5" />
+                  Call to Reserve
+                </a>
+              </div>
+            </div>
           </div>
-        </div>
-      </FadeUp>
+        </FadeUp>
+      </section>
+
+      {/* ─── Contact Info ─── */}
+      <section className="max-w-5xl mx-auto px-4">
+        <FadeUp>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {[
+              {
+                icon: <Phone className="h-5 w-5" />,
+                label: "Call Us",
+                value: "+91 99060 39157",
+                href: "tel:+919906039157",
+              },
+              {
+                icon: <Mail className="h-5 w-5" />,
+                label: "Write to Us",
+                value: "info@retreatcottage.in",
+                href: "mailto:info@retreatcottage.in",
+              },
+              {
+                icon: <MapPin className="h-5 w-5" />,
+                label: "Visit Us",
+                value: "Dharampur, HP",
+                href: "https://maps.app.goo.gl/JYkod7Q2DVKKcBYw7",
+              },
+            ].map((item, i) => (
+              <a
+                key={i}
+                href={item.href}
+                className="group flex flex-col items-center text-center p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-accent-400/30 transition-all duration-500"
+              >
+                <div className="h-14 w-14 rounded-2xl bg-accent-400/10 flex items-center justify-center text-accent-400 mb-6 group-hover:scale-110 group-hover:bg-accent-400 group-hover:text-primary-950 transition-all duration-300">
+                  {item.icon}
+                </div>
+                <span className="text-primary-400 text-xs font-bold tracking-widest uppercase mb-2">
+                  {item.label}
+                </span>
+                <span className="text-white font-medium">{item.value}</span>
+              </a>
+            ))}
+          </div>
+        </FadeUp>
+      </section>
     </div>
   );
 }
