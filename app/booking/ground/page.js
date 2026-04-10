@@ -86,6 +86,7 @@ export default async function GroundFloorBookingPage() {
             packageName="Ground Floor"
             pricing={pricing}
             stats={stats}
+            bookedDates={bookedDates}
             retreats={groundFloorRooms}
             guestOptions={guestOptions}
           />

@@ -9,7 +9,7 @@ import { findExactCombinations } from "@/app/_components/utils/combo-logic";
 import { getUnifiedBookedDates } from "../_lib/live-availability";
 import { auth } from "../_lib/auth";
 
-async function RetreatList({ filter }) {
+async function RetreatList({ filter, startDate, endDate, guests }) {
   // unstable_noStore();
   const [rooms, cabins] = await Promise.all([getRooms(), getCabins()]);
   const bookedDates = await getUnifiedBookedDates();
@@ -32,6 +32,8 @@ async function RetreatList({ filter }) {
         cabins={cabins}
         bookedDates={bookedDates}
         guestId={session?.user?.guestId}
+        startDate={startDate}
+        endDate={endDate}
       />
     );
   }
@@ -44,6 +46,8 @@ async function RetreatList({ filter }) {
         bookedDates={bookedDates}
         guestId={session?.user?.guestId}
         cabins={cabins}
+        startDate={startDate}
+        endDate={endDate}
       />
     );
   }
@@ -56,6 +60,8 @@ async function RetreatList({ filter }) {
         bookedDates={bookedDates}
         guestId={session?.user?.guestId}
         cabins={cabins}
+        startDate={startDate}
+        endDate={endDate}
       />
     );
   }
@@ -72,6 +78,8 @@ async function RetreatList({ filter }) {
           guestId={session?.user?.guestId}
           allRetreats={allRetreats}
           guestCount={guestCount}
+          startDate={startDate}
+          endDate={endDate}
         />
       );
     }
@@ -85,6 +93,8 @@ async function RetreatList({ filter }) {
         bookedDates={bookedDates}
         guestId={session?.user?.guestId}
         extraGuestPrice={extraGuestPrice}
+        startDate={startDate}
+        endDate={endDate}
       />
     );
   }

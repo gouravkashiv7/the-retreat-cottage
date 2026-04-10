@@ -15,6 +15,7 @@ export default function BookingForm({
   backUrl = "/retreats",
   guestOptions = null,
   retreats = [],
+  bookedDates = [],
   guest = null,
 }) {
   const router = useRouter();
@@ -79,6 +80,7 @@ export default function BookingForm({
     stats,
     guestOptions,
     retreats,
+    bookedDates,
     packageName,
   });
 

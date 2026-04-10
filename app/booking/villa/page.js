@@ -98,6 +98,7 @@ export default async function VillaPackageBookingPage() {
             stats={stats}
             showSpecialRequirements={true}
             guestOptions={guestOptions}
+            bookedDates={bookedDates}
             retreats={allRetreats} // Pass retreats for dynamic pricing
           />
         </div>

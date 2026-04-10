@@ -11,8 +11,13 @@ function RetreatCombinationsView({
   bookedDates,
   guestId,
   extraGuestPrice,
+  startDate,
+  endDate,
 }) {
-  const { range } = useReservation();
+  const { range: contextRange } = useReservation();
+  const optionalRange = startDate && endDate ? { from: new Date(startDate), to: new Date(endDate) } : null;
+  const range = contextRange?.from && contextRange?.to ? contextRange : optionalRange;
+
   const [loadingCombos, setLoadingCombos] = useState({});
 
   // Calculate pricing and comboId for ALL combinations first (before filtering)

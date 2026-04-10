@@ -11,8 +11,10 @@ function RetreatSection({
   className = "",
   isCombo,
   bookedDates,
+  optionalRange,
 }) {
-  const { range } = useReservation();
+  const { range: contextRange } = useReservation();
+  const range = contextRange?.from && contextRange?.to ? contextRange : optionalRange;
 
   // Filter retreats based on range and bookedDates
   const filteredRetreats =

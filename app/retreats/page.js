@@ -19,6 +19,8 @@ export const metadata = {
 export default async function RetreatsPage({ searchParams }) {
   const param = await searchParams;
   const filter = param?.capacity ?? "all";
+  const { startDate, endDate, guests } = param;
+
   return (
     <div className="space-y-8 sm:space-y-10">
       {/* Hero Header */}
@@ -38,13 +40,13 @@ export default async function RetreatsPage({ searchParams }) {
           Discover five exquisite retreats at The Retreat Cottage. 
           Perfect for solo escapes, romantic getaways, or family gatherings up to 15 guests.
         </p>
-
+ 
         {/* Dynamic Badges */}
         <div className="flex flex-wrap justify-center gap-4 pt-4">
           {[
             { icon: Utensils, label: "Pure Veg" },
             { icon: Users, label: "Groups Up to 15" },
-            { icon: Music, label: "Music Allowed" },
+            { icon: Music, label: "Bonfire Allowed" },
             { icon: PawPrint, label: "Pet Friendly" },
           ].map(({ icon: Icon, label }, idx) => (
             <div 
@@ -57,21 +59,21 @@ export default async function RetreatsPage({ searchParams }) {
           ))}
         </div>
       </div>
-
+ 
       {/* Date Range Selector */}
       <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
         <DateRangeSelector />
       </div>
-
+ 
       {/* Filter */}
       <div className="flex justify-center animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
         <Filter />
       </div>
-
+ 
       {/* Retreat Cards */}
       <div className="animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300">
         <Suspense fallback={<Spinner />} key={JSON.stringify(param)}>
-          <RetreatList filter={filter} />
+          <RetreatList filter={filter} startDate={startDate} endDate={endDate} guests={guests} />
         </Suspense>
       </div>
     </div>

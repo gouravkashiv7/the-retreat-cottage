@@ -3,9 +3,12 @@ import { useState } from "react";
 import FloorPackageCard from "./FloorPackageCard";
 import { useReservation } from "../contexts/ReservationContext";
 
-function FloorPackagesView({ rooms, bookedDates, cabins, guestId }) {
+function FloorPackagesView({ rooms, bookedDates, cabins, guestId, startDate, endDate }) {
   const [isLoading, setIsLoading] = useState(false);
-  const { range } = useReservation();
+  const { range: contextRange } = useReservation();
+  const optionalRange = startDate && endDate ? { from: new Date(startDate), to: new Date(endDate) } : null;
+  const range = contextRange?.from && contextRange?.to ? contextRange : optionalRange;
+
 
   // Helper function to calculate package details
   const createPackageDetails = (retreats) => {

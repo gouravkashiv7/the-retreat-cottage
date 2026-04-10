@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { isAlreadyBooked } from "../PackageDateSelector/utils/dateValidation";
 
 export default function useBookingFormLogic({
   range,
@@ -8,6 +9,7 @@ export default function useBookingFormLogic({
   stats,
   guestOptions,
   retreats,
+  bookedDates,
   packageName,
 }) {
   const { extraGuestPrice, minBookingLength, maxBookingLength } = settings;
@@ -64,13 +66,25 @@ export default function useBookingFormLogic({
     const endDate = new Date(checkOutDate);
     const nights = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
 
-    const isValid = nights >= minBookingLength && nights <= maxBookingLength;
-    const message = !isValid
+    let isValid = nights >= minBookingLength && nights <= maxBookingLength;
+    let message = !isValid
       ? `Booking must be between ${minBookingLength} and ${maxBookingLength} nights`
       : "";
 
+    // Secondary Check: Availability
+    if (isValid && retreats && bookedDates.length > 0) {
+      // Filter bookedDates to only include relevant units for this package
+      const retreatIds = retreats.map(r => r.id);
+      const relevantBookings = bookedDates.filter(b => retreatIds.includes(b.retreatId));
+      
+      if (isAlreadyBooked({ from: startDate, to: endDate }, relevantBookings)) {
+        isValid = false;
+        message = "Selected dates contain already booked nights in this package";
+      }
+    }
+
     return { isValid, message, nights };
-  }, [checkInDate, checkOutDate, minBookingLength, maxBookingLength]);
+  }, [checkInDate, checkOutDate, minBookingLength, maxBookingLength, retreats, bookedDates]);
 
   // Calculate dynamic pricing
   const dynamicPricing = useMemo(() => {

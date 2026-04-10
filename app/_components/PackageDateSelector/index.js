@@ -76,16 +76,36 @@ function PackageDateSelector({ settings, retreats, bookedDates, guestId }) {
 
   // Enhanced date disabled function that includes package availability
   const enhancedIsDateDisabled = (date) => {
-    // First check the original date validation
+    // 1. First check the basic date validation (booked nights, past dates, etc)
     if (isDateDisabled(date)) {
       return true;
     }
 
-    // If we have package retreats and a range is being selected, check package availability
-    if (retreats && retreats.length > 0 && range?.from) {
-      // This is a simplified check - you might want to enhance this
-      // to show package availability during date selection
-      return false; // Let the full range selection determine availability
+    // 2. If we have a start date selected, we must ensure the user doesn't select 
+    // an end date that jumps OVER a blocked range
+    if (range?.from && !range?.to && retreats?.length > 0) {
+      const compareDate = new Date(date);
+      compareDate.setHours(0, 0, 0, 0);
+
+      // Find the Earliest Conflict for ALL units after range.from
+      let firstConflictDate = null;
+
+      combinedBookedDates.forEach((booking) => {
+        const bookingStart = new Date(booking.startDate);
+        bookingStart.setHours(0, 0, 0, 0);
+
+        if (bookingStart > range.from) {
+          if (!firstConflictDate || bookingStart < firstConflictDate) {
+            firstConflictDate = bookingStart;
+          }
+        }
+      });
+
+      // If a conflict exists, any date STRICTLY AFTER the conflict start is disabled.
+      // (The conflict start date itself is the LAST allowed checkout day)
+      if (firstConflictDate && compareDate > firstConflictDate) {
+        return true;
+      }
     }
 
     return false;

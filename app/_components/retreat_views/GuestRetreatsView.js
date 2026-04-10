@@ -2,8 +2,11 @@
 import { useReservation } from "../contexts/ReservationContext";
 import ItemCard from "../ItemCard";
 
-function GuestRetreatsView({ allRetreats, guestCount, bookedDates, guestId }) {
-  const { range } = useReservation();
+function GuestRetreatsView({ allRetreats, guestCount, bookedDates, guestId, startDate, endDate }) {
+  const { range: contextRange } = useReservation();
+  const optionalRange = startDate && endDate ? { from: new Date(startDate), to: new Date(endDate) } : null;
+  const range = contextRange?.from && contextRange?.to ? contextRange : optionalRange;
+
 
   // Filter retreats based on range and bookedDates
   const filteredRetreats =

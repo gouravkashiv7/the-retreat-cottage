@@ -4,6 +4,7 @@ import { auth } from "./auth";
 import { getCabinPrice, getRoomPrice, getSettings } from "./data-service";
 import { hasDateConflict, sanitizeObservations } from "./booking-helpers";
 import { getBookedDatesById } from "./dates";
+import { getUnifiedBookedDatesById } from "./live-availability";
 import { supabase, supabaseAdmin } from "./supabase";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -222,7 +223,7 @@ async function validateDateAvailability(
     const retreatNum = parseInt(retreatId);
     const type = getRetreatType(retreatNum);
 
-    const allBookings = await getBookedDatesById(retreatNum, type);
+    const allBookings = await getUnifiedBookedDatesById(retreatNum, type);
 
     // Filter bookings to match DateSelector logic:
     // 1. Confirmed, checked-in, or blocked bookings always count

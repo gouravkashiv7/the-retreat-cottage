@@ -5,8 +5,11 @@ import Link from "next/link";
 import { useReservation } from "@/app/_components/contexts/ReservationContext";
 import { Sparkles, ArrowRight } from "lucide-react";
 
-function VillaPackageView({ rooms, cabins, bookedDates, guestId }) {
-  const { range } = useReservation();
+function VillaPackageView({ rooms, cabins, bookedDates, guestId, startDate, endDate }) {
+  const { range: contextRange } = useReservation();
+  const optionalRange = startDate && endDate ? { from: new Date(startDate), to: new Date(endDate) } : null;
+  const range = contextRange?.from && contextRange?.to ? contextRange : optionalRange;
+
   const [isVillaLoading, setIsVillaLoading] = useState(false);
   const totalCapacity = [...rooms, ...cabins].reduce(
     (sum, retreat) => sum + retreat.maxCapacity,
@@ -222,6 +225,8 @@ function VillaPackageView({ rooms, cabins, bookedDates, guestId }) {
           title="Inside the Villa Package"
           retreats={filteredRetreats}
           type="combo"
+          bookedDates={bookedDates}
+          optionalRange={optionalRange}
           emptyMessage="Unfortunately, the full villa is not available for these dates."
           isCombo={true}
         />

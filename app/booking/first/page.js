@@ -87,6 +87,7 @@ export default async function FirstFloorBookingPage() {
             pricing={pricing}
             stats={stats}
             guestOptions={guestOptions}
+            bookedDates={bookedDates}
             retreats={firstFloorCabins} // Pass retreats for dynamic pricing
           />
         </div>

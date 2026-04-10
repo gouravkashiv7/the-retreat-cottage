@@ -6,7 +6,7 @@ import { useReservation } from "@/app/_components/contexts/ReservationContext";
 import { CalendarDays, X } from "lucide-react";
 
 export default function DateRangeSelector() {
-  const { range, setRange, resetRange } = useReservation();
+  const { range, setRange, resetRange, updateGuests } = useReservation();
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -17,16 +17,22 @@ export default function DateRangeSelector() {
     if (isInitialMount.current) {
       const startParam = searchParams.get("startDate");
       const endParam = searchParams.get("endDate");
+      const guestsParam = searchParams.get("guests");
 
-      if ((startParam || endParam) && !range?.from && !range?.to) {
+      if (startParam || endParam) {
         setRange({
           from: startParam ? new Date(startParam) : undefined,
           to: endParam ? new Date(endParam) : undefined,
         });
       }
+
+      if (guestsParam) {
+        const count = parseInt(guestsParam);
+        if (!isNaN(count)) updateGuests(count);
+      }
       isInitialMount.current = false;
     }
-  }, [searchParams, range?.from, range?.to, setRange]);
+  }, [searchParams, setRange, updateGuests]);
 
   const handleDateChange = (e) => {
     const { name, value } = e.target;
