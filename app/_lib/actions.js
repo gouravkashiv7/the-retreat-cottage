@@ -49,7 +49,12 @@ export async function createBooking(bookingData, formData) {
     if (numGuests === 3) {
       accommodationPrice += extraGuestPrice;
     }
-    await validateDateAvailability(retreatId, startDateIST, endDateIST);
+    await validateDateAvailability(
+      retreatId,
+      startDateIST,
+      endDateIST,
+      session.user.guestId,
+    );
 
     const newBooking = {
       ...bookingData,
@@ -146,16 +151,40 @@ async function processRetreats(
   }
 }
 
-async function validateDateAvailability(retreatId, startDate, endDate) {
+async function validateDateAvailability(
+  retreatId,
+  startDate,
+  endDate,
+  currentGuestId,
+) {
   const retreatIds = parseRetreatIds(retreatId);
 
   for (const retreatId of retreatIds) {
     const retreatNum = parseInt(retreatId);
     const type = getRetreatType(retreatNum);
 
-    const existingBookings = await getBookedDatesById(retreatNum, type);
+    const allBookings = await getBookedDatesById(retreatNum, type);
 
-    if (hasDateConflict(existingBookings, startDate, endDate)) {
+    // Filter bookings to match DateSelector logic:
+    // 1. Confirmed, checked-in, or blocked bookings always count
+    // 2. Unconfirmed bookings only count if they belong to the SAME guest
+    const blockingBookings = allBookings.filter((booking) => {
+      if (
+        booking.status === "confirmed" ||
+        booking.status === "checked-in" ||
+        booking.status === "blocked"
+      ) {
+        return true;
+      }
+
+      if (booking.status === "unconfirmed" && currentGuestId) {
+        return String(booking.guestId) === String(currentGuestId);
+      }
+
+      return false;
+    });
+
+    if (hasDateConflict(blockingBookings, startDate, endDate)) {
       throw new Error(
         `${
           type.charAt(0).toUpperCase() + type.slice(1)
@@ -350,8 +379,8 @@ export async function updateGuest(formData) {
   }
 }
 
-export async function signInAction() {
-  await signIn("google", { redirectTo: "/account" });
+export async function signInAction(redirectTo = "/account") {
+  await signIn("google", { redirectTo });
 }
 
 export async function signOutAction() {

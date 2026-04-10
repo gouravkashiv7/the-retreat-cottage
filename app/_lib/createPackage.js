@@ -45,7 +45,7 @@ export async function createPackageBooking(formData) {
         console.error("Could not update guest phone:", guestError);
     }
 
-    await validateDateAvailability(retreatIds, startDate, endDate);
+    await validateDateAvailability(retreatIds, startDate, endDate, guestId);
     const newBooking = {
       numNights,
       startDate,
@@ -206,14 +206,38 @@ function getRetreatType(retreatId) {
   return retreatId <= 2 ? "cabin" : "room";
 }
 
-async function validateDateAvailability(retreatIds, startDate, endDate) {
+async function validateDateAvailability(
+  retreatIds,
+  startDate,
+  endDate,
+  currentGuestId,
+) {
   for (const retreatId of retreatIds) {
     const retreatNum = parseInt(retreatId);
     const type = getRetreatType(retreatNum);
 
-    const existingBookings = await getBookedDatesById(retreatNum, type);
+    const allBookings = await getBookedDatesById(retreatNum, type);
 
-    if (hasDateConflict(existingBookings, startDate, endDate)) {
+    // Filter bookings to match DateSelector logic:
+    // 1. Confirmed, checked-in, or blocked bookings always count
+    // 2. Unconfirmed bookings only count if they belong to the SAME guest
+    const blockingBookings = allBookings.filter((booking) => {
+      if (
+        booking.status === "confirmed" ||
+        booking.status === "checked-in" ||
+        booking.status === "blocked"
+      ) {
+        return true;
+      }
+
+      if (booking.status === "unconfirmed" && currentGuestId) {
+        return String(booking.guestId) === String(currentGuestId);
+      }
+
+      return false;
+    });
+
+    if (hasDateConflict(blockingBookings, startDate, endDate)) {
       throw new Error(
         `${
           type.charAt(0).toUpperCase() + type.slice(1)

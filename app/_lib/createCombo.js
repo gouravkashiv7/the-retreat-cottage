@@ -21,7 +21,7 @@ export async function createCombo(formData) {
     const numGuests = parseInt(formData.get("numGuests"));
     const totalPrice = Number(formData.get("totalPrice"));
     const numNights = parseInt(formData.get("numNights"));
-    await validateDateAvailability(bookedRetreats, startDate, endDate);
+    await validateDateAvailability(bookedRetreats, startDate, endDate, guestId);
     const newBooking = {
       startDate: formData.get("startDate"),
       endDate: formData.get("endDate"),
@@ -120,18 +120,42 @@ async function processRooms(rooms, bookingId) {
   if (error) throw new Error(`Failed to book rooms: ${error.message}`);
 }
 
-async function validateDateAvailability(bookedRetreats, startDate, endDate) {
+async function validateDateAvailability(
+  bookedRetreats,
+  startDate,
+  endDate,
+  currentGuestId,
+) {
   for (const retreat of bookedRetreats) {
     const retreatId = retreat.id;
     const type = retreat.type;
 
-    const existingBookings = await getBookedDatesById(retreatId, type);
+    const allBookings = await getBookedDatesById(retreatId, type);
 
-    if (hasDateConflict(existingBookings, startDate, endDate)) {
+    // Filter bookings to match DateSelector logic:
+    // 1. Confirmed, checked-in, or blocked bookings always count
+    // 2. Unconfirmed bookings only count if they belong to the SAME guest
+    const blockingBookings = allBookings.filter((booking) => {
+      if (
+        booking.status === "confirmed" ||
+        booking.status === "checked-in" ||
+        booking.status === "blocked"
+      ) {
+        return true;
+      }
+
+      if (booking.status === "unconfirmed" && currentGuestId) {
+        return String(booking.guestId) === String(currentGuestId);
+      }
+
+      return false;
+    });
+
+    if (hasDateConflict(blockingBookings, startDate, endDate)) {
       throw new Error(
         `${
           type.charAt(0).toUpperCase() + type.slice(1)
-        } ${retreatId} is already booked for the selected dates. Please choose different dates.`
+        } ${retreatId} is already booked for the selected dates. Please choose different dates.`,
       );
     }
   }

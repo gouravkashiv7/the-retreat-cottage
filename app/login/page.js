@@ -11,7 +11,8 @@ export const metadata = {
     "Sign in to The Retreat Cottage to manage your bookings, view reservations, and access your guest dashboard.",
 };
 
-export default function Page() {
+export default async function Page({ searchParams }) {
+  const { callbackUrl } = await searchParams;
   return (
     <div className="relative min-h-[80vh] flex items-center justify-center overflow-hidden rounded-3xl">
       {/* Background Image Layer */}
@@ -79,7 +80,7 @@ export default function Page() {
           </div>
 
           {/* Sign In Button */}
-          <SignInButton />
+          <SignInButton callbackUrl={callbackUrl} />
 
           {/* Trust Signals */}
           <div className="mt-8 flex items-center justify-center gap-2 text-primary-500">

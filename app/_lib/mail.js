@@ -1,39 +1,35 @@
-import nodemailer from "nodemailer";
-import { getWelcomeEmailTemplate } from "@/app/_emails/WelcomeTemplate";
-
 /**
- * Send a welcome email to a new guest
+ * Send a welcome email to a new guest via Supabase Edge Function
  *
  * @param {string} email - Recipient email address
  * @param {string} name - Guest's full name
  */
 export async function sendWelcomeEmail(email, name) {
-  // Transporter configuration for Hostinger
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: parseInt(process.env.EMAIL_PORT) || 465,
-    secure: true, // Use SSL/TLS for port 465
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
-  const { html, text } = getWelcomeEmailTemplate(name);
+  const edgeFunctionUrl = `${process.env.SUPABASE_URL}/functions/v1/send-welcome-email`;
 
   try {
-    const info = await transporter.sendMail({
-      from: `"${process.env.NEXT_PUBLIC_SITE_NAME || "The Retreat Cottage"}" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: `Welcome to The Retreat Cottage, ${name.split(" ")[0]}!`,
-      text: text,
-      html: html,
+    const response = await fetch(edgeFunctionUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.SUPABASE_KEY}`,
+      },
+      body: JSON.stringify({
+        guestName: name,
+        guestEmail: email,
+      }),
     });
 
-    console.log("Welcome email sent: %s", info.messageId);
-    return { success: true, messageId: info.messageId };
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Edge function failed: ${errorText}`);
+    }
+
+    const data = await response.json();
+    console.log("Welcome email sent via Edge Function: %s", data.messageId);
+    return { success: true, messageId: data.messageId };
   } catch (error) {
-    console.error("Error sending welcome email:", error);
+    console.error("Error sending welcome email via Edge Function:", error);
     return { success: false, error: error.message };
   }
 }

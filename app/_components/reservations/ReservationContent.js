@@ -82,6 +82,14 @@ function ReservationContent({
     const todayVsStart = compareDates(today, start);
     const todayVsEnd = compareDates(today, end);
 
+    if (status === "unconfirmed") {
+      return (
+        <span className="bg-red-800 text-red-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto border border-red-700/50">
+          unconfirmed
+        </span>
+      );
+    }
+
     if (status === "checked-in") {
       return (
         <span className="bg-blue-800 text-blue-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm self-start sm:self-auto">
