@@ -117,23 +117,27 @@ export default function HostPage() {
             </div>
 
             {/* Visual/Personal Touch */}
-            <div className="space-y-12 animate-in fade-in slide-in-from-right-8 duration-1000 delay-400">
-              <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl group">
-                <Image
-                  src={hostImage}
-                  alt="Balvinder Kashiv - Your Host at The Retreat Cottage"
-                  fill
-                  placeholder="blur"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-primary-950 via-primary-950/40 to-transparent" />
-                
-                <div className="absolute bottom-6 left-6 right-6">
-                  <div className="bg-primary-950/40 backdrop-blur-xl border border-white/10 p-5 rounded-3xl">
-                    <h3 className="text-xl font-black mb-0.5 text-white">Balvinder Kashiv</h3>
-                    <p className="text-accent-400 font-bold text-[10px] uppercase tracking-widest mb-3">Host & Proprietor</p>
-                    <div className="h-px bg-white/10 w-full mb-4" />
-                    <p className="text-white/90 italic font-light leading-relaxed text-sm">
+            <div className="space-y-8 lg:space-y-12 animate-in fade-in slide-in-from-right-8 duration-1000 delay-400">
+              <div className="relative group">
+                {/* Image Container */}
+                <div className="relative aspect-4/5 sm:aspect-square lg:aspect-4/5 rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl">
+                  <Image
+                    src={hostImage}
+                    alt="Balvinder Kashiv - Your Host at The Retreat Cottage"
+                    fill
+                    placeholder="blur"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-primary-950/60 via-transparent to-transparent opacity-60" />
+                </div>
+
+                {/* Quote Card - Overlay on Desktop, Below on Mobile */}
+                <div className="relative lg:absolute lg:-bottom-6 lg:left-6 lg:right-6 mt-6 lg:mt-0 z-20">
+                  <div className="bg-primary-900/60 lg:bg-primary-950/40 backdrop-blur-2xl border border-white/10 p-6 sm:p-8 rounded-[2rem] lg:rounded-3xl shadow-2xl">
+                    <h3 className="text-xl sm:text-2xl font-black mb-0.5 text-white">Balvinder Kashiv</h3>
+                    <p className="text-accent-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest mb-4">Host & Proprietor</p>
+                    <div className="h-px bg-white/10 w-full mb-5" />
+                    <p className="text-white/90 italic font-light leading-relaxed text-sm sm:text-base">
                       "After nearly three decades in the Indian Army, I found my peace here in the pines of Dharampur. I invite you to experience the same tranquility at our retreat."
                     </p>
                   </div>
@@ -141,7 +145,7 @@ export default function HostPage() {
               </div>
 
               {/* Quick Contact & Interaction */}
-              <div className="bg-accent-500 rounded-[2.5rem] p-10 text-primary-950 shadow-2xl">
+              <div className="lg:mt-20 bg-accent-500 rounded-[2.5rem] p-8 sm:p-10 text-primary-950 shadow-2xl">
                 <h3 className="text-3xl font-black mb-6 leading-tight">Plan Your Visit <br /> With Your Host</h3>
                 <div className="space-y-6 mb-10">
                   <div className="flex items-center gap-4">
