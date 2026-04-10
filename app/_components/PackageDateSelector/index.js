@@ -127,12 +127,12 @@ function PackageDateSelector({ settings, retreats, bookedDates, guestId }) {
       {/* Optional: Show clear dates button */}
       {range?.from || range?.to ? (
         <button
-          className="mt-4 border border-gold-500/30 py-2.5 px-4 text-sm font-semibold rounded-xl text-gold-400 hover:bg-gold-500/10 transition-colors w-full flex items-center justify-center gap-2"
+          className="mt-2 border border-gold-500/20 py-1.5 px-3 text-[10px] font-bold uppercase tracking-wider rounded-lg text-gold-400/80 hover:text-gold-300 hover:bg-gold-500/10 transition-all w-full flex items-center justify-center gap-2"
           onClick={resetRange}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
+            className="h-3 w-3"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -144,7 +144,7 @@ function PackageDateSelector({ settings, retreats, bookedDates, guestId }) {
               d="M6 18L18 6M6 6l12 12"
             />
           </svg>
-          Clear Dates
+          Clear Selection
         </button>
       ) : null}
     </div>

@@ -20,8 +20,8 @@ function DatePicker({
     disabled: isDateDisabled,
     captionLayout: "dropdown",
     style: {
-      "--rdp-day-height": "34px",
-      "--rdp-day-width": "32px",
+      "--rdp-day-height": "26px",
+      "--rdp-day-width": "24px",
       "--rdp-accent-color": "rgb(236 201 140)",
     },
     modifiersClassNames: {
