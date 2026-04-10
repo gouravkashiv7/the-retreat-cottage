@@ -288,9 +288,14 @@ function UpdateProfileForm({ guest, children }) {
               <ShieldCheck className="w-5 h-5 text-accent-400" />
             </div>
             <div>
-              <h3 className="text-white font-bold text-lg">Identity Details</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-white font-bold text-lg">Identity Details</h3>
+                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 flex items-center gap-1">
+                  <ShieldCheck className="w-2.5 h-2.5" /> SECURE STORAGE
+                </span>
+              </div>
               <p className="text-primary-400 text-xs">
-                Select ID type to enable upload & verification
+                Your ID documents are encrypted and stored in a private, secure vault.
               </p>
             </div>
           </div>

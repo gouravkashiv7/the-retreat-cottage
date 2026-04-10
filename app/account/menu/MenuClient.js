@@ -19,7 +19,6 @@ export default function MenuClient({
   const [activeCategory, setActiveCategory] = useState("All");
   const [cart, setCart] = useState([]);
   const [isOrdering, setIsOrdering] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
   const [orderMsg, setOrderMsg] = useState({ text: "", type: "" });
   const [showCart, setShowCart] = useState(false);
   const [showOrders, setShowOrders] = useState(false);
@@ -125,67 +124,6 @@ export default function MenuClient({
     }
   };
 
-  const handleDownloadMenu = async () => {
-    setIsDownloading(true);
-    try {
-      const { jsPDF } = await import("jspdf");
-      const doc = new jsPDF();
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(22);
-      doc.text("THE RETREAT COTTAGE — MENU", 105, 20, { align: "center" });
-      doc.setFontSize(12);
-      doc.setFont("helvetica", "normal");
-      doc.text("Curated Local Flavors & Global Favorites", 105, 28, {
-        align: "center",
-      });
-      let y = 45;
-      categories
-        .filter((c) => c !== "All")
-        .forEach((cat) => {
-          if (y > 270) {
-            doc.addPage();
-            y = 20;
-          }
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(16);
-          doc.setTextColor(198, 153, 99);
-          doc.text(cat.toUpperCase(), 20, y);
-          y += 10;
-          doc.setDrawColor(230, 230, 230);
-          doc.line(20, y - 2, 190, y - 2);
-          menuItems
-            .filter((i) => i.category === cat)
-            .forEach((item) => {
-              if (y > 270) {
-                doc.addPage();
-                y = 20;
-              }
-              doc.setFont("helvetica", "bold");
-              doc.setFontSize(11);
-              doc.setTextColor(40, 40, 40);
-              doc.text(item.name, 20, y);
-              doc.setFont("helvetica", "normal");
-              doc.text(`₹${item.price}`, 190, y, { align: "right" });
-              y += 5;
-              if (item.description) {
-                doc.setFontSize(9);
-                doc.setTextColor(100, 100, 100);
-                const splitDesc = doc.splitTextToSize(item.description, 150);
-                doc.text(splitDesc, 20, y);
-                y += splitDesc.length * 4 + 2;
-              }
-              y += 3;
-            });
-          y += 10;
-        });
-      doc.save("The-Retreat-Cottage-Menu.pdf");
-    } catch (err) {
-      console.error("Download failed:", err);
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
   const currentStayOrders = checkedInBooking
     ? recentOrders.filter((o) => o.bookingId === checkedInBooking.id)
     : [];
@@ -203,8 +141,6 @@ export default function MenuClient({
         }`}>
           <MenuHero
             checkedInBooking={checkedInBooking}
-            handleDownloadMenu={handleDownloadMenu}
-            isDownloading={isDownloading}
           />
 
         <ActiveOrdersPanel

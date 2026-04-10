@@ -3,13 +3,16 @@ import { supabaseAdmin } from "./supabase";
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: 465,
-  secure: true,
+  port: parseInt(process.env.EMAIL_PORT) || 465,
+  secure: parseInt(process.env.EMAIL_PORT) === 465,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
   },
-  pool: true, // Better for sending multiple emails (guest + admin)
+  tls: {
+    rejectUnauthorized: false // Often required for shared hosting SMTP
+  },
+  pool: true,
   maxConnections: 5,
   maxMessages: 100
 });
@@ -18,7 +21,7 @@ const transporter = nodemailer.createTransport({
 transporter.verify(function (error, success) {
   if (error) {
     console.error("❌ SMTP Connection Error:", error.message);
-    console.log("👉 Tip: Check your EMAIL_USER and EMAIL_PASSWORD in .env. If using Hostinger, ensure you are using an App Password if 2FA is on.");
+    console.log(`Config used: Host: ${process.env.EMAIL_HOST}, Port: ${process.env.EMAIL_PORT}, User: ${process.env.EMAIL_USER}`);
   } else {
     console.log("✅ SMTP Server is ready to send emails");
   }

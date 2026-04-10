@@ -2,7 +2,7 @@
 import { useState } from "react";
 import RetreatSection from "../RetreatSection";
 import Link from "next/link";
-import { useReservation } from "../contexts/ReservationContext";
+import { useReservation } from "@/app/_components/contexts/ReservationContext";
 
 function VillaPackageView({ rooms, cabins, bookedDates, guestId }) {
   const { range } = useReservation();

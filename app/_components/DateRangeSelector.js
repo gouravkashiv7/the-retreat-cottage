@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useReservation } from "./contexts/ReservationContext";
+import { useReservation } from "@/app/_components/contexts/ReservationContext";
 import { CalendarDays, X } from "lucide-react";
 
 export default function DateRangeSelector() {

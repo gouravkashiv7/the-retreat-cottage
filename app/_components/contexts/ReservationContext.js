@@ -1,5 +1,5 @@
 "use client";
-const { createContext, useContext, useState } = require("react");
+import { createContext, useContext, useState } from "react";
 
 const ReservationContext = createContext();
 

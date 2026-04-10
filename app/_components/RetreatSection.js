@@ -1,5 +1,5 @@
 "use client";
-import { useReservation } from "./contexts/ReservationContext";
+import { useReservation } from "@/app/_components/contexts/ReservationContext";
 import ItemCard from "./ItemCard";
 
 function RetreatSection({

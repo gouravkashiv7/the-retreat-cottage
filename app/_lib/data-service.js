@@ -102,7 +102,30 @@ export async function getGuest(email) {
     .eq("email", email)
     .single();
 
+  if (error || !data) return data;
+
+  // Enrich with signed URLs for private ID storage
+  if (data.guestIDCard) {
+    data.idFrontUrl = await getSignedIdUrl(data.guestIDCard);
+  }
+  if (data.guestIDCardBack) {
+    data.idBackUrl = await getSignedIdUrl(data.guestIDCardBack);
+  }
+
   return data;
+}
+
+async function getSignedIdUrl(path) {
+  if (!path) return null;
+  const { data, error } = await supabaseAdmin.storage
+    .from("guest-ids")
+    .createSignedUrl(path, 3600); // 1 hour expiration
+
+  if (error) {
+    console.error("Error creating signed URL:", error);
+    return null;
+  }
+  return data.signedUrl;
 }
 
 export async function getAdminUser(email = "admin@retreatcottage.in") {
@@ -288,6 +311,7 @@ export async function getCheckedOutBookings(guestId) {
     .from("bookings")
     .select(
       `id, startDate, endDate, numNights, numGuests, totalPrice, status,
+       guests ( fullName ),
        booking_cabins ( bookingCabinPrice, cabins ( name ) ),
        booking_rooms  ( bookingRoomPrice,  rooms  ( name ) )`,
     )

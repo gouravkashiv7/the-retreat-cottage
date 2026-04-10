@@ -1,6 +1,6 @@
 import DateSelector from "@/app/_components/DateSelector";
 import ReservationForm from "@/app/_components/ReservationForm";
-import { getSettings } from "../_lib/data-service";
+import { getSettings, getGuest } from "../_lib/data-service";
 import { auth } from "../_lib/auth";
 import LoginMessage from "./LoginMessage";
 import { getUnifiedBookedDatesById } from "../_lib/live-availability";
@@ -13,6 +13,9 @@ async function Reservations({ retreat, type }) {
     getUnifiedBookedDatesById(id, type),
   ]);
   const session = await auth();
+
+  // Fetch guest data to check phone availability
+  const guest = session?.user ? await getGuest(session.user.email) : null;
 
   return (
     <div className="mb-12 lg:mb-24">
@@ -32,7 +35,7 @@ async function Reservations({ retreat, type }) {
         </div>
         <div className="lg:col-span-2 lg:border-l lg:border-primary-800">
           {session?.user ? (
-            <ReservationForm retreat={retreat} user={session.user} />
+            <ReservationForm retreat={retreat} user={session.user} guest={guest} type={type} />
           ) : (
             <LoginMessage />
           )}

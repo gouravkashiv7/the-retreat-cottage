@@ -15,6 +15,24 @@ import {
 } from "./booking-helpers";
 import { sendBookingEmail } from "./email";
 
+export async function updateGuestPhone(phone) {
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in");
+
+  const cleaned = phone.toString().replace(/\D/g, "");
+  if (cleaned.length !== 10) {
+    throw new Error("Phone number must be exactly 10 digits");
+  }
+
+  const { error } = await supabaseAdmin
+    .from("guests")
+    .update({ phone: cleaned })
+    .eq("id", session.user.guestId);
+
+  if (error) throw new Error("Could not save phone number");
+  return { success: true };
+}
+
 export async function createBooking(bookingData, formData) {
   const session = await auth();
   if (!session) throw new Error("User must be logged in");
@@ -233,6 +251,7 @@ export async function updateGuest(formData) {
     !phone ||
     /^[\+]?[1-9][\d]{0,15}$/.test(phone.toString().replace(/\D/g, ""));
   if (phone && !isValidPhone) throw new Error("Invalid phone number format");
+
   // Validate ID based on country and type
   if (country === "India") {
     if (!idType) throw new Error("Please select an ID type for India");
@@ -242,11 +261,10 @@ export async function updateGuest(formData) {
     if (!isValid)
       throw new Error(`Invalid ${getIndianIdTypeName(idType)} number`);
   } else {
-    // For non-India countries, validate passport or other
     if (!idType) throw new Error("Please select an ID type");
     if (!idNumber)
       throw new Error(
-        `Please enter your ${idType === "passport" ? "passport" : "ID"} number`,
+         `Please enter your ${idType === "passport" ? "passport" : "ID"} number`,
       );
 
     if (idType === "passport") {
@@ -255,27 +273,29 @@ export async function updateGuest(formData) {
     }
   }
 
-  // Handle optional image uploads
+  // Handle Secure ID Storage (Private Bucket)
   const idFrontFile = formData.get("idFrontImage");
   const idBackFile = formData.get("idBackImage");
-  let idFrontUrl = undefined;
-  let idBackUrl = undefined;
+  let guestIDCard = undefined;
+  let guestIDCardBack = undefined;
 
-  // We need supabaseAdmin to bypass RLS for uploads if client lacks permissions,
-  // but if we are already logged in we can use supabase client. We will use supabaseAdmin.
+  const sanitizeFilename = (name) =>
+    name.replace(/[^a-z0-9.]/gi, "-").replace(/-+/g, "-");
 
   if (
     idFrontFile instanceof File &&
     idFrontFile.size > 0 &&
     idFrontFile.name !== "undefined"
   ) {
-    const fileName = `guest-${session.user.guestId}-front-${Date.now()}`;
+    const sanitized = sanitizeFilename(idFrontFile.name);
+    const fileName = `guest-${session.user.guestId}/${Date.now()}-front-${sanitized}`;
+    
     const { error: frontError } = await supabaseAdmin.storage
-      .from("avatars")
+      .from("guest-ids")
       .upload(fileName, idFrontFile, { upsert: true });
 
-    if (frontError) throw new Error("Failed to upload ID Front Image");
-    idFrontUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/avatars/${fileName}`;
+    if (frontError) throw new Error(`Failed to upload ID Front Image: ${frontError.message}`);
+    guestIDCard = fileName;
   }
 
   if (
@@ -283,13 +303,15 @@ export async function updateGuest(formData) {
     idBackFile.size > 0 &&
     idBackFile.name !== "undefined"
   ) {
-    const fileName = `guest-${session.user.guestId}-back-${Date.now()}`;
+    const sanitized = sanitizeFilename(idBackFile.name);
+    const fileName = `guest-${session.user.guestId}/${Date.now()}-back-${sanitized}`;
+    
     const { error: backError } = await supabaseAdmin.storage
-      .from("avatars")
+      .from("guest-ids")
       .upload(fileName, idBackFile, { upsert: true });
 
-    if (backError) throw new Error("Failed to upload ID Back Image");
-    idBackUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/avatars/${fileName}`;
+    if (backError) throw new Error(`Failed to upload ID Back Image: ${backError.message}`);
+    guestIDCardBack = fileName;
   }
 
   const updateData = {
@@ -303,17 +325,18 @@ export async function updateGuest(formData) {
     phone: phone || null,
   };
 
-  if (idFrontUrl !== undefined) updateData.idFrontUrl = idFrontUrl;
-  if (idBackUrl !== undefined) updateData.idBackUrl = idBackUrl;
+  // Save relative paths for secure storage columns
+  if (guestIDCard !== undefined) updateData.guestIDCard = guestIDCard;
+  if (guestIDCardBack !== undefined) updateData.guestIDCardBack = guestIDCardBack;
 
   try {
-    const { data, error } = await supabaseAdmin
+    const { error } = await supabaseAdmin
       .from("guests")
       .update(updateData)
       .eq("id", session.user.guestId);
 
     if (error) {
-      console.error("Supabase error:", error.message, error.details);
+      console.error("Supabase error:", error.message);
       return {
         success: false,
         message: `Update failed: ${error.message}`,
@@ -321,7 +344,7 @@ export async function updateGuest(formData) {
     }
 
     revalidatePath("/account/profile");
-    return { success: true, message: "Profile updated successfully!" };
+    return { success: true, message: "Profile updated securely!" };
   } catch (error) {
     return { success: false, message: error.message };
   }

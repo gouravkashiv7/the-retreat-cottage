@@ -30,48 +30,217 @@ function ReceiptsClient({ bookings }) {
 
   const toggle = (id) => setExpandedId(expandedId === id ? null : id);
 
+  // PDF-safe currency formatter (jsPDF helvetica can't render ₹)
+  const pdfCurrency = (amount) => {
+    const formatted = new Intl.NumberFormat("en-IN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
+    return `Rs. ${formatted}`;
+  };
+
   const handleDownload = async (booking) => {
     setDownloadingId(booking.id);
 
     try {
-      // Dynamic import to avoid SSR issues
-      const html2canvas = (await import("html2canvas")).default;
       const { jsPDF } = await import("jspdf");
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pw = doc.internal.pageSize.getWidth(); // 210
+      const accomNames = getAccommodationNames(booking);
+      const ordersTotal = getOrdersTotal(booking.orders);
+      const grandTotal = (booking.totalPrice || 0) + ordersTotal;
+      const leftM = 20;
+      const rightM = 190;
 
-      const el = document.getElementById(`receipt-${booking.id}`);
-      if (!el) return;
+      // ── Colors ──
+      const C = {
+        navy:  [20, 28, 36],
+        gold:  [198, 153, 99],
+        text:  [40, 44, 52],
+        sub:   [110, 110, 118],
+        line:  [220, 220, 224],
+        bg:    [248, 248, 250],
+        white: [255, 255, 255],
+      };
 
-      // Temporarily make visible for screenshot
-      el.style.position = "fixed";
-      el.style.left = "-9999px";
-      el.style.top = "0";
-      el.style.display = "block";
+      // ── Gold accent stripe at top ──
+      doc.setFillColor(...C.gold);
+      doc.rect(0, 0, pw, 3, "F");
 
-      const canvas = await html2canvas(el, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
+      // ── Logo ──
+      const img = new Image();
+      img.src = "/logo-dark.png";
+      await new Promise((r) => { img.onload = r; img.onerror = r; });
+      if (img.complete && img.naturalWidth > 0) {
+        doc.addImage(img, "PNG", leftM, 10, 18, 18);
+      }
+
+      // ── Company Name ──
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(20);
+      doc.setTextColor(...C.navy);
+      doc.text("The Retreat Cottage", 42, 19);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      doc.setTextColor(...C.sub);
+      doc.text("Boutique Mountain Stay  |  Dharampur, Himachal Pradesh  |  www.retreatcottage.in", 42, 24);
+
+      // ── INVOICE / RECEIPT label (right-aligned, separate row) ──
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(...C.gold);
+      doc.text("INVOICE / RECEIPT", rightM, 36, { align: "right" });
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(...C.sub);
+      doc.text(`#${booking.id}  |  Downloaded: ${new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}`, rightM, 41, { align: "right" });
+
+      // ── Divider ──
+      doc.setDrawColor(...C.line);
+      doc.setLineWidth(0.4);
+      doc.line(leftM, 46, rightM, 46);
+
+      // ── Two-column info section ──
+      let y = 56;
+
+      // Left column — Bill To
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7);
+      doc.setTextColor(...C.gold);
+      doc.text("BILL TO", leftM, y);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(...C.navy);
+      doc.text(booking.guests?.fullName || "Guest", leftM, y + 6);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(...C.sub);
+      doc.text("Verified Guest", leftM, y + 11);
+
+      // Right column — Stay Details
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7);
+      doc.setTextColor(...C.gold);
+      doc.text("STAY DETAILS", 120, y);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(...C.text);
+      const details = [
+        `Accommodation:  ${accomNames.join(", ") || "—"}`,
+        `Period:  ${formatDate(booking.startDate)} — ${formatDate(booking.endDate)}`,
+        `Duration:  ${booking.numNights} Night(s)  ·  ${booking.numGuests} Guest(s)`,
+      ];
+      details.forEach((line, i) => {
+        doc.text(line, 120, y + 6 + i * 5);
       });
 
-      el.style.display = "none";
-      el.style.position = "";
-      el.style.left = "";
-      el.style.top = "";
+      // ── Status badge ──
+      doc.setFillColor(...C.gold);
+      doc.roundedRect(rightM - 22, y - 2, 22, 6, 1, 1, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(6.5);
+      doc.setTextColor(...C.white);
+      doc.text("SETTLED", rightM - 11, y + 2.5, { align: "center" });
 
-      const imgData = canvas.toDataURL("image/jpeg", 0.85);
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "pt",
-        format: "a4",
-      });
+      // ── Charges Table ──
+      y = 85;
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      // Table header
+      doc.setFillColor(...C.navy);
+      doc.rect(leftM, y, rightM - leftM, 8, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7.5);
+      doc.setTextColor(...C.white);
+      doc.text("DESCRIPTION", leftM + 4, y + 5.5);
+      doc.text("AMOUNT (Rs.)", rightM - 4, y + 5.5, { align: "right" });
 
-      pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(
-        `TheRetreatCottage_Receipt_${formatDate(booking.startDate)}.pdf`,
-      );
+      y += 14;
+
+      // ── Row helper ──
+      const addRow = (label, amount, opts = {}) => {
+        if (y > 265) { doc.addPage(); y = 20; }
+        const { bold, indent, color, size } = { bold: false, indent: 0, color: C.text, size: 8.5, ...opts };
+        doc.setFont("helvetica", bold ? "bold" : "normal");
+        doc.setFontSize(size);
+        doc.setTextColor(...color);
+        doc.text(label, leftM + 4 + indent, y);
+        if (amount !== null) {
+          doc.text(pdfCurrency(amount), rightM - 4, y, { align: "right" });
+        }
+        // Subtle row line
+        doc.setDrawColor(...C.line);
+        doc.setLineWidth(0.15);
+        doc.line(leftM, y + 3, rightM, y + 3);
+        y += 7;
+      };
+
+      // Stay charges
+      addRow(`Room / Cabin Charges (${booking.numNights} Night${booking.numNights > 1 ? "s" : ""})`, booking.totalPrice || 0, { bold: true });
+
+      // Food orders
+      if (booking.orders && booking.orders.length > 0) {
+        y += 2;
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7);
+        doc.setTextColor(...C.gold);
+        doc.text("FOOD & BEVERAGE", leftM + 4, y);
+        y += 6;
+
+        booking.orders.forEach((order) => {
+          order.order_items?.forEach((item) => {
+            addRow(
+              `${item.menu_items?.name || "Item"}  x${item.quantity}`,
+              item.unitPrice * item.quantity,
+              { indent: 4, color: C.sub, size: 8 }
+            );
+          });
+        });
+
+        addRow("Food & Beverage Subtotal", ordersTotal, { bold: true, color: C.navy });
+      }
+
+      // ── Grand Total Box ──
+      y += 8;
+      if (y > 255) { doc.addPage(); y = 20; }
+
+      doc.setFillColor(...C.bg);
+      doc.roundedRect(leftM, y, rightM - leftM, 18, 2, 2, "F");
+      doc.setDrawColor(...C.gold);
+      doc.setLineWidth(0.6);
+      doc.roundedRect(leftM, y, rightM - leftM, 18, 2, 2, "S");
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(...C.sub);
+      doc.text("GRAND TOTAL", leftM + 6, y + 11);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.setTextColor(...C.gold);
+      doc.text(pdfCurrency(grandTotal), rightM - 6, y + 12, { align: "right" });
+
+      // ── Footer ──
+      const fy = 278;
+      doc.setDrawColor(...C.line);
+      doc.setLineWidth(0.3);
+      doc.line(leftM, fy - 5, rightM, fy - 5);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7);
+      doc.setTextColor(...C.navy);
+      doc.text("Thank you for choosing The Retreat Cottage", pw / 2, fy, { align: "center" });
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(6);
+      doc.setTextColor(...C.sub);
+      doc.text("This is a computer-generated receipt and does not require a signature.", pw / 2, fy + 4, { align: "center" });
+
+      doc.save(`Receipt_TRC_${booking.id}.pdf`);
     } catch (err) {
       console.error("PDF generation error:", err);
       alert("Failed to generate PDF. Please try again.");
@@ -85,8 +254,8 @@ function ReceiptsClient({ bookings }) {
       booking.booking_cabins?.map((bc) => bc.cabins?.name).filter(Boolean) ||
       [];
     const roomNames =
-      booking.booking_rooms?.map((br) => br.rooms?.name).filter(Boolean) || [];
-    return [...cabinNames, ...roomNames];
+      booking.booking_rooms?.map((br) => br.rooms?.name).filter(Boolean) || String(booking.id);
+    return cabinNames.length || roomNames.length ? [...cabinNames, ...roomNames] : ["Boutique Stay"];
   };
 
   const getOrdersTotal = (orders) =>
@@ -248,364 +417,6 @@ function ReceiptsClient({ bookings }) {
                     </button>
                   </div>
                 )}
-
-                {/* Hidden PDF Template */}
-                <div
-                  id={`receipt-${booking.id}`}
-                  style={{ display: "none", width: "595px" }}
-                >
-                  <div
-                    style={{
-                      fontFamily: "'Segoe UI', Arial, sans-serif",
-                      padding: "40px",
-                      color: "#1a1a2e",
-                      backgroundColor: "#ffffff",
-                    }}
-                  >
-                    {/* PDF Header */}
-                    <div
-                      style={{
-                        borderBottom: "3px solid #c69963",
-                        paddingBottom: "20px",
-                        marginBottom: "25px",
-                      }}
-                    >
-                      <h1
-                        style={{
-                          fontSize: "24px",
-                          fontWeight: "800",
-                          color: "#1a1a2e",
-                          margin: 0,
-                        }}
-                      >
-                        🏡 The Retreat Cottage
-                      </h1>
-                      <p
-                        style={{
-                          fontSize: "11px",
-                          color: "#666",
-                          margin: "4px 0 0",
-                        }}
-                      >
-                        Manali, Himachal Pradesh, India
-                      </p>
-                      <p
-                        style={{
-                          fontSize: "11px",
-                          color: "#666",
-                          margin: "2px 0 0",
-                        }}
-                      >
-                        Receipt #{booking.id}
-                      </p>
-                    </div>
-
-                    {/* Stay Info */}
-                    <div style={{ marginBottom: "20px" }}>
-                      <h2
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "700",
-                          color: "#c69963",
-                          textTransform: "uppercase",
-                          letterSpacing: "1px",
-                          marginBottom: "10px",
-                        }}
-                      >
-                        Stay Summary
-                      </h2>
-                      <table
-                        style={{
-                          width: "100%",
-                          borderCollapse: "collapse",
-                          fontSize: "12px",
-                        }}
-                      >
-                        <tbody>
-                          <tr>
-                            <td
-                              style={{
-                                padding: "6px 0",
-                                color: "#444",
-                              }}
-                            >
-                              Accommodation
-                            </td>
-                            <td
-                              style={{
-                                padding: "6px 0",
-                                textAlign: "right",
-                                fontWeight: "600",
-                              }}
-                            >
-                              {accomNames.join(", ") || "—"}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td
-                              style={{
-                                padding: "6px 0",
-                                color: "#444",
-                              }}
-                            >
-                              Check-in
-                            </td>
-                            <td
-                              style={{
-                                padding: "6px 0",
-                                textAlign: "right",
-                                fontWeight: "600",
-                              }}
-                            >
-                              {formatDate(booking.startDate)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td
-                              style={{
-                                padding: "6px 0",
-                                color: "#444",
-                              }}
-                            >
-                              Check-out
-                            </td>
-                            <td
-                              style={{
-                                padding: "6px 0",
-                                textAlign: "right",
-                                fontWeight: "600",
-                              }}
-                            >
-                              {formatDate(booking.endDate)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td
-                              style={{
-                                padding: "6px 0",
-                                color: "#444",
-                              }}
-                            >
-                              Duration
-                            </td>
-                            <td
-                              style={{
-                                padding: "6px 0",
-                                textAlign: "right",
-                                fontWeight: "600",
-                              }}
-                            >
-                              {booking.numNights} night
-                              {booking.numNights > 1 ? "s" : ""}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td
-                              style={{
-                                padding: "6px 0",
-                                color: "#444",
-                              }}
-                            >
-                              Guests
-                            </td>
-                            <td
-                              style={{
-                                padding: "6px 0",
-                                textAlign: "right",
-                                fontWeight: "600",
-                              }}
-                            >
-                              {booking.numGuests}
-                            </td>
-                          </tr>
-                          <tr
-                            style={{
-                              borderTop: "1px solid #eee",
-                            }}
-                          >
-                            <td
-                              style={{
-                                padding: "8px 0",
-                                fontWeight: "700",
-                              }}
-                            >
-                              Stay Total
-                            </td>
-                            <td
-                              style={{
-                                padding: "8px 0",
-                                textAlign: "right",
-                                fontWeight: "700",
-                                color: "#c69963",
-                              }}
-                            >
-                              {formatCurrency(booking.totalPrice || 0)}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-
-                    {/* Orders */}
-                    {booking.orders && booking.orders.length > 0 && (
-                      <div style={{ marginBottom: "20px" }}>
-                        <h2
-                          style={{
-                            fontSize: "14px",
-                            fontWeight: "700",
-                            color: "#c69963",
-                            textTransform: "uppercase",
-                            letterSpacing: "1px",
-                            marginBottom: "10px",
-                          }}
-                        >
-                          Food Orders
-                        </h2>
-                        <table
-                          style={{
-                            width: "100%",
-                            borderCollapse: "collapse",
-                            fontSize: "12px",
-                          }}
-                        >
-                          <thead>
-                            <tr
-                              style={{
-                                borderBottom: "1px solid #ddd",
-                              }}
-                            >
-                              <th
-                                style={{
-                                  textAlign: "left",
-                                  padding: "6px 0",
-                                  color: "#888",
-                                  fontWeight: "600",
-                                }}
-                              >
-                                Item
-                              </th>
-                              <th
-                                style={{
-                                  textAlign: "center",
-                                  padding: "6px 0",
-                                  color: "#888",
-                                  fontWeight: "600",
-                                }}
-                              >
-                                Qty
-                              </th>
-                              <th
-                                style={{
-                                  textAlign: "right",
-                                  padding: "6px 0",
-                                  color: "#888",
-                                  fontWeight: "600",
-                                }}
-                              >
-                                Amount
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {booking.orders.flatMap((order) =>
-                              order.order_items?.map((oi, idx) => (
-                                <tr
-                                  key={`${order.id}-${idx}`}
-                                  style={{
-                                    borderBottom: "1px solid #f5f5f5",
-                                  }}
-                                >
-                                  <td style={{ padding: "6px 0" }}>
-                                    {oi.menu_items?.name || "Item"}
-                                  </td>
-                                  <td
-                                    style={{
-                                      padding: "6px 0",
-                                      textAlign: "center",
-                                    }}
-                                  >
-                                    {oi.quantity}
-                                  </td>
-                                  <td
-                                    style={{
-                                      padding: "6px 0",
-                                      textAlign: "right",
-                                      fontWeight: "600",
-                                    }}
-                                  >
-                                    {formatCurrency(oi.unitPrice * oi.quantity)}
-                                  </td>
-                                </tr>
-                              )),
-                            )}
-                            <tr style={{ borderTop: "1px solid #eee" }}>
-                              <td
-                                colSpan={2}
-                                style={{
-                                  padding: "8px 0",
-                                  fontWeight: "700",
-                                }}
-                              >
-                                Orders Total
-                              </td>
-                              <td
-                                style={{
-                                  padding: "8px 0",
-                                  textAlign: "right",
-                                  fontWeight: "700",
-                                  color: "#c69963",
-                                }}
-                              >
-                                {formatCurrency(ordersTotal)}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-
-                    {/* Grand Total */}
-                    <div
-                      style={{
-                        borderTop: "3px solid #c69963",
-                        paddingTop: "15px",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "16px",
-                          fontWeight: "800",
-                        }}
-                      >
-                        Grand Total
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "20px",
-                          fontWeight: "800",
-                          color: "#c69963",
-                        }}
-                      >
-                        {formatCurrency(grandTotal)}
-                      </span>
-                    </div>
-
-                    {/* Footer */}
-                    <p
-                      style={{
-                        fontSize: "10px",
-                        color: "#aaa",
-                        textAlign: "center",
-                        marginTop: "30px",
-                      }}
-                    >
-                      Thank you for staying with us! We hope to see you again.
-                    </p>
-                  </div>
-                </div>
               </div>
             );
           })}
