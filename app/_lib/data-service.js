@@ -377,3 +377,19 @@ export async function createGuest(newGuest) {
 
   return data;
 }
+
+export async function updateGuest(id, updatedFields) {
+  const { data, error } = await supabaseAdmin
+    .from("guests")
+    .update(updatedFields)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Guest could not be updated");
+  }
+
+  return data;
+}

@@ -8,6 +8,8 @@ import MobileMenuButton from "./MobileMenuButton";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/retreats", label: "Retreats" },
+  { href: "/guides", label: "Guides" },
+  { href: "/feedback", label: "Feedback" },
   { href: "/about", label: "About" },
 ];
 

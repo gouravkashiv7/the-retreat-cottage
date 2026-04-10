@@ -141,10 +141,10 @@ export default async function SolanGuide() {
         {/* Header Section */}
         <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <Link
-            href="/retreats"
+            href="/guides"
             className="text-accent-500 hover:text-accent-400 text-sm font-bold uppercase tracking-widest mb-4 inline-block transition-colors"
           >
-            ← Back to Retreats
+            ← Back to Guides
           </Link>
           <h1 className="text-5xl sm:text-6xl font-black mb-6 tracking-tight text-white px-2">
             Discover <span className="text-accent-500">Solan</span>

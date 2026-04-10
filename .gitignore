@@ -44,4 +44,6 @@ next-env.d.ts
 *.md
 !README.md
 
-/supabase
+# supabase
+/supabase/config.toml
+/supabase/.temp/

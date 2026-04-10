@@ -8,6 +8,8 @@ import { MapPin, Phone, Mail, Instagram, ExternalLink } from "lucide-react";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/retreats", label: "Retreats" },
+  { href: "/guides", label: "Guides" },
+  { href: "/feedback", label: "Feedback" },
   { href: "/about", label: "About" },
 ];
 

@@ -11,13 +11,21 @@ const authOptions = {
         const existingUser = await getGuest(user.email);
 
         if (!existingUser) {
-          await createGuest({ email: user.email, fullName: user.name });
+          await createGuest({
+            email: user.email,
+            fullName: user.name,
+            image: user.image,
+          });
 
           // Use dynamic import to prevent Node.js modules from being loaded in the Edge runtime (middleware)
           const { sendWelcomeEmail } = await import("./mail");
           sendWelcomeEmail(user.email, user.name).catch((err) =>
             console.error("Welcome email failed:", err),
           );
+        } else if (existingUser.image !== user.image) {
+          // Update image if it has changed or was missing
+          const { updateGuest } = await import("./data-service");
+          await updateGuest(existingUser.id, { image: user.image });
         }
 
         return true;
