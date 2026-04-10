@@ -23,10 +23,10 @@ export const metadata = {
     default: "Pure Veg Luxury Homestay Kasauli | The Retreat Cottage",
   },
   description:
-    "Pure Veg luxury homestay near Kasauli. Private 5-bedroom villa for up to 12 adults, with a maximum capacity of 15 guests. Perfect for parties with Music, Karaoke, and Bonfire.",
+    "Pure Veg luxury homestay near Kasauli. Private 5-bedroom villa for up to 12 adults, with a maximum capacity of 15 guests. Perfect for parties with Bonfire, Karaoke, and Himalayan views.",
   keywords: [
     "Pure Veg Homestay Kasauli",
-    "Music allowed Homestay Himachal",
+    "Bonfire allowed Homestay Himachal",
     "Luxury Villa for 12 adults Kasauli",
     "Pet friendly villa Himachal Pradesh",
     "Homestay with Karaoke and Bonfire Kasauli",
@@ -35,9 +35,9 @@ export const metadata = {
     "Boutique Homestay Himachal",
   ],
   openGraph: {
-    title: "The Retreat Cottage | Music & Pure Veg Luxury Homestay",
+    title: "The Retreat Cottage | Bonfire & Pure Veg Luxury Homestay",
     description:
-      "Private 5-bedroom villa for up to 15 guests total. Enjoy Music, Karaoke, Bonfire, and Pet-Friendly stays near Kasauli.",
+      "Private 5-bedroom villa for up to 15 guests total. Enjoy Bonfire, Karaoke, and Pet-Friendly stays near Kasauli.",
     url: "https://retreatcottage.in",
     siteName: "The Retreat Cottage",
     images: [
@@ -53,8 +53,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Retreat Cottage | Party Villa with Music",
-    description: "Private villa for up to 15 guests near Kasauli. Music, Karaoke & Pure Veg.",
+    title: "The Retreat Cottage | Party Villa with Bonfire",
+    description: "Private villa for up to 15 guests near Kasauli. Bonfire, Karaoke & Pure Veg.",
     images: ["/opengraph-image.jpg"],
   },
 };
