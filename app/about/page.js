@@ -361,7 +361,7 @@ export default function Page() {
       {/* ─── Location & Map Section ─── */}
       <section className="max-w-7xl mx-auto px-4">
         <div className="relative rounded-[3rem] overflow-hidden bg-primary-950/40 border border-white/5 p-8 md:p-16 backdrop-blur-xl">
-          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-accent-500/5 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute top-0 right-0 w-100 h-100 bg-accent-500/5 rounded-full blur-[120px] pointer-events-none" />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-10">
