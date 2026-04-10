@@ -15,8 +15,8 @@ const navLinks = [
     icon: <HomeIcon className="h-5 w-5 text-primary-600" />,
   },
   {
-    name: "Reservations",
-    href: "/account/reservations",
+    name: "My Bookings",
+    href: "/account/bookings",
     icon: <CalendarDaysIcon className="h-5 w-5 text-primary-600" />,
   },
   {

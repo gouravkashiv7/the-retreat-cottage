@@ -115,7 +115,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, details, isSubmitting }) {
             <X className="w-5 h-5" />
           </button>
           
-          <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-wide">Final Confirmation</h3>
+          <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-wide">Confirm Your Request</h3>
           <p className="text-primary-400 text-xs mb-8 uppercase tracking-widest">Review your {details.packageName} booking</p>
 
           <div className="space-y-4 bg-primary-800/40 border border-primary-700/50 rounded-2xl p-6">
@@ -192,11 +192,11 @@ function ConfirmModal({ isOpen, onClose, onConfirm, details, isSubmitting }) {
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">
                   <div className="w-4 h-4 border-2 border-primary-950/30 border-t-primary-950 rounded-full animate-spin" />
-                  Booking...
+                  Submitting Request...
                 </span>
               ) : (
                 <span className="flex items-center justify-center gap-2">
-                  Confirm <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  Request Stay <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </span>
               )}
             </button>
@@ -237,7 +237,7 @@ function SubmitButton({ canConfirmBooking, packageName, onClick }) {
             : "text-primary-500"
         }`}
       >
-        <span>Confirm {packageName} Package Stay</span>
+        <span>Request {packageName} Package Stay</span>
         <ArrowRight className={`w-5 h-5 ${canConfirmBooking ? 'group-hover:translate-x-1.5' : ''} transition-transform`} />
       </div>
     </button>

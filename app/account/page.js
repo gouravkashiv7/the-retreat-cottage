@@ -19,9 +19,9 @@ export default async function Page() {
 
   const cards = [
     {
-      href: "/account/reservations",
+      href: "/account/bookings",
       icon: CalendarDays,
-      title: "My Reservations",
+      title: "My Bookings",
       desc: "View your upcoming stays, manage dates, or check past booking history.",
     },
     {

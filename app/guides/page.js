@@ -122,9 +122,12 @@ export default function GuidesPage() {
             </div>
             
             <div className="space-y-2">
-              <h3 className="text-2xl font-black text-white">More Coming Soon</h3>
-              <p className="text-primary-400 text-sm max-w-[200px] mx-auto italic">
-                We're currently exploring more gems to share with you.
+              <h3 className="text-2xl font-black text-white">Toy Train Guide</h3>
+              <p className="text-secondary-400 text-sm max-w-[200px] mx-auto font-bold uppercase tracking-widest animate-pulse">
+                Coming Soon
+              </p>
+              <p className="text-primary-400 text-xs max-w-[200px] mx-auto italic mt-2">
+                A complete guide to the heritage track and hidden tunnels just 200m from our villa.
               </p>
             </div>
 

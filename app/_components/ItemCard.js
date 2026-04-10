@@ -139,7 +139,7 @@ function ItemCard({
               </>
             ) : (
               <>
-                <span className="relative z-10">Details & Reservation</span>
+                <span className="relative z-10">Details & Booking</span>
                 <ArrowRight className="h-4 w-4 relative z-10 transition-transform duration-300 group-hover/btn:translate-x-2" />
               </>
             )}

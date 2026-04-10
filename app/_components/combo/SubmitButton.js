@@ -39,8 +39,8 @@ export default function SubmitButton({
       >
         <span>
           {pending
-            ? `Reserving Stay...`
-            : `Confirm Stay for ${guestCount} Guests`}
+            ? `Submitting Request...`
+            : `Request Stay for ${guestCount} Guests`}
         </span>
         <ArrowRight className={`w-5 h-5 ${canConfirmBooking ? 'group-hover:translate-x-1.5' : ''} transition-transform`} />
       </div>

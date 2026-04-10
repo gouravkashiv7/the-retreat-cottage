@@ -144,7 +144,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, details, isSubmitting }) {
             <X className="w-5 h-5" />
           </button>
 
-          <h3 className="text-xl font-bold text-white mb-1">Confirm Your Reservation</h3>
+          <h3 className="text-xl font-bold text-white mb-1">Confirm Your Stay Request</h3>
           <p className="text-primary-400 text-sm mb-6">Please review the details below before confirming.</p>
 
           {/* Details Card */}
@@ -187,7 +187,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, details, isSubmitting }) {
 
           {/* Total Price */}
           <div className="flex items-center justify-between mt-5 px-2">
-            <span className="text-primary-300 text-sm font-medium">Total Estimate</span>
+            <span className="text-primary-300 text-sm font-medium">Estimated Stay Value</span>
             <span className="text-2xl font-bold text-accent-400">₹{details.price.toLocaleString()}</span>
           </div>
 
@@ -213,7 +213,7 @@ function ConfirmModal({ isOpen, onClose, onConfirm, details, isSubmitting }) {
                   Booking...
                 </span>
               ) : (
-                "Confirm Booking"
+                "Confirm Stay Request"
               )}
             </button>
           </div>
@@ -313,7 +313,7 @@ function ReservationForm({ retreat, user, guest, type }) {
       if (result?.redirect) {
         setShowConfirmModal(false);
         toast.success(
-          "Reservation successful! We've sent you a confirmation email.",
+          "Stay request submitted! We've sent you a confirmation email.",
         );
         resetRange();
         reset();
@@ -322,7 +322,7 @@ function ReservationForm({ retreat, user, guest, type }) {
     } catch (error) {
       setShowConfirmModal(false);
       toast.error(
-        error.message || "Failed to create reservation. Please try again.",
+        error.message || "Failed to submit request. Please try again.",
       );
     }
   };
@@ -466,7 +466,7 @@ function ReservationForm({ retreat, user, guest, type }) {
               className="w-full sm:w-auto h-14 px-10 text-lg font-bold bg-accent-500 hover:bg-accent-600 text-primary-950 rounded-xl transition-all disabled:opacity-50 shadow-xl shadow-accent-500/10 active:scale-[0.98]"
               disabled={!startDate || !endDate || isSubmitting}
             >
-              Reserve Your Stay
+              Request Your Stay
             </button>
           </div>
         </form>

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import retreat from "@/public/retreat.webp";
-import { m, useScroll, useTransform } from "framer-motion";
+import { m, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { 
   ArrowRight, 
   UtensilsCrossed, 
@@ -14,7 +14,9 @@ import {
   Wifi, 
   TrainFront,
   ChevronDown,
-  Star
+  Star,
+  Compass,
+  MessageCircle
 } from "lucide-react";
 import { useState } from "react";
 
@@ -134,6 +136,38 @@ export default function Home() {
           "@type": "Answer",
           "text": "Absolutely! We provide a sound system and Karaoke for our guests to enjoy music and celebrate. To respect the valley's tranquility, we ask that music be turned down by 10 PM."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "What are the check-in and check-out timings?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Standard check-in is at 2:00 PM and check-out is at 11:00 AM."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is the villa heated in winters?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Rooms have Hot/Cold ACs. We also provide additional room heaters and extra blankets."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can we arrange driver stay?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, driver accommodation is available nearby (within 1km) at ₹500 per night."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is there a trekking path nearby?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, a heritage toy train track trek is just 200m away with old tunnels for photography."
+        }
       }
     ]
   };
@@ -143,7 +177,60 @@ export default function Home() {
     "@type": "WebSite",
     name: "The Retreat Cottage",
     url: "https://retreatcottage.in",
-  };
+  };  const faqData = [
+    {
+      question: "What is the total guest capacity?",
+      answer: "We can accommodate up to 15 guests total (12 adults + children).\n\nMax adult capacity is 12 (in 5 king beds + 2 extra mattresses). Children 9 and below stay for free (limit 1 per room)."
+    },
+    {
+      question: "Can we play music at the villa?",
+      answer: "Yes, absolutely! Unlike hotels, we allow our guests to play music and enjoy Karaoke on our private sound system. To respect the valley's tranquility, we ask that music be turned down by 10 PM."
+    },
+    {
+      question: "Are pets allowed?",
+      answer: "Yes! Pets are allowed when you book an entire floor or the full villa. This ensures privacy for you and your pets."
+    },
+    {
+      question: "What are the dining options?",
+      answer: "We operate a Pure Veg kitchen. We offer delicious, home-cooked vegetarian meals tailored to your preferences."
+    },
+    {
+      question: "What about parking and accessibility?",
+      answer: "We have dedicated parking space right beside the villa that can accommodate 4-5 cars. The property is conveniently located just 500 metres from the National Highway (NH), offering easy access while maintaining mountain peace."
+    },
+    {
+      question: "What are the check-in and check-out timings?",
+      answer: "Standard check-in is at 2:00 PM and check-out is at 11:00 AM. Please contact us for any early check-in or late check-out requests (subject to availability)."
+    },
+    {
+      question: "How do you handle the cold mountain winters?",
+      answer: "Your comfort is our priority throughout the year. All our rooms are equipped with Hot/Cold ACs and we provide additional room heaters and extra blankets to ensure a cozy and warm stay even in peak winter."
+    },
+    {
+      question: "What is your policy on alcohol and smoking?",
+      answer: "Alcohol and smoking are permitted within the privacy of your rooms. However, to maintain a fresh and welcoming environment for all our guests, smoking is not allowed in public common areas."
+    },
+    {
+      question: "Is there accommodation for our drivers?",
+      answer: "Yes, we can arrange driver accommodation within a 1 km radius of the villa for a nominal charge of ₹500. Please inform us in advance so we can ensure availability."
+    },
+    {
+      question: "Can you arrange local transport or cabs?",
+      answer: "We are happy to help you coordinate with reliable local cab facilities for your sightseeing and transport needs. To ensure you get the best local rates, we do not take any commission for facilitating these services."
+    },
+    {
+      question: "Are there any nature walks or treks nearby?",
+      answer: "The heritage toy train track is just a short 200m walk from the villa. It offers a stunning trekking path through historic old tunnels—perfect for photography. We only request our guests to help us preserve the natural beauty of the valley by not littering."
+    },
+    {
+      question: "Is the property accessible for seniors?",
+      answer: "The ground floor has 3 steps, and our super deluxe rooms are accessed by approximately 15 steps. While not fully wheelchair accessible, it is manageable for most guests."
+    }
+  ];
+
+  const shuffledFaqs = useState(() => [...faqData].sort(() => Math.random() - 0.5))[0];
+  const [showAll, setShowAll] = useState(false);
+  const visibleFaqs = showAll ? shuffledFaqs : shuffledFaqs.slice(0, 5);
 
   return (
     <main className="relative min-h-svh bg-primary-950 selection:bg-accent-500 selection:text-primary-950">
@@ -229,7 +316,7 @@ export default function Home() {
             >
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               <span className="relative flex items-center justify-center gap-3">
-                Book Your Retreat{" "}
+                Plan Your Retreat{" "}
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
               </span>
             </Link>
@@ -239,7 +326,7 @@ export default function Home() {
               className="group text-white text-lg font-medium underline-offset-8 hover:underline decoration-accent-500/50 hover:decoration-accent-500 transition-all flex items-center gap-3 px-6 py-4"
             >
               Our Story{" "}
-              <ArrowRight className="w-5 h-5 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all -rotate-45" />
+              <ArrowRight className="h-5 w-5 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all -rotate-45" />
             </Link>
           </m.div>
         </m.div>
@@ -302,35 +389,91 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Local Guides Link Section */}
+      <section className="relative z-30 bg-primary-950 py-24 px-4 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative group p-8 sm:p-16 rounded-[3rem] bg-linear-to-r from-accent-500/10 via-primary-900/40 to-accent-500/10 border border-white/10 overflow-hidden text-center">
+            {/* Background elements */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(198,153,99,0.1)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+
+            <div className="relative z-10 space-y-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent-500/10 border border-accent-500/20 rounded-full text-accent-400 text-[10px] font-black uppercase tracking-[0.3em]">
+                <Compass className="h-4 w-4" />
+                Local Neighborhood
+              </div>
+              
+              <h2 className="text-4xl md:text-6xl font-black text-white tracking-tight leading-[0.9]">
+                More Than <br />
+                <span className="text-accent-400 italic font-light">Just A Stay.</span>
+              </h2>
+              
+              <p className="text-primary-300 text-lg max-w-2xl mx-auto font-light leading-relaxed">
+                From heritage toy train treks to secret mountain tunnels, 
+                explore our curated local guides.
+              </p>
+
+              <div className="pt-4">
+                <Link
+                  href="/guides"
+                  className="inline-flex items-center gap-4 bg-white hover:bg-accent-500 text-primary-950 px-10 py-5 rounded-2xl font-black transition-all hover:scale-105 active:scale-95 group/guide-btn"
+                >
+                  Explore Our Guides
+                  <ArrowRight className="h-5 w-5 group-hover/guide-btn:translate-x-2 transition-transform" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ Section */}
       <section className="relative z-30 bg-primary-950 py-32 px-4 border-t border-white/5">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl text-white font-medium mb-4">Frequently Asked Questions</h2>
-            <p className="text-primary-400 font-light">Everything you need to know about your stay.</p>
+            <p className="text-primary-400 font-light italic">Everything you need to know about your stay.</p>
           </div>
 
           <div className="space-y-4">
-            <FAQItem 
-              question="What is the total guest capacity?" 
-              answer={"We can accommodate up to 15 guests total (12 adults + children).\n\nMax adult capacity is 12 (in 5 king beds + 2 extra mattresses). Children 9 and below stay for free (limit 1 per room)."} 
-            />
-            <FAQItem 
-              question="Can we play music at the villa?" 
-              answer="Yes, absolutely! Unlike hotels, we allow our guests to play music and enjoy Karaoke on our private sound system. To respect the valley's tranquility, we ask that music be turned down by 10 PM." 
-            />
-            <FAQItem 
-              question="Are pets allowed?" 
-              answer="Yes! Pets are allowed when you book an entire floor or the full villa. This ensures privacy for you and your pets." 
-            />
-            <FAQItem 
-              question="What are the dining options?" 
-              answer="We operate a Pure Veg kitchen. We offer delicious, home-cooked vegetarian meals tailored to your preferences." 
-            />
-            <FAQItem 
-              question="Is the property accessible for seniors?" 
-              answer="The ground floor has 3 steps, and our super deluxe rooms are accessed by approximately 15 steps. While not fully wheelchair accessible, it is manageable for most guests." 
-            />
+            <AnimatePresence initial={false}>
+              {visibleFaqs.map((faq, index) => (
+                <m.div
+                  key={faq.question}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.05 }}
+                >
+                  <FAQItem question={faq.question} answer={faq.answer} />
+                </m.div>
+              ))}
+            </AnimatePresence>
+          </div>
+
+          {faqData.length > 5 && (
+            <div className="mt-12 text-center">
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="group inline-flex items-center gap-3 px-8 py-3.5 bg-white/5 hover:bg-white text-primary-200 hover:text-primary-950 border border-white/10 rounded-full font-bold transition-all duration-300 active:scale-95 shadow-xl hover:shadow-white/10"
+              >
+                {showAll ? "Show Less" : "View All Questions"}
+                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAll ? "rotate-180" : "group-hover:translate-y-0.5"}`} />
+              </button>
+            </div>
+          )}
+
+          {/* WhatsApp Support Section */}
+          <div className="mt-20 text-center animate-in fade-in slide-in-from-bottom-6 duration-1000">
+            <div className="h-px w-24 bg-linear-to-r from-transparent via-accent-500/30 to-transparent mx-auto mb-8" />
+            <p className="text-primary-300 text-lg font-light mb-6">Still have more questions?</p>
+            <Link
+              href="https://wa.me/919906039157?text=i%20have%20a%20query%20regarding"
+              target="_blank"
+              className="inline-flex items-center gap-3 px-10 py-5 bg-emerald-500/10 hover:bg-emerald-500 border border-emerald-500/20 text-emerald-400 hover:text-primary-950 rounded-2xl font-black transition-all duration-500 group shadow-2xl hover:shadow-emerald-500/20"
+            >
+              <MessageCircle className="w-6 h-6 group-hover:scale-110 transition-transform" />
+              <span>Feel Free To Contact Us</span>
+            </Link>
           </div>
         </div>
       </section>

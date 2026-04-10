@@ -6,6 +6,7 @@ import UserProfile from "./UserProfile";
 const navLinks = [
   { href: "/retreats", label: "Retreats" },
   { href: "/guides", label: "Guides" },
+  { href: "/host", label: "The Host" },
   { href: "/feedback", label: "Feedback" },
   { href: "/about", label: "About" },
 ];

@@ -44,11 +44,11 @@ export default function Page() {
           transition={{ delay: 0.3, duration: 0.6 }}
         >
           <h1 className="mb-4 text-4xl font-normal tracking-tight text-white sm:text-5xl">
-            Reserved with <br />
+            Requested with <br />
             <span className="italic font-light text-accent-300">Perfect Harmony.</span>
           </h1>
           <p className="mb-10 text-lg sm:text-xl text-primary-200/90 font-light leading-relaxed">
-            Thank you for choosing The Retreat Cottage. Your mountain escape is now confirmed. We look forward to welcoming you to the Himalayan pine valleys.
+            Thank you for choosing The Retreat Cottage. Your stay request has been received. To finalize your stay, please check your email for payment instructions.
           </p>
         </m.div>
 
@@ -60,11 +60,11 @@ export default function Page() {
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <Link
-            href="/account/reservations"
+            href="/account/bookings"
             className="group w-full sm:w-auto flex items-center justify-center gap-2 bg-accent-500 text-primary-950 px-8 py-4 rounded-xl font-bold transition-all hover:scale-[1.02] active:scale-95 shadow-[0_15px_35px_rgba(198,153,99,0.2)]"
           >
             <Calendar className="h-5 w-5" />
-            Manage Reservations
+            Manage Bookings
             <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
           </Link>
 
@@ -84,7 +84,7 @@ export default function Page() {
           transition={{ delay: 0.8, duration: 1 }}
           className="mt-12 text-sm text-primary-400 font-light italic"
         >
-          Check your email for booking details and your unique reservation code.
+          Check your email for stay request details and your unique booking ID.
         </m.p>
       </div>
     </div>

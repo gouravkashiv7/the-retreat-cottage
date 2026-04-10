@@ -224,9 +224,9 @@ export async function updateBooking(formData) {
 
   if (error) throw new Error("Booking could not be updated");
 
-  revalidatePath(`/account/reservations/edit/${bookingId}`);
-  revalidatePath("/account/reservations");
-  return { success: true, redirect: "/account/reservations" };
+  revalidatePath(`/account/bookings/edit/${bookingId}`);
+  revalidatePath("/account/bookings");
+  return { success: true, redirect: "/account/bookings" };
 }
 
 export async function deleteReservation(bookingId) {
@@ -263,7 +263,7 @@ export async function deleteReservation(bookingId) {
 
   if (error) throw new Error("Booking could not be deleted");
 
-  revalidatePath("/account/reservations");
+  revalidatePath("/account/bookings");
 }
 
 export async function updateGuest(formData) {
