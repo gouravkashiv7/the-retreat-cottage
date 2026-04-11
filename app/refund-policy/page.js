@@ -27,29 +27,29 @@ export default function Page() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                 <div className="p-6 bg-primary-800/30 rounded-2xl border border-accent-400/10 hover:border-accent-400/30 transition-colors">
                   <p className="text-sm uppercase tracking-widest text-primary-400 font-bold mb-2">
-                    More than 14 Days
+                    7+ Days Notice
                   </p>
                   <p className="text-3xl font-black text-green-400">100%</p>
                   <p className="text-xs text-primary-300 mt-2">
-                    Full refund of the booking amount
+                    Full refund minus processing fees
                   </p>
                 </div>
                 <div className="p-6 bg-primary-800/30 rounded-2xl border border-accent-400/10 hover:border-accent-400/30 transition-colors">
                   <p className="text-sm uppercase tracking-widest text-primary-400 font-bold mb-2">
-                    7 - 14 Days
+                    Within 7 Days
                   </p>
-                  <p className="text-3xl font-black text-accent-400">70%</p>
+                  <p className="text-3xl font-black text-accent-400">50%</p>
                   <p className="text-xs text-primary-300 mt-2">
-                    Refund of the total booking amount
+                    Minimum refund of booking amount*
                   </p>
                 </div>
                 <div className="p-6 bg-primary-800/30 rounded-2xl border border-accent-400/10 hover:border-accent-400/30 transition-colors">
                   <p className="text-sm uppercase tracking-widest text-primary-400 font-bold mb-2">
-                    Less than 7 Days
+                    No-Show
                   </p>
                   <p className="text-3xl font-black text-red-400">0%</p>
                   <p className="text-xs text-primary-300 mt-2">
-                    Strictly non-refundable
+                    Non-eligible for any refund
                   </p>
                 </div>
               </div>
@@ -78,10 +78,10 @@ export default function Page() {
                 Advance Payments
               </h2>
               <p>
-                To confirm your booking, an advance payment of at least 50% is
-                required. Until this payment is received and verified, the
-                booking status will remain "Unconfirmed" and the dates may be
-                opened for other guests.
+                Full payment or an advance booking amount is required at the
+                time of reservation to confirm your booking. Until this payment
+                is received and verified, the booking status will remain
+                "Unconfirmed" and the dates may be opened for other guests.
               </p>
             </section>
 
@@ -103,9 +103,11 @@ export default function Page() {
 
           <div className="mt-12 pt-8 border-t border-accent-400/10">
             <p className="text-primary-400 text-sm italic opacity-70">
-              * The Retreat Cottage reserves the right to modify these terms at
-              any time. All refunds are processed back to the original payment
-              method within 7-10 business days.
+              * Cancellations made within 7 days of check-in may attract a
+              cancellation charge of up to 50% of the total booking amount. The
+              Retreat Cottage reserves the right to modify these terms. All
+              refunds are processed via the original payment method within 7-10
+              business days.
             </p>
           </div>
         </div>

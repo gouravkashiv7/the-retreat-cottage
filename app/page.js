@@ -18,7 +18,7 @@ import {
   Compass,
   MessageCircle
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Feature = ({ icon: Icon, title, description }) => (
   <m.div 
@@ -180,7 +180,12 @@ export default function Home() {
     url: "https://retreatcottage.in",
   };
 
-  const shuffledFaqs = useState(() => [...faqData].sort(() => Math.random() - 0.5))[0];
+  const [shuffledFaqs, setShuffledFaqs] = useState(faqData);
+  
+  useEffect(() => {
+    setShuffledFaqs([...faqData].sort(() => Math.random() - 0.5));
+  }, []);
+
   const [showAll, setShowAll] = useState(false);
   const visibleFaqs = showAll ? shuffledFaqs : shuffledFaqs.slice(0, 5);
 
