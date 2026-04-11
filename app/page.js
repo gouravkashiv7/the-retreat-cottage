@@ -109,75 +109,7 @@ export default function Home() {
     ]
   };
 
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Is The Retreat Cottage pet-friendly?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, pets are allowed but only for Floor bookings or Full Villa bookings to ensure full privacy and convenience."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What is the total capacity of the villa?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "We can accommodate up to 15 guests total (12 adults + children). Children aged 9 and below stay for free (limit 1 per room)."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can we play music?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Absolutely! We provide a sound system and Karaoke for our guests to enjoy music and celebrate. To respect the valley's tranquility, we ask that music be turned down by 10 PM."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What are the check-in and check-out timings?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Standard check-in is at 2:00 PM and check-out is at 11:00 AM."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How is the villa heated in winters?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Rooms have Hot/Cold ACs. We also provide additional room heaters and extra blankets."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can we arrange driver stay?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, driver accommodation is available nearby (within 1km) at ₹500 per night."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is there a trekking path nearby?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, a heritage toy train track trek is just 200m away with old tunnels for photography."
-        }
-      }
-    ]
-  };
-
-  const siteNameJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "The Retreat Cottage",
-    url: "https://retreatcottage.in",
-  };  const faqData = [
+  const faqData = [
     {
       question: "What is the total guest capacity?",
       answer: "We can accommodate up to 15 guests total (12 adults + children).\n\nMax adult capacity is 12 (in 5 king beds + 2 extra mattresses). Children 9 and below stay for free (limit 1 per room)."
@@ -227,6 +159,26 @@ export default function Home() {
       answer: "The ground floor has 3 steps, and our super deluxe rooms are accessed by approximately 15 steps. While not fully wheelchair accessible, it is manageable for most guests."
     }
   ];
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqData.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer.replace(/\n/g, " ")
+      }
+    }))
+  };
+
+  const siteNameJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "The Retreat Cottage",
+    url: "https://retreatcottage.in",
+  };
 
   const shuffledFaqs = useState(() => [...faqData].sort(() => Math.random() - 0.5))[0];
   const [showAll, setShowAll] = useState(false);

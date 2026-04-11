@@ -1,8 +1,8 @@
 import imageToyTrain from "@/public/toy-train.png";
 import imageBalcony from "@/public/balcony-view.png";
 import imageTrack from "@/public/track.png";
-import imageVilla from "@/public/about-1.jpg";
-import imageForest from "@/public/about-2.jpg";
+import imageVilla from "@/public/cottage-1.png";
+import imageForest from "@/public/guest.png";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -232,7 +232,7 @@ export default function Page() {
 
           <div className="relative order-1 lg:order-2">
             <ScaleIn>
-              <div className="relative z-10 rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl aspect-[4/5] lg:aspect-auto lg:h-[700px]">
+              <div className="relative z-10 rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl aspect-4/5 lg:aspect-auto lg:h-175">
                 <Image
                   src={imageVilla}
                   alt="Luxury wooden cabin interior at The Retreat Cottage Dharampur Kasauli"
@@ -262,7 +262,8 @@ export default function Page() {
                 The Local Vibe
               </Badge>
               <h2 className="text-4xl md:text-6xl text-white font-medium mb-6">
-                Whispers of the <span className="italic font-light">Heritage</span>
+                Whispers of the{" "}
+                <span className="italic font-light">Heritage</span>
               </h2>
               <p className="text-primary-300 max-w-2xl mx-auto text-lg font-light">
                 Distance yourself from the mundane with walks along the timeless
@@ -289,9 +290,9 @@ export default function Page() {
                 The Nostalgic Express
               </h3>
               <p className="text-primary-300 font-light leading-relaxed">
-                Watch the iconic Kalka-Shimla Toy Train wind through the hills. A
-                UNESCO World Heritage site that passes just moments away,
-                  bringing a soulful rhythm to your stay.
+                Watch the iconic Kalka-Shimla Toy Train wind through the hills.
+                A UNESCO World Heritage site that passes just moments away,
+                bringing a soulful rhythm to your stay.
               </p>
             </FadeUp>
 
@@ -312,9 +313,9 @@ export default function Page() {
                 Trekking the Pines
               </h3>
               <p className="text-primary-300 font-light leading-relaxed">
-                Follow the sun dappled tracks through ancient pine forests. These
-                undiscovered trails offer the perfect meditative walk for soul
-                searchers and adventure lovers alike.
+                Follow the sun dappled tracks through ancient pine forests.
+                These undiscovered trails offer the perfect meditative walk for
+                soul searchers and adventure lovers alike.
               </p>
             </FadeUp>
           </div>
@@ -421,13 +422,16 @@ export default function Page() {
               </FadeUp>
             </div>
 
-            <ScaleIn className="h-[500px] lg:h-[600px]">
+            <ScaleIn className="h-125 lg:h-150">
               <div className="rounded-[2.5rem] overflow-hidden ring-1 ring-white/10 shadow-2xl h-full relative group">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3423.3724941405317!2d77.0166679!3d30.904210700000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390f87109b9272f1%3A0x1cc88c9993d31c6d!2sThe%20Retreat%20Cottage!5e0!3m2!1sen!2sin!4v1761327870057!5m2!1sen!2sin"
                   width="100%"
                   height="100%"
-                  style={{ border: 0, filter: "grayscale(0.3) contrast(1.1) invert(0)" }}
+                  style={{
+                    border: 0,
+                    filter: "grayscale(0.3) contrast(1.1) invert(0)",
+                  }}
                   allowFullScreen=""
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
@@ -452,7 +456,10 @@ export default function Page() {
           <div className="flex items-center justify-center gap-3">
             <div className="flex gap-1">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="h-5 w-5 text-accent-400 fill-accent-400" />
+                <Star
+                  key={i}
+                  className="h-5 w-5 text-accent-400 fill-accent-400"
+                />
               ))}
             </div>
             <span className="text-primary-300 font-light">
@@ -476,10 +483,10 @@ export default function Page() {
             <div className="absolute inset-0 opacity-10 mix-blend-overlay">
               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20" />
             </div>
-            <div className="absolute -top-1/2 -left-1/4 w-[100%] h-[100%] bg-white/20 blur-[120px] rounded-full rotate-45" />
+            <div className="absolute -top-1/2 -left-1/4 w-full h-full bg-white/20 blur-[120px] rounded-full rotate-45" />
 
             <div className="relative z-10 max-w-4xl mx-auto">
-              <h2 className="text-4xl md:text-7xl font-medium tracking-tight text-primary-950 mb-10 leading-[1]">
+              <h2 className="text-4xl md:text-7xl font-medium tracking-tight text-primary-950 mb-10 leading-none">
                 Your Private Piece of <br />
                 <span className="italic underline underline-offset-8 decoration-primary-950/20">
                   Himalayan Paradise
