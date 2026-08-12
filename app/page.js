@@ -177,7 +177,8 @@ export default function Home() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "The Retreat Cottage",
-    url: "https://retreatcottage.in",
+    alternateName: "Retreat Cottage",
+    url: "https://retreatcottage.in/",
   };
 
   const [shuffledFaqs, setShuffledFaqs] = useState(faqData);
